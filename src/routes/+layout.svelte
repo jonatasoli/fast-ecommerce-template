@@ -5,34 +5,47 @@
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github-dark.css';
-	import { storeHighlightJs } from '@skeletonlabs/skeleton';
+	import {
+		storeHighlightJs,
+		initializeStores,
+		Drawer,
+		getDrawerStore
+	} from '@skeletonlabs/skeleton';
 	import xml from 'highlight.js/lib/languages/xml'; // for HTML
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import logo from '$lib/assets/logo.png';
+	import Navigation from '$lib/components/Navigation/Navigation.svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
 	hljs.registerLanguage('typescript', typescript);
 	storeHighlightJs.set(hljs);
+	initializeStores();
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
-	import { MagnifyingGlass, ShoppingCart, UserCircle } from 'svelte-heros-v2';
+	import { MagnifyingGlass, ShoppingCart, UserCircle, Bars3 } from 'svelte-heros-v2';
+	import PageHeader from '$lib/components/PageHeader/PageHeader.svelte';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	let search = '';
+	const drawerStore = getDrawerStore();
 
 	function doSearch() {
 		console.log(search);
 	}
+
+	function drawerOpen(): void {
+		drawerStore.open({});
+	}
 </script>
 
+<Drawer><Navigation /></Drawer>
 <!-- App Shell -->
-
 <AppShell>
 	<svelte:fragment slot="header">
 		<AppBar
@@ -44,13 +57,18 @@
 			class="flex justify-center items-center"
 		>
 			<div slot="lead">
-				<div
-					class="flex-none inline-flex items-center justify-center h-12 md:h-16 w-[150px] sm:w-[250px]"
-				>
-					<img src={logo} alt="Logo" class="h-full w-auto" />
+				<div class="flex items-start">
+					<button class="sm:hidden btn btn-sm mr-4" on:click={drawerOpen}>
+						<Bars3 size="30" class="text-primary" />
+					</button>
+					<div
+						class="flex-none inline-flex items-center justify-center h-12 md:h-16 w-[180px] sm:w-[250px]"
+					>
+						<img src={logo} alt="Logo" class="h-full w-auto" />
+					</div>
 				</div>
 				<div class="flex w-screen items-center justify-center">
-					<div class="h-10 flex mx-auto sm:hidden w-[300px]">
+					<div class="h-10 flex flex-1 mx-4 sm:hidden w-[300px]">
 						<input
 							class="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-primary rounded-l-lg py-2 transition duration-300 ease focus:outline-none focus:ring-0 focus:border-primary hover:border-primary shadow-sm focus:shadow"
 							placeholder="Digite o que você procura"
@@ -100,13 +118,8 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<svelte:fragment slot="sidebarLeft">
-		<!-- Hidden below Tailwind's large breakpoint -->
-		<div id="sidebar-left" class="hidden lg:block">Sidebar</div>
-	</svelte:fragment>
-
 	<svelte:fragment slot="pageHeader">
-		<AppBar>pageHeader</AppBar>
+		<AppBar padding="p-0" class="hidden sm:flex w-full"><PageHeader /></AppBar>
 	</svelte:fragment>
 
 	<slot />

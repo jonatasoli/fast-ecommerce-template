@@ -48,6 +48,9 @@ export default {
 					800: '#9B681D',
 					900: '#4D340E',
 					950: '#271A07'
+				},
+				primaryHover: {
+					DEFAULT: '#E4A647'
 				}
 			}
 		}
