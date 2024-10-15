@@ -30,6 +30,7 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { MagnifyingGlass, ShoppingCart, UserCircle, Bars3 } from 'svelte-heros-v2';
 	import PageHeader from '$lib/components/SideBar/SideBar.svelte';
+	import Footer from '$lib/components/Footer/Footer.svelte';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	let search = '';
@@ -124,5 +125,5 @@
 
 	<slot />
 
-	<svelte:fragment slot="footer">Footer</svelte:fragment>
+	<svelte:fragment slot="pageFooter"><Footer /></svelte:fragment>
 </AppShell>

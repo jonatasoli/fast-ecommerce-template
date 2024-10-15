@@ -269,7 +269,9 @@
 </script>
 
 <div class="flex flex-col justify-center items-center">
-	<h1 class="text-primary text-2xl font-light my-8 mt-8 mb-4 text-center uppercase">COMBOS</h1>
+	<h1 class="text-primary text-2xl lg:text-5xl font-light my-8 mt-8 mb-4 text-center uppercase">
+		COMBOS
+	</h1>
 	<p class="text-gray-400 text-base font-medium leading-5 mb-8 text-center">22 Produtos</p>
 </div>
 

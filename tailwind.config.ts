@@ -51,6 +51,9 @@ export default {
 				},
 				primaryHover: {
 					DEFAULT: '#E4A647'
+				},
+				homeBackground: {
+					DEFAULT: '#101010'
 				}
 			}
 		}
