@@ -1,4 +1,5 @@
 <script>
+	import { _ } from 'svelte-i18n';
 	export let navLinks = [
 		{ label: 'Combos', to: '#' },
 		{ label: 'Lisos e Selagem', to: '#' },
@@ -22,7 +23,7 @@
 				<p
 					class="m-0 font-light text-primary text-xl leading-6 uppercase pb-4 border-b border-opacity-50 border-primary mb-4"
 				>
-					Categorias
+					{$_('navigation.categories')}
 				</p>
 				<ul class="grid gap-4 grid-cols-1 md:grid-cols-3 lg:grid-cols-6">
 					{#each navLinks as link}
@@ -38,8 +39,7 @@
 				</ul>
 				<div class="w-full py-6 border-t border-opacity-50 border-primary flex justify-start">
 					<address class="text-xs text-white opacity-70 leading-5">
-						Academia Brasileira de Beleza Hair School - CNPJ: 09.675.354/0001-00 © Todos os
-						direitos reservados. 2023
+						{$_('address')}
 					</address>
 				</div>
 			</div>
