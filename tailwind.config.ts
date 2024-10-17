@@ -30,6 +30,9 @@ export default {
 			// => @media (min-width: 1536px) { ... }
 		},
 		extend: {
+			boxShadow: {
+				custom: '0 0 1rem #0000001a' // Sombra personalizada
+			},
 			fontFamily: {
 				sans: ['Montserrat', 'sans-serif']
 			},
@@ -50,7 +53,8 @@ export default {
 					950: '#271A07'
 				},
 				primaryHover: {
-					DEFAULT: '#E4A647'
+					DEFAULT: '#E4A647',
+					hover: '#F9E9D2'
 				},
 				homeBackground: {
 					DEFAULT: '#101010'
