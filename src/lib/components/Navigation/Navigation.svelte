@@ -1,22 +1,26 @@
-<script>
-	import { AppShell } from '@skeletonlabs/skeleton';
+<script lang="ts">
+	export let data;
 </script>
 
-<AppShell slotSidebarLeft="" class="w-64 sm:hidden">
-	<nav
-		class="list-nav p-4 transition-all duration-300 ease-in-out h-screen bg-primary rounded-r-lg"
-	>
-		<ul class="text-white">
-			<li class="border-b border-white/50 py-2">
-				<a href="/" class="hover:text-gray-200">Homepage</a>
-			</li>
-			<li class="border-b border-white/50 py-2">
-				<a href="/about" class="hover:text-gray-200">About</a>
-			</li>
-			<li class="border-b border-white/50 py-2">
-				<a href="/blog" class="hover:text-gray-200">Blog</a>
-			</li>
-			<li class="py-2"><a href="/contact" class="hover:text-gray-200">Contact</a></li>
-		</ul>
-	</nav>
-</AppShell>
+<nav class="bg-primary">
+	<div class="w-screen">
+		<div class="flex h-16 items-center justify-center">
+			<div class="">
+				<div class="">
+					<div class="flex flex-wrap space-4 items-center">
+						{#each data.categories as category}
+							<div class="my-1">
+								<a
+									href="#"
+									class="rounded-md px-3 py-2 text-sm font-semibold uppercase font-sans hover:bg-primaryHover hover:text-white"
+								>
+									{category.name}
+								</a>
+							</div>
+						{/each}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>

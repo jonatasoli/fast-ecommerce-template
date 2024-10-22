@@ -15,7 +15,7 @@
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
-	import Navigation from '$lib/components/Navigation/Navigation.svelte';
+	import SideBar from '$lib/components/SideBar/SideBar.svelte';
 
 	hljs.registerLanguage('xml', xml); // for HTML
 	hljs.registerLanguage('css', css);
@@ -29,10 +29,11 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { MagnifyingGlass, ShoppingCart, UserCircle, Bars3 } from 'svelte-heros-v2';
-	import PageHeader from '$lib/components/SideBar/SideBar.svelte';
+	import PageHeader from '$lib/components/Navigation/Navigation.svelte';
 	import Footer from '$lib/components/Footer/Footer.svelte';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
+	export let data;
 	let search = '';
 	const drawerStore = getDrawerStore();
 
@@ -45,7 +46,7 @@
 	}
 </script>
 
-<Drawer><Navigation /></Drawer>
+<Drawer><SideBar {data} /></Drawer>
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
@@ -120,7 +121,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="pageHeader">
-		<AppBar padding="p-0" class="hidden sm:flex w-full"><PageHeader /></AppBar>
+		<AppBar padding="p-0" class="hidden sm:flex w-full"><PageHeader {data} /></AppBar>
 	</svelte:fragment>
 
 	<slot />
