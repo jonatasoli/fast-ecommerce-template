@@ -86,6 +86,8 @@
         "forgotPassword": "Esqueci minha senha",
         "submit": "Entrar",
         "register": "Ainda não sou cliente",
+        "success": "Login realizado com sucesso",
+        "failure": "Falha ao Fazer Login",
         "formValidation": {
             "invalidCredentials": "Usuário ou senha inválidos",
             "serverError": "Erro ao realizar login",
