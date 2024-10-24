@@ -11,7 +11,7 @@
 						{#each data.categories as category}
 							<div class="my-1">
 								<a
-									href="#"
+									href={`/pages/categories/${category.path}`}
 									class="rounded-md px-3 py-2 text-sm font-semibold uppercase font-sans hover:bg-primaryHover hover:text-white"
 								>
 									{category.name}

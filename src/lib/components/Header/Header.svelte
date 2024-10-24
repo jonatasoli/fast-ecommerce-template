@@ -23,7 +23,9 @@
 		<div
 			class="flex-none inline-flex items-center justify-center h-12 md:h-16 w-[180px] sm:w-[250px]"
 		>
-			<img src={logo} alt="Logo" class="h-full w-auto" />
+			<a href="/pages/dashboard" class="cursor-pointer">
+				<img src={logo} alt="Logo" class="h-full w-auto" />
+			</a>
 		</div>
 
 		<div class="flex pr-2">
