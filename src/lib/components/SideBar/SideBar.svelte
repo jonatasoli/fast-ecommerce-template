@@ -1,10 +1,23 @@
-<script>
+<script lang="ts">
+	import { goto } from '$app/navigation';
 	import { AppShell } from '@skeletonlabs/skeleton';
+	import { createEventDispatcher } from 'svelte';
 	import { ChevronDown, ChevronRight, ChevronUp } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
 	export let data;
 
-	let isExpanded = false; // Estado que controla se o item está expandido
+	let isExpanded = false;
+	const dispatch = createEventDispatcher();
+
+	function closeModal() {
+		dispatch('close');
+	}
+
+	function navigateTo(path: string) {
+		isExpanded = false;
+		closeModal();
+		goto(path);
+	}
 </script>
 
 <AppShell slotSidebarLeft="" class="w-64 sm:hidden">
@@ -13,33 +26,40 @@
 	>
 		<ul class="text-white">
 			<li class="border-b border-white/50 py-2">
-				<a href="/" class="hover:text-gray-200">Homepage</a>
+				<a
+					href="/pages/dashboard"
+					class="hover:text-gray-200"
+					on:click|preventDefault={() => navigateTo(`/pages/dashboard`)}>Homepage</a
+				>
 			</li>
 
 			<li class="border-b border-white/50 py-2">
-				<!-- Ao clicar, altera o estado de isExpanded -->
 				<a
 					href="#"
 					class="hover:text-gray-200"
 					on:click|preventDefault={() => (isExpanded = !isExpanded)}
 				>
 					{$_('navigation.categories')}
-					<!-- Ícone de seta para indicar que o item pode ser expandido -->
+
 					<span class="ml-2">
 						{#if isExpanded}
-							<ChevronUp /> <!-- Ícone de seta para cima (quando expandido) -->
+							<ChevronUp />
 						{:else}
-							<ChevronDown /> <!-- Ícone de seta para baixo (quando colapsado) -->
+							<ChevronDown />
 						{/if}
 					</span>
 				</a>
 
-				<!-- Mostra os subitens se isExpanded for verdadeiro -->
 				{#if isExpanded}
 					<ul class="ml-4 mt-2">
 						{#each data.categories as category}
 							<li class="py-2">
-								<a href="#" class="hover:text-gray-200">{category.name}</a>
+								<a
+									href={`/pages/categories/${category.path}`}
+									class="hover:text-gray-200"
+									on:click|preventDefault={() => navigateTo(`/pages/categories/${category.path}`)}
+									>{category.name}</a
+								>
 							</li>
 						{/each}
 					</ul>

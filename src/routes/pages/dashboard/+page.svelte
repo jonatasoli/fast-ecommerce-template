@@ -6,8 +6,6 @@
 	$: latestProducts = data ? data.products.slice(0, 4) : [];
 
 	$: latestCategories = data ? data.categories.slice(0, 3) : [];
-
-	console.log(data);
 </script>
 
 <div class="flex flex-col justify-center items-center">
@@ -22,13 +20,15 @@
 			<div
 				class=" flex flex-col rounded-3xl border border-primary overflow-hidden shadow-lg lg:w-64"
 			>
-				<div class="relative w-full h-0 pb-[76.03%] overflow-hidden">
-					<img
-						class="absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-						src={product.image_path}
-						alt={product.name}
-					/>
-				</div>
+				<a href={`/pages/products/${product.product_id}`}>
+					<div class="relative w-full h-0 pb-[76.03%] overflow-hidden">
+						<img
+							class="absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+							src={product.image_path}
+							alt={product.name}
+						/>
+					</div>
+				</a>
 				<div class="product-item__content p-3 pb-4 flex-1">
 					<div class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1">{product.name}</div>
 

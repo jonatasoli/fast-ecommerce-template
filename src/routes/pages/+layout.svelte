@@ -44,9 +44,13 @@
 	function drawerOpen(): void {
 		drawerStore.open({});
 	}
+
+	function drawerClose(): void {
+		drawerStore.close();
+	}
 </script>
 
-<Drawer><SideBar {data} /></Drawer>
+<Drawer><SideBar {data} on:close={drawerClose} /></Drawer>
 <!-- App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">

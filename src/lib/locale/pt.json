@@ -47,6 +47,10 @@
         "installments": "em até {count} de {amount} sem juros",
         "variants": "Selecione uma opção:"
     },
+    "productDetails": {
+        "composition": "Composição",
+        "howToUse": "Como usar"
+    },
     "cart": {
         "title": "Meu Carrinho",
         "empty": "Seu carrinho está vazio",

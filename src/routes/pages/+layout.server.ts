@@ -1,11 +1,11 @@
 import { SERVER_BASE_URL } from '$env/static/private';
-import { json } from '@sveltejs/kit';
+import { json, redirect } from '@sveltejs/kit';
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ cookies }) => {
 	const token = cookies.get('access_token');
 
 	if (!token) {
-		return json({ success: false, message: 'Unauthorized' }, { status: 401 });
+		throw redirect(302, '/');
 	}
 
 	try {

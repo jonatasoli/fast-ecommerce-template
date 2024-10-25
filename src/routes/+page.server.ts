@@ -54,9 +54,8 @@ export const actions = {
 				});
 			}
 
-			// Redireciona para o dashboard após o login bem-sucedido
-			throw redirect(302, '/pages/dashboard');
-		} catch (error) {
+			throw redirect(302, '/');
+		} catch {
 			return fail(500, {
 				error: 'Erro no servidor, tente novamente mais tarde',
 				form
