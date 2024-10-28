@@ -11,13 +11,13 @@
 		Drawer,
 		getDrawerStore
 	} from '@skeletonlabs/skeleton';
-	import xml from 'highlight.js/lib/languages/xml'; // for HTML
+	import xml from 'highlight.js/lib/languages/xml';
 	import css from 'highlight.js/lib/languages/css';
 	import javascript from 'highlight.js/lib/languages/javascript';
 	import typescript from 'highlight.js/lib/languages/typescript';
 	import SideBar from '$lib/components/SideBar/SideBar.svelte';
 
-	hljs.registerLanguage('xml', xml); // for HTML
+	hljs.registerLanguage('xml', xml);
 	hljs.registerLanguage('css', css);
 	hljs.registerLanguage('javascript', javascript);
 	hljs.registerLanguage('typescript', typescript);
@@ -25,16 +25,19 @@
 	initializeStores();
 	const logo = import.meta.env.VITE_URL_LOGO;
 
-	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { MagnifyingGlass, ShoppingCart, UserCircle, Bars3 } from 'svelte-heros-v2';
 	import PageHeader from '$lib/components/Navigation/Navigation.svelte';
 	import Footer from '$lib/components/Footer/Footer.svelte';
+	import Loading from '$lib/components/Loading/Loading.svelte';
+	import { isLoading } from '$lib/stores/loading';
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	export let data;
 	let search = '';
+
 	const drawerStore = getDrawerStore();
 
 	function doSearch() {
@@ -129,6 +132,8 @@
 	<svelte:fragment slot="pageHeader">
 		<AppBar padding="p-0" class="hidden sm:flex w-full"><PageHeader {data} /></AppBar>
 	</svelte:fragment>
+
+	<Loading visible={$isLoading} />
 
 	<slot />
 

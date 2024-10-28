@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
 	import { currencyFormat } from '$lib/utils';
+	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import { showLoading, hideLoading, isLoading } from '$lib/stores/loading';
 	export let data;
 
 	$: latestProducts = data ? data.products.slice(0, 4) : [];
@@ -28,16 +30,21 @@
 							alt={product.name}
 						/>
 					</div>
-				</a>
-				<div class="product-item__content p-3 pb-4 flex-1">
-					<div class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1">{product.name}</div>
 
-					<div class="container-price flex flex-col gap-2 mt-6">
-						<p class="price text-primary font-semibold text-xl m-0">
-							{currencyFormat(product.price)}
-						</p>
+					<div class="product-item__content p-3 pb-4 flex-1">
+						<div
+							class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1 hover:text-primaryHover"
+						>
+							{product.name}
+						</div>
+
+						<div class="container-price flex flex-col gap-2 mt-6">
+							<p class="price text-primary font-semibold text-xl m-0">
+								{currencyFormat(product.price)}
+							</p>
+						</div>
 					</div>
-				</div>
+				</a>
 				{#if product.quantity}
 					<button
 						class="product-item__buy w-full inline-flex justify-center items-center text-white bg-primary cursor-pointer text-xl py-4 transition-all duration-300 hover:bg-opacity-80"
