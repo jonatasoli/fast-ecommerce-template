@@ -47,6 +47,10 @@
         "installments": "em até {count} de {amount} sem juros",
         "variants": "Selecione uma opção:"
     },
+    "productDetails": {
+        "composition": "Composição",
+        "howToUse": "Como usar"
+    },
     "cart": {
         "title": "Meu Carrinho",
         "empty": "Seu carrinho está vazio",
@@ -86,6 +90,8 @@
         "forgotPassword": "Esqueci minha senha",
         "submit": "Entrar",
         "register": "Ainda não sou cliente",
+        "success": "Login realizado com sucesso",
+        "failure": "Falha ao Fazer Login",
         "formValidation": {
             "invalidCredentials": "Usuário ou senha inválidos",
             "serverError": "Erro ao realizar login",
