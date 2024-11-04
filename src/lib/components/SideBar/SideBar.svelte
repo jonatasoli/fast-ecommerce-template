@@ -22,7 +22,7 @@
 
 <AppShell slotSidebarLeft="" class="w-64 sm:hidden">
 	<nav
-		class="list-nav p-4 transition-all duration-300 ease-in-out h-screen bg-primary rounded-r-lg"
+		class="list-nav p-4 transition-all duration-300 ease-in-out h-screen bg-primary-500 rounded-r-lg"
 	>
 		<ul class="text-white">
 			<li class="border-b border-white/50 py-2">

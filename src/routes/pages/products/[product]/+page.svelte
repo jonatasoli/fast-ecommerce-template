@@ -23,7 +23,7 @@
 			class="w-full h-72 object-cover rounded-lg"
 		/>
 
-		<h1 class="text-lg sm:text-xl md:text-2xl font-semibold text-primary text-center">
+		<h1 class="text-lg sm:text-xl md:text-2xl font-semibold text-primary-500 text-center">
 			{data.product.name}
 		</h1>
 
@@ -31,12 +31,12 @@
 			{data.product.description.content}
 		</p>
 
-		<p class="text-md sm:text-lg md:text-xl font-semibold text-primary">
+		<p class="text-md sm:text-lg md:text-xl font-semibold text-primary-500">
 			{currencyFormat(Number(data.product.price))}
 		</p>
 
 		<button
-			class="w-full py-2 px-4 bg-primary text-white font-semibold rounded-md hover:bg-primary-dark transition-all duration-200 ease-in-out"
+			class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-md hover:bg-primary-dark transition-all duration-200 ease-in-out"
 			on:click={addToCart}
 		>
 			Adicionar ao Carrinho
@@ -44,14 +44,14 @@
 
 		<div class="w-full py-4">
 			{#if data.product.description.content}
-				<ul class="text-primary">
+				<ul class="text-primary-500">
 					<li class="border-b border-gray-200 py-2">
 						<a
 							href="#"
 							class="hover:text-gray-200 flex justify-between"
 							on:click|preventDefault={() => (isExpandedComposition = !isExpandedComposition)}
 						>
-							<h2 class="text-lg sm:text-xl font-semibold text-primary">
+							<h2 class="text-lg sm:text-xl font-semibold text-primary-500">
 								{$_('productDetails.composition')}
 							</h2>
 							<span class="ml-2">
@@ -75,14 +75,14 @@
 			{/if}
 
 			{#if data.product.description.how_to_use}
-				<ul class="text-primary">
+				<ul class="text-primary-500">
 					<li class="py-2">
 						<a
 							href="#"
 							class="hover:text-gray-200 flex justify-between"
 							on:click|preventDefault={() => (isExpandedUse = !isExpandedUse)}
 						>
-							<h2 class="text-lg sm:text-xl font-semibold text-primary">
+							<h2 class="text-lg sm:text-xl font-semibold text-primary-500">
 								{$_('productDetails.howToUse')}
 							</h2>
 							<span class="ml-2">
@@ -117,9 +117,9 @@
 		/>
 
 		<div class="mt-4 md:mt-0 md:w-1/2 md:ml-8">
-			<h1 class="text-2xl font-semibold text-primary">{data.product.name}</h1>
+			<h1 class="text-2xl font-semibold text-primary-500">{data.product.name}</h1>
 
-			<p class="text-lg font-semibold text-primary mt-2">
+			<p class="text-lg font-semibold text-primary-500 mt-2">
 				{currencyFormat(Number(data.product.price))}
 			</p>
 
@@ -130,7 +130,7 @@
 			<p class="text-gray-600 mt-4">{data.product.description.content}</p>
 
 			<button
-				class="w-full py-2 px-4 bg-primary text-white font-semibold rounded-md mt-4 hover:bg-primary-dark transition-all duration-200 ease-in-out"
+				class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-md mt-4 hover:bg-primary-700 transition-all duration-200 ease-in-out"
 				on:click={addToCart}
 			>
 				Adicionar ao Carrinho
@@ -138,14 +138,14 @@
 
 			<div class="w-full py-4 mt-4">
 				{#if data.product.description.composition}
-					<ul class="text-primary">
+					<ul class="text-primary-500">
 						<li class="border-b border-gray-200 py-2">
 							<a
 								href="#"
 								class="hover:text-gray-200 flex justify-between"
 								on:click|preventDefault={() => (isExpandedComposition = !isExpandedComposition)}
 							>
-								<h2 class="text-xl font-semibold text-primary">
+								<h2 class="text-xl font-semibold text-primary-500">
 									{$_('productDetails.composition')}
 								</h2>
 								<span class="ml-2">
@@ -169,14 +169,14 @@
 				{/if}
 
 				{#if data.product.description.how_to_use}
-					<ul class="text-primary mt-4">
+					<ul class="text-primary-500 mt-4">
 						<li class="py-2">
 							<a
 								href="#"
 								class="hover:text-gray-200 flex justify-between"
 								on:click|preventDefault={() => (isExpandedUse = !isExpandedUse)}
 							>
-								<h2 class="text-xl font-semibold text-primary">
+								<h2 class="text-xl font-semibold text-primary-500">
 									{$_('productDetails.howToUse')}
 								</h2>
 								<span class="ml-2">

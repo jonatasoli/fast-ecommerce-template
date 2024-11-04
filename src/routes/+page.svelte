@@ -22,12 +22,13 @@
 	const toastStore = getToastStore();
 	function showToast(message: string, bgColor: string) {
 		const t = {
-			message: message, // Mensagem dinâmica
-			autohide: false, // Não oculta automaticamente
-			background: bgColor, // Cor de fundo dinâmica (classe Tailwind)
-			classes: `${bgColor} text-white` // Aplica a cor de fundo e texto branco
+			message: message,
+			autohide: false,
+			hideDismiss: true,
+			background: bgColor,
+			classes: `${bgColor} text-white`
 		};
-		toastStore.trigger(t); // Dispara o toast
+		toastStore.trigger(t);
 	}
 
 	async function handleLogin(formData: FormData) {
@@ -53,18 +54,15 @@
 			});
 
 			if (response) {
-				showToast($_('login.success'), 'bg-primary');
+				showToast($_('login.success'), 'bg-primary-500');
 				goto('/pages/dashboard');
 			} else {
-				// Exibir erro caso o login falhe
 				showToast($_('login.failure'), 'bg-red');
 				error = 'Falha ao fazer login, verifique suas credenciais.';
 			}
 		}
 	}
-	function handleForgotPassword() {
-		// Lógica para recuperação de senha
-	}
+	function handleForgotPassword() {}
 </script>
 
 <div class="login flex flex-col items-center justify-center min-h-screen px-4 sm:px-8">
@@ -73,11 +71,10 @@
 	</a>
 
 	<div class="w-full max-w-md mt-4 p-4 rounded-lg bg-white sm:shadow-custom">
-		<p class="text-center text-xl text-primary font-medium mb-4">
+		<p class="text-center text-xl text-primary-500 font-medium mb-4">
 			{$_('login.title')}
 		</p>
 
-		<!-- Formulário ajustado -->
 		<form
 			class="login__form flex flex-col gap-4"
 			method="POST"
@@ -85,7 +82,6 @@
 				await handleLogin(formData);
 			}}
 		>
-			<!-- Campo de usuário -->
 			<div>
 				<label class="block mb-1 font-medium text-gray-700">
 					{$_('login.username')}
@@ -94,12 +90,11 @@
 					name="username"
 					bind:value={username}
 					placeholder={$_('login.username')}
-					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary hover:border-primary placeholder-gray-400 placeholder-opacity-75 focus:ring-primary transition duration-200 ease-in-out"
+					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 					type="text"
 				/>
 			</div>
 
-			<!-- Campo de senha -->
 			<div>
 				<label class="block mb-1 font-medium text-gray-700">
 					{$_('login.password')}
@@ -109,21 +104,19 @@
 					type="password"
 					bind:value={password}
 					placeholder={$_('login.password')}
-					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary hover:border-primary placeholder-gray-400 placeholder-opacity-75 focus:ring-primary transition duration-200 ease-in-out"
+					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 				/>
 			</div>
 
-			<!-- Exibição de erro -->
 			{#if error}
 				<div class="text-red-500 text-sm text-center">
 					{error}
 				</div>
 			{/if}
 
-			<!-- Botão de login -->
 			<div class="mt-6">
 				<button
-					class="font-bold w-full bg-primary hover:bg-primaryHover transition text-white rounded-full px-4 py-2"
+					class="font-bold w-full bg-primary-500 hover:bg-primary transition text-white rounded-full px-4 py-2"
 					type="submit"
 				>
 					{$_('login.submit')}
@@ -131,10 +124,9 @@
 			</div>
 		</form>
 
-		<!-- Botões de recuperação e registro -->
 		<div class="mt-4 flex flex-col items-center gap-4">
 			<button
-				class="font-bold w-full flex justify-center items-center bg-white text-primary hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
+				class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
 				on:click={handleForgotPassword}
 			>
 				{$_('login.forgotPassword')}
@@ -143,7 +135,7 @@
 
 			<a href="/register" class="block w-full">
 				<button
-					class="font-bold w-full flex justify-center items-center bg-white text-primary hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
+					class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
 				>
 					{$_('login.register')}
 					<ChevronRight class="w-5 h-5" />

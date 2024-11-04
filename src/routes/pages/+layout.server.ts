@@ -1,8 +1,10 @@
 import { SERVER_BASE_URL } from '$env/static/private';
 import { json, redirect } from '@sveltejs/kit';
+
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ cookies }) => {
 	const token = cookies.get('access_token');
+	const document = cookies.get('userDocument');
 
 	if (!token) {
 		throw redirect(302, '/');
@@ -15,13 +17,22 @@ export const load = async ({ cookies }) => {
 			}
 		});
 
-		if (!response.ok) {
-			throw new Error('Failed to fetch categories');
+		const res = await fetch(`${SERVER_BASE_URL}/user/${document}`, {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
+
+		if (!response.ok && !res) {
+			throw new Error('Failed to fetch categories or Document');
 		}
 
 		const data = await response.json();
+		const user = await res.json();
 		return {
-			categories: data.categories
+			categories: data.categories,
+			token,
+			user
 		};
 	} catch (error) {
 		console.error('Error fetching categories:', error);

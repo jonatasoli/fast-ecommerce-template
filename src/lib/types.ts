@@ -29,3 +29,28 @@ export interface Product {
 export interface ResponseProduct {
 	product: Product;
 }
+
+export interface Address {
+	user_id: number;
+	street: string;
+	street_number: string;
+	address_complement: string;
+	neighborhood: string;
+	city: string;
+	state: string;
+	country: string;
+	zipcode: string;
+}
+
+export interface User {
+	user_id: number | null;
+	name: string;
+	password: string;
+	document: string;
+	phone: string;
+	role_id: number | null;
+	email: string;
+	full_name: string | null;
+	disabled: boolean | null;
+	addresses: Address[];
+}

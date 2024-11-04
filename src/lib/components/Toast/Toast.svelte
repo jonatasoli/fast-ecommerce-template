@@ -17,7 +17,7 @@
 <div
 	class={`fixed bottom-5 right-5 p-4 rounded-lg shadow-lg transition-opacity duration-300 ease-in-out 
       ${show ? 'opacity-100' : 'opacity-0'} 
-      ${type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
+      ${type === 'success' ? 'bg-green text-white' : 'bg-red text-white'}`}
 >
 	{message}
 </div>
