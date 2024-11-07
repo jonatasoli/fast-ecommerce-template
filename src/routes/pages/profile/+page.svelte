@@ -46,10 +46,11 @@
 		</h1>
 	</div>
 
-	<div class="p-3 flex flex-col space-y-4">
-		<!-- Campo ID do Usuário -->
+	<div class="p-3 flex flex-col space-y-4 w-full">
 		<div>
-			<label for="id" class="block mb-1 font-medium text-sm text-gray-700">ID do Usuário</label>
+			<label for="id" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.idUser')}</label
+			>
 			<input
 				id="id"
 				type="text"
@@ -59,9 +60,10 @@
 			/>
 		</div>
 
-		<!-- Campo Nome -->
 		<div>
-			<label for="name" class="block mb-1 font-medium text-sm text-gray-700">Nome</label>
+			<label for="name" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.name')}</label
+			>
 			<input
 				id="name"
 				type="text"
@@ -71,9 +73,10 @@
 			/>
 		</div>
 
-		<!-- Campo Documento -->
 		<div>
-			<label for="document" class="block mb-1 font-medium text-sm text-gray-700">Documento</label>
+			<label for="document" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.document')}</label
+			>
 			<input
 				id="document"
 				type="text"
@@ -83,9 +86,10 @@
 			/>
 		</div>
 
-		<!-- Campo Telefone -->
 		<div>
-			<label for="phone" class="block mb-1 font-medium text-sm text-gray-700">Telefone</label>
+			<label for="phone" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.phone')}</label
+			>
 			<input
 				id="phone"
 				type="text"
@@ -95,9 +99,10 @@
 			/>
 		</div>
 
-		<!-- Campo Email -->
 		<div>
-			<label for="email" class="block mb-1 font-medium text-sm text-gray-700">Email</label>
+			<label for="email" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.email')}</label
+			>
 			<input
 				id="email"
 				type="text"
@@ -107,9 +112,10 @@
 			/>
 		</div>
 
-		<!-- Campo Endereço -->
 		<div>
-			<label for="address" class="block mb-1 font-medium text-sm text-gray-700">Endereço</label>
+			<label for="address" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.address')}</label
+			>
 			<input
 				id="address"
 				type="text"
@@ -120,7 +126,9 @@
 		</div>
 
 		<div>
-			<label for="cep" class="block mb-1 font-medium text-sm text-gray-700">Cep</label>
+			<label for="cep" class="block mb-1 font-medium text-sm text-gray-700"
+				>{$_('checkout.user.zipcode')}</label
+			>
 			<input
 				id="cep"
 				type="text"
@@ -130,7 +138,6 @@
 			/>
 		</div>
 
-		<!-- Botão Editar -->
 		<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
 			<button
 				class="md:w-28 w-full py-2 px-4 md:mx-3 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all duration-200 ease-in-out"

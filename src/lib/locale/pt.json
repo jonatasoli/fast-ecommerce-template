@@ -195,8 +195,12 @@
         "user": {
             "title": "Informações pessoais",
             "name": "Nome",
+            "document": "Documento",
+            "idUser": "ID do Usuário",
             "email": "E-mail",
             "phone": "Telefone",
+            "address": "Endereço",
+            "zipcode": "CEP",
             "login": {
                 "part1": "Faça seu",
                 "part2": "login",

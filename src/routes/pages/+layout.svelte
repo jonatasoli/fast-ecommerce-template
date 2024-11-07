@@ -35,6 +35,7 @@
 	import { isLoading } from '$lib/stores/loading';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
+	import { goto } from '$app/navigation';
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
@@ -60,6 +61,19 @@
 
 	function drawerClose(): void {
 		drawerStore.close();
+	}
+
+	async function logout() {
+		const resp = await fetch(`/api/auth/logout`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		const data = await resp.json();
+		if (data.success) {
+			goto('/');
+		}
 	}
 </script>
 
@@ -150,14 +164,14 @@
 							<div
 								class="flex flex-col w-full items-center justify-center border-primary-500 border-b border-opacity-50 my-1 py-2"
 							>
-								<span class="text-slate-500 w-full hover:text-primary-500">
+								<span class="text-slate-500 cursor-default w-full hover:text-primary-500">
 									{welcomeMessage}
 								</span>
 							</div>
 							<div class="flex flex-col text-slate-500 my-1 py-2">
 								<span class="hover:text-primary-500">Meus pedidos</span>
 								<span class="hover:text-primary-500"><a href="/pages/profile">Perfil</a></span>
-								<span class="hover:text-primary-500">Sair</span>
+								<span class="hover:text-primary-500" on:click={logout}>Sair</span>
 							</div>
 							<div class="arrow bg-surface-100-800-token"></div>
 						</div>

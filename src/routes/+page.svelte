@@ -2,14 +2,12 @@
 	import { _ } from 'svelte-i18n';
 	export const layout = false;
 
-	import { ChevronRight } from 'svelte-heros-v2'; // Usando biblioteca de ícones
-	import { superForm } from 'sveltekit-superforms';
+	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
 	const logo = import.meta.env.VITE_URL_LOGO;
 	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { loginSchema } from '$lib/schemas/login.js';
-	import { onMount } from 'svelte';
 
 	initializeStores();
 
@@ -83,10 +81,11 @@
 			}}
 		>
 			<div>
-				<label class="block mb-1 font-medium text-gray-700">
+				<label for="username" class="block mb-1 font-medium text-gray-700">
 					{$_('login.username')}
 				</label>
 				<input
+					id="username"
 					name="username"
 					bind:value={username}
 					placeholder={$_('login.username')}
@@ -96,10 +95,11 @@
 			</div>
 
 			<div>
-				<label class="block mb-1 font-medium text-gray-700">
+				<label for="password" class="block mb-1 font-medium text-gray-700">
 					{$_('login.password')}
 				</label>
 				<input
+					id="password"
 					name="password"
 					type="password"
 					bind:value={password}
@@ -116,7 +116,7 @@
 
 			<div class="mt-6">
 				<button
-					class="font-bold w-full bg-primary-500 hover:bg-primary transition text-white rounded-full px-4 py-2"
+					class="font-bold w-full bg-primary-500 hover:bg-primary-400 transition text-white rounded-full px-4 py-2"
 					type="submit"
 				>
 					{$_('login.submit')}
@@ -126,7 +126,7 @@
 
 		<div class="mt-4 flex flex-col items-center gap-4">
 			<button
-				class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
+				class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primary-400 transition rounded-full px-4 py-2"
 				on:click={handleForgotPassword}
 			>
 				{$_('login.forgotPassword')}
@@ -135,7 +135,7 @@
 
 			<a href="/register" class="block w-full">
 				<button
-					class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primaryHover-hover transition rounded-full px-4 py-2"
+					class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primary-400 transition rounded-full px-4 py-2"
 				>
 					{$_('login.register')}
 					<ChevronRight class="w-5 h-5" />
