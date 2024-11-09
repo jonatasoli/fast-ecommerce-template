@@ -178,12 +178,14 @@
 					{/if}
 				</button>
 
-				<button
-					class="flex items-center justify-center rounded-full bg-transparent p-2 transition-all shadow-sm hover:shadow focus:bg-white focus:shadow-none active:bg-white hover:bg-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-					type="button"
-				>
-					<ShoppingCart size="30" class="text-primary-500" />
-				</button>
+				<a href="/pages/cart">
+					<button
+						class="flex items-center justify-center rounded-full bg-transparent p-2 transition-all shadow-sm hover:shadow focus:bg-white focus:shadow-none active:bg-white hover:bg-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+						type="button"
+					>
+						<ShoppingCart size="30" class="text-primary-500" />
+					</button>
+				</a>
 			</div>
 		</AppBar>
 	</svelte:fragment>

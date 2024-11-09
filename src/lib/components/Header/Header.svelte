@@ -40,7 +40,7 @@
 				class="flex items-center justify-center rounded-full bg-transparent p-2 transition-all shadow-sm hover:shadow focus:bg-white focus:shadow-none active:bg-white hover:bg-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 				type="button"
 			>
-				<ShoppingCart size="30" class="text-primary" />
+				<a href="/pages/cart"><ShoppingCart size="30" class="text-primary" /></a>
 			</button>
 		</div>
 	</div>
@@ -85,6 +85,6 @@
 		class="flex items-center justify-center rounded-full bg-transparent p-2 transition-all shadow-sm hover:shadow focus:bg-white focus:shadow-none active:bg-white hover:bg-white active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 		type="button"
 	>
-		<ShoppingCart size="30" class="text-primary-500" />
+		<a href="/pages/cart"> <ShoppingCart size="30" class="text-primary-500" /></a>
 	</button>
 </div>

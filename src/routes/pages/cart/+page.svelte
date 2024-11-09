@@ -1,7 +1,16 @@
 <script lang="ts">
-	import { Banknotes, ShoppingCart, Trash } from 'svelte-heros-v2';
+	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 
 	let coupon = '';
+	let count = 1;
+
+	function increment() {
+		count += 1;
+	}
+
+	function decrement() {
+		if (count > 0) count -= 1;
+	}
 </script>
 
 <div class="grid grid-cols-1 p-4 gap-4 sm:grid-cols-2">
@@ -30,7 +39,7 @@
 	<!-- cep -->
 	<div class="border border-gray-300 p-4 flex flex-col gap-2 rounded-lg">
 		<div class="text-primary-500 flex items-center gap-2">
-			<ShoppingCart size="35" />
+			<ShoppingCart size="50" />
 			<h3 class="text-lg font-semibold text-primary-500">
 				Insira seu CEP para calcular o frete e o prazo de entrega
 			</h3>
@@ -76,6 +85,8 @@
 		</div>
 	</div>
 
+	<!-- carrinho -->
+
 	<div
 		class="flex flex-col items-center justify-center border border-gray-300 p-4 gap-2 rounded-lg"
 	>
@@ -97,9 +108,51 @@
 		</div>
 
 		<div class="flex items-center justify-between gap-4 w-full">
-			<button>less/more</button>
+			<div
+				class="flex items-center gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
+			>
+				<button on:click={decrement} class="px-2"><Minus /></button>
+				<input
+					bind:value={count}
+					type="text"
+					class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+				/>
+				<button on:click={increment} class="px-2"><Plus /></button>
+			</div>
 			<span class="text-xl font-semibold">R$ 419,00</span>
 			<Trash class="text-primary-500" />
 		</div>
+	</div>
+
+	<!-- resumo -->
+	<div
+		class="flex flex-col items-center justify-center border border-gray-300 p-4 gap-2 rounded-lg"
+	>
+		<div class="flex justify-between w-full my-3">
+			<span class="text-sm font-sans">Produtos</span><span>R$ 197,00</span>
+		</div>
+
+		<div class="flex justify-between w-full my-3">
+			<span class="text-sm font-sans">Frete</span><span>R$ 50,00</span>
+		</div>
+
+		<hr class="w-full border-t-2 !border-gray-300" />
+
+		<div class="flex justify-between w-full my-3">
+			<h3 class="text-lg font-semibold">Total</h3>
+
+			<h3 class="text-lg font-semibold" i>R$ 200,00</h3>
+		</div>
+
+		<button
+			class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
+			>Finalizar Compra</button
+		>
+
+		<a href="/pages/dashboard"
+			><span class="text-primary-700 font-bold cursor-pointer my-3 underline"
+				>Continuar comprando</span
+			>
+		</a>
 	</div>
 </div>
