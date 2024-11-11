@@ -2,6 +2,25 @@
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 
 	let coupon = '';
+	const products = [
+		{
+			name: 'Combo Cachos',
+			description: 'Kit para tratamento de cachos',
+			quantity: 2,
+			price: 197.0,
+			imageUrl:
+				'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
+		},
+		{
+			name: 'Shampoo Cachos',
+			description: 'Shampoo hidratante para cachos',
+			quantity: 1,
+			price: 50.0,
+			imageUrl:
+				'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
+		}
+		// Adicione mais produtos aqui, se necessário
+	];
 	let count = 1;
 
 	function increment() {
@@ -55,7 +74,7 @@
 
 			<button
 				class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
-				>Adicionar</button
+				>Calcular</button
 			>
 		</div>
 
@@ -91,36 +110,73 @@
 		class="flex flex-col items-center justify-center border border-gray-300 p-4 gap-2 rounded-lg"
 	>
 		<h1 class="text-2xl font-bold my-5">Meu Carrinho</h1>
-		<div class="grid grid-col-1 items-center justify-center p-4 gap-5 w-full">
-			<div class="flex items-center justify-center">
-				<img
-					src="https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg"
-					alt=""
-					class="w-full h-full sm:max-w-56"
-				/>
-			</div>
 
-			<div class="flex justify-center items-center">
-				<span
-					>COMBO VIBRANCE - 1 CACHOS RELAXAMENTO 1 KG + 1 CREME NEUTRALIZANTE POS RELAXAMENTO 1L</span
-				>
-			</div>
-		</div>
+		<script>
+			const products = [
+				{
+					name: 'Combo Cachos',
+					description: 'Kit para tratamento de cachos',
+					quantity: 2,
+					price: 197.0,
+					imageUrl:
+						'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
+				},
+				{
+					name: 'Shampoo Cachos',
+					description: 'Shampoo hidratante para cachos',
+					quantity: 1,
+					price: 50.0,
+					imageUrl:
+						'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
+				}
+				// Adicione mais produtos aqui, se necessário
+			];
+		</script>
 
-		<div class="flex items-center justify-between gap-4 w-full">
-			<div
-				class="flex items-center gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
-			>
-				<button on:click={decrement} class="px-2"><Minus /></button>
-				<input
-					bind:value={count}
-					type="text"
-					class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-				/>
-				<button on:click={increment} class="px-2"><Plus /></button>
-			</div>
-			<span class="text-xl font-semibold">R$ 419,00</span>
-			<Trash class="text-primary-500" />
+		<div class="overflow-x-auto w-full">
+			<table class="w-full bg-white border border-gray-200 rounded-lg">
+				<thead>
+					<tr class="bg-gray-100 border-b">
+						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
+						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Descrição</th>
+						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Quantidade</th>
+						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Preço por Unidade</th>
+						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Ação</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each products as product}
+						<tr class="border-b hover:bg-gray-50">
+							<td class="px-6 py-4 whitespace-nowrap flex items-center">
+								<img src={product.imageUrl} alt={product.name} class="w-10 h-10 rounded mr-3" />
+								<span class="text-gray-700 text-sm">{product.name}</span>
+							</td>
+							<td class="px-6 py-4 text-gray-700 text-sm">{product.description}</td>
+							<td class="px-6 py-4 text-gray-700 text-sm">
+								<div
+									class="flex items-center justify-center w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
+								>
+									<button on:click={decrement} class="px-2"><Minus /></button>
+									<input
+										bind:value={count}
+										type="text"
+										class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
+									/>
+									<button on:click={increment} class="px-2"><Plus /></button>
+								</div></td
+							>
+							<td class="px-6 py-4 text-gray-700 text-sm">R$ {product.price.toFixed(2)}</td>
+							<td class="px-6 py-4">
+								<button
+									class="px-3 py-1 text-sm text-white bg-transparent rounded hover:bg-primary-50"
+								>
+									<Trash class="text-primary-500" />
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		</div>
 	</div>
 
@@ -141,7 +197,7 @@
 		<div class="flex justify-between w-full my-3">
 			<h3 class="text-lg font-semibold">Total</h3>
 
-			<h3 class="text-lg font-semibold" i>R$ 200,00</h3>
+			<h3 class="text-lg font-semibold">R$ 200,00</h3>
 		</div>
 
 		<button
