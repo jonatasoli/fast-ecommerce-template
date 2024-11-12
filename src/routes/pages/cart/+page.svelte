@@ -1,33 +1,25 @@
 <script lang="ts">
+	import { cartStore } from '$lib/stores/cart';
+	import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
+	import type { CartItem } from '$lib/types';
+	import { currencyFormat } from '$lib/utils';
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 
 	let coupon = '';
-	const products = [
-		{
-			name: 'Combo Cachos',
-			description: 'Kit para tratamento de cachos',
-			quantity: 2,
-			price: 197.0,
-			imageUrl:
-				'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
-		},
-		{
-			name: 'Shampoo Cachos',
-			description: 'Shampoo hidratante para cachos',
-			quantity: 1,
-			price: 50.0,
-			imageUrl:
-				'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
-		}
-		// Adicione mais produtos aqui, se necessário
-	];
-	let count = 1;
 
-	function increment() {
+	const cart = cartStore();
+
+	let products: CartItem[] = [];
+
+	$: products = $cart.cart_items;
+
+	$: !products ? showLoading : hideLoading;
+
+	function increment(count) {
 		count += 1;
 	}
 
-	function decrement() {
+	function decrement(count) {
 		if (count > 0) count -= 1;
 	}
 </script>
@@ -111,64 +103,66 @@
 	>
 		<h1 class="text-2xl font-bold my-5">Meu Carrinho</h1>
 
-		<script>
-			const products = [
-				{
-					name: 'Combo Cachos',
-					description: 'Kit para tratamento de cachos',
-					quantity: 2,
-					price: 197.0,
-					imageUrl:
-						'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
-				},
-				{
-					name: 'Shampoo Cachos',
-					description: 'Shampoo hidratante para cachos',
-					quantity: 1,
-					price: 50.0,
-					imageUrl:
-						'https://s3.us-east-2.wasabisys.com/cdn.gattorosa.com.br/production/cachos/ID%2051%20combo-cachos-agjgbw.jpg'
-				}
-				// Adicione mais produtos aqui, se necessário
-			];
-		</script>
-
 		<div class="overflow-x-auto w-full">
 			<table class="w-full bg-white border border-gray-200 rounded-lg">
 				<thead>
 					<tr class="bg-gray-100 border-b">
-						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Produto</th>
-						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Descrição</th>
-						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Quantidade</th>
-						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Preço por Unidade</th>
-						<th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Ação</th>
+						<th
+							class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
+							>Produto</th
+						>
+
+						<th
+							class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
+							>Quantidade</th
+						>
+						<th
+							class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 hidden sm:table-cell"
+							>Preço</th
+						>
+						<th
+							class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
+							>Ação</th
+						>
 					</tr>
 				</thead>
 				<tbody>
 					{#each products as product}
 						<tr class="border-b hover:bg-gray-50">
-							<td class="px-6 py-4 whitespace-nowrap flex items-center">
-								<img src={product.imageUrl} alt={product.name} class="w-10 h-10 rounded mr-3" />
-								<span class="text-gray-700 text-sm">{product.name}</span>
-							</td>
-							<td class="px-6 py-4 text-gray-700 text-sm">{product.description}</td>
-							<td class="px-6 py-4 text-gray-700 text-sm">
-								<div
-									class="flex items-center justify-center w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
-								>
-									<button on:click={decrement} class="px-2"><Minus /></button>
-									<input
-										bind:value={count}
-										type="text"
-										class="flex-shrink-0 text-gray-900 dark:text-white border-0 bg-transparent text-sm font-normal focus:outline-none focus:ring-0 max-w-[2.5rem] text-center"
-									/>
-									<button on:click={increment} class="px-2"><Plus /></button>
-								</div></td
+							<td
+								class="px-4 py-2 sm:px-6 sm:py-4 whitespace-nowrap flex items-center text-xs sm:text-sm"
 							>
-							<td class="px-6 py-4 text-gray-700 text-sm">R$ {product.price.toFixed(2)}</td>
-							<td class="px-6 py-4">
+								<img
+									src={product.image_path}
+									alt={product.name}
+									class="w-8 h-8 sm:w-10 sm:h-10 rounded mr-2 sm:mr-3"
+								/>
+								<span
+									class="text-gray-700 max-w-[100px] sm:max-w-[200px] truncate overflow-hidden text-ellipsis"
+									>{product.name}</span
+								>
+							</td>
+
+							<td class="px-4 py-2 sm:px-6 sm:py-4 text-gray-700 text-xs sm:text-sm">
+								<div
+									class="flex items-center justify-center w-24 sm:w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
+								>
+									<button on:click={decrement} class="px-1 sm:px-2"><Minus /></button>
+									<input
+										bind:value={product.quantity}
+										type="text"
+										class="text-gray-900 border-0 bg-transparent text-xs sm:text-sm font-normal focus:outline-none focus:ring-0 max-w-[2rem] text-center"
+									/>
+									<button on:click={increment} class="px-1 sm:px-2"><Plus /></button>
+								</div>
+							</td>
+							<td
+								class="px-4 py-2 sm:px-6 sm:py-4 text-gray-700 text-xs sm:text-sm hidden sm:table-cell"
+								>{currencyFormat(product.price)}</td
+							>
+							<td class="px-4 py-2 sm:px-6 sm:py-4 text-xs sm:text-sm">
 								<button
-									class="px-3 py-1 text-sm text-white bg-transparent rounded hover:bg-primary-50"
+									class="px-2 py-1 text-xs sm:text-sm text-white bg-transparent rounded hover:bg-primary-50"
 								>
 									<Trash class="text-primary-500" />
 								</button>

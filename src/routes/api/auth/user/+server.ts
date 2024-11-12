@@ -1,6 +1,6 @@
 // src/routes/api/user/+server.ts
 import { error, type RequestHandler } from '@sveltejs/kit';
-import { SERVER_BASE_URL } from '$env/static/private';
+import { VITE_SERVER_BASE_URL } from '$env/static/private';
 import type { User } from '$lib/types';
 
 export const GET: RequestHandler = async ({ cookies, fetch }) => {
@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ cookies, fetch }) => {
 			throw error(400, 'USER_NOT_AUTHENTICATED');
 		}
 
-		const res = await fetch(`${SERVER_BASE_URL}/user/${document}`, {
+		const res = await fetch(`${VITE_SERVER_BASE_URL}/user/${document}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import { SERVER_BASE_URL } from '$env/static/private';
+import { VITE_SERVER_BASE_URL } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ cookies }) => {
@@ -9,13 +9,13 @@ export const load = async ({ cookies }) => {
 	}
 
 	try {
-		const response = await fetch(`${SERVER_BASE_URL}/catalog/latest`, {
+		const response = await fetch(`${VITE_SERVER_BASE_URL}/catalog/latest`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}
 		});
 
-		const res = await fetch(`${SERVER_BASE_URL}/catalog/categories`, {
+		const res = await fetch(`${VITE_SERVER_BASE_URL}/catalog/categories`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}

@@ -1,4 +1,4 @@
-import { SERVER_BASE_URL } from '$env/static/private';
+import { VITE_SERVER_BASE_URL } from '$env/static/private';
 import { json, type Cookies } from '@sveltejs/kit';
 
 export async function POST({ request, cookies }: { request: Request; cookies: Cookies }) {
@@ -9,7 +9,7 @@ export async function POST({ request, cookies }: { request: Request; cookies: Co
 		})
 		.join('&');
 	try {
-		const res = await fetch(`${SERVER_BASE_URL}/user/token`, {
+		const res = await fetch(`${VITE_SERVER_BASE_URL}/user/token`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded'

@@ -1,5 +1,5 @@
 // src/routes/api/categories.ts
-import { SERVER_BASE_URL } from '$env/static/private';
+import { VITE_SERVER_BASE_URL } from '$env/static/private';
 import { json, type Cookies } from '@sveltejs/kit';
 
 export async function GET({ cookies }: { cookies: Cookies }) {
@@ -10,7 +10,7 @@ export async function GET({ cookies }: { cookies: Cookies }) {
 	}
 
 	try {
-		const response = await fetch(`${SERVER_BASE_URL}/catalog/categories`, {
+		const response = await fetch(`${VITE_SERVER_BASE_URL}/catalog/categories`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}
