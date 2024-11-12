@@ -2,28 +2,35 @@
 	import { goto } from '$app/navigation';
 	import { currencyFormat } from '$lib/utils';
 	import { _ } from 'svelte-i18n';
-	import { cartStore } from '$lib/stores/cart';
+	import { cartStore } from '$lib/stores/cart'; // Supondo que cartStore seja uma writable store
 	import type { Cart, CartItem, Product, ProductItem } from '$lib/types';
+
 	export let latestProducts;
 
-	const cart = cartStore();
+	// Torne a store 'cartStore' reativa
+	$: cart = cartStore(); // Se cartStore for uma writable store, use o '$' para se inscrever.
 
 	async function handleAddToCart(product: CartItem) {
 		if (!product) {
 			return;
 		}
 
+		// Adiciona o produto ao carrinho
 		await cart.addToCart({
 			image_path: product.image_path,
 			name: product.name,
 			price: product.price,
 			product_id: product.product_id,
 			quantity: 1,
-			discount_price: product.discount_price,
+			discount_price: product.discount_price || 0,
 			available_quantity: product.quantity
 		});
 
+		// Redireciona para a página do carrinho
+
 		await goto('/pages/cart');
+
+		console.log($cart.cart_items);
 	}
 </script>
 

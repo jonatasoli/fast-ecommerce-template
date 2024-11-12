@@ -1,26 +1,35 @@
 <script lang="ts">
 	import { cartStore } from '$lib/stores/cart';
-	import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
-	import type { CartItem } from '$lib/types';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
+	import type { Cart, CartItem } from '$lib/types';
 	import { currencyFormat } from '$lib/utils';
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 
 	let coupon = '';
-
+	let zipcode: string = '';
+	let freight_product_code: string = 'PAC';
 	const cart = cartStore();
 
 	let products: CartItem[] = [];
 
 	$: products = $cart.cart_items;
 
-	$: !products ? showLoading : hideLoading;
-
-	function increment(count) {
-		count += 1;
+	async function removeItem(product_id: number) {
+		await cart.removeItem(product_id);
 	}
 
-	function decrement(count) {
-		if (count > 0) count -= 1;
+	async function updateQuantity(item: CartItem, produc_quantity: number) {
+		showLoading();
+		cart.updateQuantity(item.product_id, produc_quantity);
+
+		const res = await cart.refreshEstimate();
+
+		hideLoading();
+	}
+
+	async function estimate() {
+		await cart.updateZipcode(zipcode, freight_product_code);
+		await cart.refreshEstimate();
 	}
 </script>
 
@@ -60,39 +69,45 @@
 			<input
 				type="text"
 				placeholder="Informe seu CEP"
-				bind:value={coupon}
+				bind:value={zipcode}
 				class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 			/>
 
 			<button
 				class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
-				>Calcular</button
+				on:click={estimate}>Calcular</button
 			>
 		</div>
 
 		<div class="flex items-center justify-between">
-			<span class="text-sm">Envio para todo o Brasil</span>
-			<div class=" flex items-center">
-				<label class="flex items-center space-x-2 mx-2">
-					<input
-						class="radio border border-gray-400 w-4 h-4"
-						type="radio"
-						checked
-						name="radio-direct"
-						value="1"
-					/>
-					<p class="font-normal text-sm">PAC</p>
-				</label>
-				<label class="flex items-center space-x-2">
-					<input
-						class="radio border border-gray-400 w-4 h-4"
-						type="radio"
-						name="radio-direct"
-						value="2"
-					/>
-					<p class="font-normal text-sm">SEDEX</p>
-				</label>
-			</div>
+			{#if !$cart.freight}<span class="text-sm">Envio para todo o Brasil</span>
+				<div class="flex items-center">
+					<label class="flex items-center space-x-2 mx-2">
+						<input
+							class="radio border border-gray-400 w-4 h-4"
+							type="radio"
+							name="radio-direct"
+							value="PAC"
+							bind:group={freight_product_code}
+						/>
+						<p class="font-normal text-sm">PAC</p>
+					</label>
+					<label class="flex items-center space-x-2">
+						<input
+							class="radio border border-gray-400 w-4 h-4"
+							type="radio"
+							name="radio-direct"
+							value="SEDEX"
+							bind:group={freight_product_code}
+						/>
+						<p class="font-normal text-sm">SEDEX</p>
+					</label>
+				</div>
+			{:else}<span class="text-sm font-bold"
+					>Entrega - até {$cart.freight.delivery_time} dias úteis</span
+				>
+				<span class="text-sm font-bold">{currencyFormat(Number($cart.freight.price))}</span>
+			{/if}
 		</div>
 	</div>
 
@@ -134,7 +149,7 @@
 							>
 								<img
 									src={product.image_path}
-									alt={product.name}
+									alt=""
 									class="w-8 h-8 sm:w-10 sm:h-10 rounded mr-2 sm:mr-3"
 								/>
 								<span
@@ -147,13 +162,19 @@
 								<div
 									class="flex items-center justify-center w-24 sm:w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
 								>
-									<button on:click={decrement} class="px-1 sm:px-2"><Minus /></button>
+									<button
+										on:click={() => updateQuantity(product, product.quantity - 1)}
+										class="px-1 sm:px-2"><Minus /></button
+									>
 									<input
 										bind:value={product.quantity}
-										type="text"
-										class="text-gray-900 border-0 bg-transparent text-xs sm:text-sm font-normal focus:outline-none focus:ring-0 max-w-[2rem] text-center"
+										type="number"
+										class="no-arrows text-gray-900 border-0 bg-transparent text-xs sm:text-sm font-normal focus:outline-none focus:ring-0 max-w-[3rem] text-center"
 									/>
-									<button on:click={increment} class="px-1 sm:px-2"><Plus /></button>
+									<button
+										on:click={() => updateQuantity(product, product.quantity + 1)}
+										class="px-1 sm:px-2"><Plus /></button
+									>
 								</div>
 							</td>
 							<td
@@ -163,6 +184,9 @@
 							<td class="px-4 py-2 sm:px-6 sm:py-4 text-xs sm:text-sm">
 								<button
 									class="px-2 py-1 text-xs sm:text-sm text-white bg-transparent rounded hover:bg-primary-50"
+									on:click={() => {
+										removeItem(product.product_id);
+									}}
 								>
 									<Trash class="text-primary-500" />
 								</button>
@@ -179,11 +203,15 @@
 		class="flex flex-col items-center justify-center border border-gray-300 p-4 gap-2 rounded-lg"
 	>
 		<div class="flex justify-between w-full my-3">
-			<span class="text-sm font-sans">Produtos</span><span>R$ 197,00</span>
+			<span class="text-sm font-sans">Produtos</span><span
+				>{currencyFormat(Number($cart.subtotal))}</span
+			>
 		</div>
 
 		<div class="flex justify-between w-full my-3">
-			<span class="text-sm font-sans">Frete</span><span>R$ 50,00</span>
+			<span class="text-sm font-sans">Frete</span><span
+				>{$cart.freight ? currencyFormat(Number($cart.freight.price)) : 'R$ 0,00'}</span
+			>
 		</div>
 
 		<hr class="w-full border-t-2 !border-gray-300" />
@@ -191,7 +219,7 @@
 		<div class="flex justify-between w-full my-3">
 			<h3 class="text-lg font-semibold">Total</h3>
 
-			<h3 class="text-lg font-semibold">R$ 200,00</h3>
+			<h3 class="text-lg font-semibold">{currencyFormat(Number($cart.total))}</h3>
 		</div>
 
 		<button
@@ -206,3 +234,16 @@
 		</a>
 	</div>
 </div>
+
+<style>
+	.no-arrows::-webkit-outer-spin-button,
+	.no-arrows::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Para Firefox */
+	.no-arrows[type='number'] {
+		-moz-appearance: textfield;
+	}
+</style>
