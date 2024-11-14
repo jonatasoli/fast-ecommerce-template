@@ -2,35 +2,52 @@
 	import { cartStore } from '$lib/stores/cart';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import type { Cart, CartItem } from '$lib/types';
-	import { currencyFormat } from '$lib/utils';
+	import { currencyFormat, currencyFormatFreight } from '$lib/utils';
+	import { onDestroy } from 'svelte';
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
+	import { _ } from 'svelte-i18n';
 
 	let coupon = '';
 	let zipcode: string = '';
 	let freight_product_code: string = 'PAC';
 	const cart = cartStore();
+	const freeText = $_('cart.free');
 
 	let products: CartItem[] = [];
 
 	$: products = $cart.cart_items;
+	$: freight = $cart.freight;
 
 	async function removeItem(product_id: number) {
 		await cart.removeItem(product_id);
+		await cart.refreshEstimate();
 	}
 
-	async function updateQuantity(item: CartItem, produc_quantity: number) {
+	async function updateQuantity(item: CartItem, new_quantity: number) {
 		showLoading();
-		cart.updateQuantity(item.product_id, produc_quantity);
 
-		const res = await cart.refreshEstimate();
+		item.quantity = new_quantity;
+
+		cart.updateQuantity(item.product_id, new_quantity);
+
+		await cart.refreshEstimate();
+		await cart.refreshEstimate();
 
 		hideLoading();
 	}
 
 	async function estimate() {
-		await cart.updateZipcode(zipcode, freight_product_code);
+		cart.updateZipcode(zipcode, freight_product_code);
 		await cart.refreshEstimate();
 	}
+
+	onDestroy(async () => {
+		zipcode = '';
+		cart.updateZipcode(zipcode, freight_product_code);
+
+		await cart.refreshEstimate();
+		console.log(zipcode);
+	});
 </script>
 
 <div class="grid grid-cols-1 p-4 gap-4 sm:grid-cols-2">
@@ -74,40 +91,45 @@
 			/>
 
 			<button
-				class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
+				class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
 				on:click={estimate}>Calcular</button
 			>
 		</div>
 
-		<div class="flex items-center justify-between">
-			{#if !$cart.freight}<span class="text-sm">Envio para todo o Brasil</span>
-				<div class="flex items-center">
-					<label class="flex items-center space-x-2 mx-2">
-						<input
-							class="radio border border-gray-400 w-4 h-4"
-							type="radio"
-							name="radio-direct"
-							value="PAC"
-							bind:group={freight_product_code}
-						/>
-						<p class="font-normal text-sm">PAC</p>
-					</label>
-					<label class="flex items-center space-x-2">
-						<input
-							class="radio border border-gray-400 w-4 h-4"
-							type="radio"
-							name="radio-direct"
-							value="SEDEX"
-							bind:group={freight_product_code}
-						/>
-						<p class="font-normal text-sm">SEDEX</p>
-					</label>
-				</div>
-			{:else}<span class="text-sm font-bold"
-					>Entrega - até {$cart.freight.delivery_time} dias úteis</span
+		{#if freight}
+			<div class="flex items-center justify-between my-3">
+				<span class="text-sm font-bold">Entrega - até {$cart.freight.delivery_time} dias úteis</span
 				>
-				<span class="text-sm font-bold">{currencyFormat(Number($cart.freight.price))}</span>
-			{/if}
+				<span class="text-sm font-bold"
+					>{currencyFormatFreight(Number($cart.freight.price), freeText)}</span
+				>
+			</div>
+		{/if}
+
+		<div class="flex items-center justify-between">
+			<span class="text-sm">Envio para todo o Brasil</span>
+			<div class="flex items-center">
+				<label class="flex items-center space-x-2 mx-2">
+					<input
+						class="radio border border-gray-400 w-4 h-4"
+						type="radio"
+						name="radio-direct"
+						value="PAC"
+						bind:group={freight_product_code}
+					/>
+					<p class="font-normal text-sm">PAC</p>
+				</label>
+				<label class="flex items-center space-x-2">
+					<input
+						class="radio border border-gray-400 w-4 h-4"
+						type="radio"
+						name="radio-direct"
+						value="SEDEX"
+						bind:group={freight_product_code}
+					/>
+					<p class="font-normal text-sm">SEDEX</p>
+				</label>
+			</div>
 		</div>
 	</div>
 
@@ -160,7 +182,7 @@
 
 							<td class="px-4 py-2 sm:px-6 sm:py-4 text-gray-700 text-xs sm:text-sm">
 								<div
-									class="flex items-center justify-center w-24 sm:w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
+									class="flex items-center justify-center w-22 sm:w-32 gap-1 border border-gray-300 rounded-xl hover:border-primary-500"
 								>
 									<button
 										on:click={() => updateQuantity(product, product.quantity - 1)}
@@ -210,7 +232,9 @@
 
 		<div class="flex justify-between w-full my-3">
 			<span class="text-sm font-sans">Frete</span><span
-				>{$cart.freight ? currencyFormat(Number($cart.freight.price)) : 'R$ 0,00'}</span
+				>{$cart.freight
+					? currencyFormatFreight(Number($cart.freight.price), freeText)
+					: 'R$ 0,00'}</span
 			>
 		</div>
 
@@ -223,8 +247,9 @@
 		</div>
 
 		<button
-			class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
-			>Finalizar Compra</button
+			class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+			on:click={() => (freight ? estimate() : null)}
+			disabled={!freight}>Finalizar Compra</button
 		>
 
 		<a href="/pages/dashboard"

@@ -24,6 +24,9 @@
         "test": "Teste",
         "diamonds": "Diamonds"
     },
+    "header": {
+        "type": "Digite o que você procura"
+    },
     "footer": {
         "contact": {
             "title": "Entre em contato conosco através do botão WHATSAPP, ou deixe seu email",
@@ -57,6 +60,7 @@
         "total": "Total",
         "finish": "Finalizar Compra",
         "continue": "Continuar Comprando",
+        "free": "Gratís",
         "products": {
             "title": "Produto",
             "quantity": "Quantidade",

@@ -5,7 +5,6 @@ import { persisted } from 'svelte-persisted-store';
 
 const serverUrl = import.meta.env.VITE_SERVER_BASE_URL;
 
-// Estado inicial do carrinho
 const initialCart: Cart = {
 	uuid: '',
 	affiliate: '',
@@ -13,6 +12,7 @@ const initialCart: Cart = {
 	discount: '',
 	freight_product_code: 'PAC',
 	freight: {
+		max_date: '',
 		price: '',
 		delivery_time: ''
 	},
@@ -65,10 +65,8 @@ export function cartStore() {
 
 	async function updateQuantity(productId: number, newQuantity: number) {
 		cart.update((state) => {
-			// Verifica se a quantidade é válida
 			if (newQuantity < 1) return state;
 
-			// Atualiza a quantidade do produto no carrinho
 			const updatedItems = state.cart_items.map((item) =>
 				item.product_id === productId ? { ...item, quantity: newQuantity } : item
 			);
@@ -132,6 +130,14 @@ export function cartStore() {
 					total: currentCart.total,
 					zipcode: currentCart.zipcode,
 					freight_product_code: currentCart.freight_product_code,
+					freight:
+						currentCart.zipcode && currentCart.freight
+							? {
+									max_date: currentCart.freight.max_date,
+									delivery_time: currentCart.freight.delivery_time,
+									price: currentCart.freight.price
+								}
+							: null,
 					coupon: currentCart.coupon,
 					affiliate: currentCart.affiliate
 				})

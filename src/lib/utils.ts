@@ -53,6 +53,17 @@ export function generateURI(productName: string) {
 		.replace(/--+/g, '-');
 }
 
+export function currencyFormatFreight(value: number, freeLabel: string, locale = 'pt-BR'): string {
+	if (value === 0.01) {
+		return freeLabel;
+	}
+
+	return new Intl.NumberFormat(locale, {
+		style: 'currency',
+		currency: 'BRL'
+	}).format(value);
+}
+
 export function currencyFormat(
 	value: number | undefined | null,
 	locale = LOCALES.PT_BR,

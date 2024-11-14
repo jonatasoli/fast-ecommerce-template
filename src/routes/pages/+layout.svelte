@@ -106,7 +106,7 @@
 					<div class="h-10 flex flex-1 mx-4 sm:hidden w-[300px]">
 						<input
 							class="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-primary-500 rounded-l-lg py-2 transition duration-300 ease focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 shadow-sm focus:shadow"
-							placeholder="Digite o que você procura"
+							placeholder={$_('header.type')}
 						/>
 						<button
 							class="flex items-center justify-center rounded-r-lg bg-transparent p-2 border border-primary-500 border-l-0 text-sm text-white transition-all shadow-sm hover:shadow focus:bg-primary-500 focus:shadow-none active:bg-primary-500 hover:bg-primary-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -126,7 +126,7 @@
 				>
 					<input
 						class="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-primary-500 rounded-l-lg py-2 transition duration-300 ease focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 shadow-sm focus:shadow"
-						placeholder="Digite o que você procura"
+						placeholder={$_('header.type')}
 					/>
 					<button
 						class="flex items-center justify-center rounded-r-lg bg-transparent p-2 border border-primary-500 border-l-0 text-sm text-white transition-all shadow-sm hover:shadow focus:bg-primary-500 focus:shadow-none active:bg-primary-500 hover:bg-primary-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"

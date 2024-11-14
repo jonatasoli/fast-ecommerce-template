@@ -70,6 +70,7 @@ export interface Cart {
 }
 
 export interface Freight {
+	max_date: string;
 	price: string;
 	delivery_time: string;
 }
