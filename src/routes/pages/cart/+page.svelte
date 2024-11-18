@@ -3,6 +3,7 @@
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import type { Cart, CartItem } from '$lib/types';
 	import { currencyFormat, currencyFormatFreight } from '$lib/utils';
+	import { getToastStore, Toast } from '@skeletonlabs/skeleton';
 	import { onDestroy } from 'svelte';
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
@@ -12,6 +13,22 @@
 	let freight_product_code: string = 'PAC';
 	const cart = cartStore();
 	const freeText = $_('cart.free');
+	const toastStore = getToastStore();
+	function showToast(message: string) {
+		const t = {
+			message: `
+				<div class="flex items-center space-x-2 text-gray-700">
+					
+					<span>${message}</span>
+				</div>
+			`,
+			autohide: false,
+			hideDismiss: true,
+			classes: 'flex items-center bg-white shadow-sm'
+		};
+
+		toastStore.trigger(t);
+	}
 
 	let products: CartItem[] = [];
 
@@ -37,7 +54,21 @@
 	}
 
 	async function estimate() {
-		cart.updateZipcode(zipcode, freight_product_code);
+		await cart.updateZipcode(zipcode, freight_product_code);
+		const res = await cart.refreshEstimate();
+
+		if (!res) {
+			showToast('Algo deu errado, tente novamente...');
+		}
+	}
+
+	async function estimateCoupon() {
+		cart.updateCoupon(coupon);
+		const res = await cart.refreshEstimate();
+
+		if (!res) {
+			showToast('Algo deu errado, tente novamente...');
+		}
 		await cart.refreshEstimate();
 	}
 
@@ -46,7 +77,6 @@
 		cart.updateZipcode(zipcode, freight_product_code);
 
 		await cart.refreshEstimate();
-		console.log(zipcode);
 	});
 </script>
 
@@ -68,7 +98,7 @@
 
 			<button
 				class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
-				>Adicionar</button
+				on:click={estimateCoupon}>Adicionar</button
 			>
 		</div>
 	</div>
@@ -258,6 +288,8 @@
 			>
 		</a>
 	</div>
+
+	<Toast position="tr" />
 </div>
 
 <style>

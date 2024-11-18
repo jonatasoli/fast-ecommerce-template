@@ -86,6 +86,13 @@ export function cartStore() {
 		}));
 	}
 
+	function updateCoupon(newCoupon: string) {
+		cart.update((state) => ({
+			...state,
+			coupon: newCoupon
+		}));
+	}
+
 	async function addToCart(item: CartItem) {
 		if (!item) return;
 		let uuid = get(cart).uuid;
@@ -164,6 +171,7 @@ export function cartStore() {
 		removeItem,
 		refreshEstimate,
 		updateQuantity,
-		updateZipcode
+		updateZipcode,
+		updateCoupon
 	};
 }
