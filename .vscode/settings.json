@@ -116,5 +116,9 @@
 		"transition",
 		"width",
 		"zIndex"
+	],
+	"i18n-ally.localesPaths": [
+		"src/lib/i18n",
+		"src/lib/locale"
 	]
 }
