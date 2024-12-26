@@ -61,6 +61,7 @@
         "finish": "Finalizar Compra",
         "continue": "Continuar Comprando",
         "free": "Gratís",
+        "AddCart": "Adicionar ao Carrinho",
         "products": {
             "title": "Produto",
             "quantity": "Quantidade",
@@ -139,6 +140,7 @@
         "title": "Faça seu cadastro",
         "username": "Username",
         "name": "Nome",
+        "login": "Ir para login",
         "email": "E-mail",
         "document": "CPF",
         "password": "Senha",

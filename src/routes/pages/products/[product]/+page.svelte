@@ -28,7 +28,7 @@
 		</h1>
 
 		<p class="text-gray-600 text-center text-sm sm:text-base md:text-lg">
-			{data.product.description.content}
+			{@html data.product.description.content}
 		</p>
 
 		<p class="text-md sm:text-lg md:text-xl font-semibold text-primary-500">
@@ -39,7 +39,7 @@
 			class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-md hover:bg-primary-dark transition-all duration-200 ease-in-out"
 			on:click={addToCart}
 		>
-			Adicionar ao Carrinho
+		{$_('cart.AddCart')}
 		</button>
 
 		<div class="w-full py-4">
@@ -127,13 +127,13 @@
 				em até 3x de {currencyFormat(Number(data.product.price) / 3)} sem juros
 			</p>
 
-			<p class="text-gray-600 mt-4">{data.product.description.content}</p>
+			<p class="text-gray-600 mt-4">{@html data.product.description.content}</p>
 
 			<button
 				class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-md mt-4 hover:bg-primary-700 transition-all duration-200 ease-in-out"
 				on:click={addToCart}
 			>
-				Adicionar ao Carrinho
+			{$_('cart.AddCart')}                                                                                                    
 			</button>
 
 			<div class="w-full py-4 mt-4">
@@ -161,7 +161,7 @@
 								class={`ml-4 mt-2 transition-all duration-300 ease-in-out ${isExpandedComposition ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
 							>
 								<li class="py-2">
-									<a href="#" class=" text-gray-600">{data.product.description.composition}</a>
+									<a href="#" class=" text-gray-600">{@html data.product.description.composition}</a>
 								</li>
 							</ul>
 						</li>
@@ -192,7 +192,7 @@
 								class={`ml-4 mt-2 transition-all duration-300 ease-in-out ${isExpandedUse ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}
 							>
 								<li class="py-2">
-									<p class="text-gray-600">{data.product.description.how_to_use}</p>
+									<p class="text-gray-600">{@html data.product.description.how_to_use}</p>
 								</li>
 							</ul>
 						</li>
