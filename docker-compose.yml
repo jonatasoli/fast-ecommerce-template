@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  fast-ecommerce-template:
+    build: .
+    ports:
+      - "5173:5173"  # Mapear a porta do container para a sua máquina local
+    env_file:
+      - .env  # Carregar as variáveis de ambiente do arquivo .env
+    volumes:
+      - .:/app  # Sincronizar o diretório atual com o container (para alterações em tempo real)
+    command: yarn dev --host --port 5173  # Ou remova se preferir que use o CMD do Dockerfile
