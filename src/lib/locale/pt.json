@@ -248,6 +248,8 @@
             "credit_card_number": "Número do cartão",
             "credit_card_name": "Nome impresso no cartão",
             "credit_card_validate": "Validade",
+            "type_card": "Tipo de documento",
+            "document": "Documento",
             "credit_card_cvv": "CVV",
             "installments": "Parcelas",
             "form": {
