@@ -1,9 +1,10 @@
 <script>
+	import Confirmation from '$lib/components/checkout/confirmation/confirmation.svelte';
 	import Payment from '$lib/components/checkout/payment/payment.svelte';
 	import Shipping from '$lib/components/checkout/shipping/shipping.svelte';
-	import { ChevronDoubleRight } from 'svelte-heros-v2';
+	import { isLoading } from '$lib/stores/loading';
 
-	let activeStep = 2; // Controle do passo ativo. 2 significa "Entrega"
+	let activeStep = 2;
 	const steps = [
 		{ number: 1, label: 'Login', isActive: false },
 		{ number: 2, label: 'Entrega', isActive: true },
@@ -13,16 +14,23 @@
 
 	// Avançar para o próximo passo
 	function nextStep() {
+		$isLoading = true;
 		if (activeStep < steps.length) {
 			activeStep++;
+
+			$isLoading = false;
 		}
+		$isLoading = false;
 	}
 
 	// Voltar para o passo anterior
 	function previousStep() {
+		$isLoading = true;
 		if (activeStep > 1) {
 			activeStep--;
+			$isLoading = false;
 		}
+		$isLoading = false;
 	}
 </script>
 
@@ -53,11 +61,11 @@
 	<!-- Renderizar o componente correspondente ao passo ativo -->
 	<div class="w-full mt-8 flex flex-col items-center">
 		{#if activeStep === 2}
-			<Shipping {nextStep} {previousStep}  />
+			<Shipping {nextStep} {previousStep} />
 		{:else if activeStep === 3}
 			<Payment {nextStep} {previousStep} />
+		{:else if activeStep === 4}
+			<Confirmation {nextStep} {previousStep} />
 		{/if}
 	</div>
-
-	<!-- Botões para navegação -->
 </div>

@@ -140,7 +140,7 @@
 			<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
 				<button
 					class="md:w-28 py-2 md:px-4 my-1 bg-white font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80"
-					on:click={nextStep}
+					on:click={previousStep}
 				>
 					<div class="flex justify-center"><ChevronDoubleLeft /> Voltar</div>
 				</button>
