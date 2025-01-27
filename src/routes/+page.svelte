@@ -12,9 +12,7 @@
 	initializeStores();
 
 	export let data;
-	let notification = true;
 	let error = '';
-	let loading = false;
 	let username = '';
 	let password = '';
 	const toastStore = getToastStore();
@@ -30,19 +28,25 @@
 	}
 
 	async function handleLogin(formData: FormData) {
-		const form = {
-			username: formData.get('username') as string,
-			password: formData.get('password') as string
-		};
+		try {
+			const form = {
+				username: formData.get('username') as string,
+				password: formData.get('password') as string
+			};
 
-		const data = {
-			username: form.username.replace(/\D/g, ''),
-			password
-		};
+			const data = {
+				username: form.username.replace(/\D/g, ''),
+				password: form.password
+			};
 
-		const result = loginSchema.safeParse(data);
+			const result = loginSchema.safeParse(data);
 
-		if (result) {
+			if (!result.success) {
+				showToast($_('login.invalid_data'), 'bg-red');
+				console.error('Erro na validação:', result.error.errors);
+				return;
+			}
+
 			const response = await fetch('/api/auth/login', {
 				method: 'POST',
 				body: JSON.stringify(data),
@@ -51,15 +55,29 @@
 				}
 			});
 
-			if (response) {
+			if (!response.ok) {
+				const errorMessage = await response.text();
+				showToast($_('login.failure'), 'bg-red');
+				console.error('Erro ao realizar login:', errorMessage);
+				return;
+			}
+
+			const res = await response.json();
+
+			if (res.success) {
 				showToast($_('login.success'), 'bg-primary-500');
 				goto('/pages/dashboard');
 			} else {
-				showToast($_('login.failure'), 'bg-red');
+				showToast($_('login.failure'), 'bg-primary-500');
 				error = 'Falha ao fazer login, verifique suas credenciais.';
+				console.error('Falha ao fazer login:', res.message || 'Erro desconhecido.');
 			}
+		} catch (error) {
+			showToast($_('login.error'), 'bg-red');
+			console.error('Erro inesperado no login:', error);
 		}
 	}
+
 	function handleForgotPassword() {}
 </script>
 
