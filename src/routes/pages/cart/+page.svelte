@@ -48,8 +48,14 @@
 		cart.updateQuantity(item.product_id, new_quantity);
 
 		await cart.refreshEstimate();
-		await cart.refreshEstimate();
 
+		const res = await cart.refreshEstimate();
+
+		if (!res) {
+			coupon = '';
+			cart.updateCoupon(coupon);
+			showToast('Algo deu errado, tente novamente');
+		}
 		hideLoading();
 	}
 
@@ -58,18 +64,22 @@
 		const res = await cart.refreshEstimate();
 
 		if (!res) {
+			zipcode = '';
+			cart.updateZipcode(zipcode, freight_product_code);
 			showToast('Algo deu errado, tente novamente...');
 		}
 	}
 
 	async function estimateCoupon() {
 		cart.updateCoupon(coupon);
-		const res = await cart.refreshEstimate();
+		await cart.refreshEstimate();
 
+		const res = await cart.refreshEstimate();
 		if (!res) {
+			coupon = '';
+			cart.updateCoupon(coupon);
 			showToast('Algo deu errado, tente novamente...');
 		}
-		await cart.refreshEstimate();
 	}
 
 	onDestroy(async () => {
@@ -268,6 +278,14 @@
 					>{currencyFormat(Number($cart.subtotal))}</span
 				>
 			</div>
+
+			{#if $cart.discount !== '0'}
+				<div class="flex justify-between w-full my-3">
+					<span class="text-sm font-sans">Desconto</span><span
+						>-{currencyFormat(Number($cart.discount))}</span
+					>
+				</div>
+			{/if}
 
 			<div class="flex justify-between w-full my-3">
 				<span class="text-sm font-sans">Frete</span><span
