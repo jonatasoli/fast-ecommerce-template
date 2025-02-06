@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
+	import { cartStore } from '$lib/stores/cart';
 
+	$: cart = cartStore();
 	export let nextStep: () => void;
 	export let previousStep: () => void;
+	export let data: string;
 	let postalCode = 'Postal Code';
 	let country = 'Country';
 	let state = 'State';
@@ -14,6 +17,12 @@
 	let pleaseEnter = 'Please enter';
 	let numberIsRequired = 'Number is required';
 	let complement = 'Complement';
+	
+
+	async function handleSubmitUserAddress(){
+		const res = await cart.addUserCart(data);
+		console.log(res);
+	}
 </script>
 
 <div class="my-4">
@@ -136,7 +145,7 @@
 	<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
 		<button
 			class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-			on:click={nextStep}
+			on:click={handleSubmitUserAddress}
 		>
 			<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
 		</button>

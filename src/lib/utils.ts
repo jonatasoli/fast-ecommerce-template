@@ -18,6 +18,10 @@ export function formatDocument(document: string) {
 	return document;
 }
 
+export function splitDate(date: string): { year: string, month: string } {
+	const [year, month] = date.split('-');
+	return { year, month };
+  }
 export const locales = [
 	{ name: 'Inglês (Estados Unidos)', value: 'en-US', isDefault: false },
 	{ name: 'Inglês (Reino Unido)', value: 'en-GB', isDefault: false },

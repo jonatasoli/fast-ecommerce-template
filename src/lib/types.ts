@@ -26,6 +26,17 @@ export interface Product {
 	sku: string;
 }
 
+export interface CreditCard {
+	creditCardNumber: string;
+	creditCardName: string;
+	creditCardExpiration: string;
+	creditCardCvv: string;
+	installments: number;
+	installmentsMessage: string;
+	typeDocument: string;
+	document: string;
+}
+
 export interface ResponseProduct {
 	product: Product;
 }
@@ -109,7 +120,7 @@ export interface UserAddress {
 	zipcode: string;
 }
 
-export interface User {
+export interface UserData {
 	user_id: number | null;
 	name: string;
 	email: string;

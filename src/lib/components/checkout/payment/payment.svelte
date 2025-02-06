@@ -1,16 +1,119 @@
 <script lang="ts">
+
+import { mercadoPagoService } from '$lib/plugins/mercadopago';
+	import { cartStore } from '$lib/stores/cart';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
+	
 	import { ChevronDoubleLeft, ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
+    import Flatpickr from 'svelte-flatpickr';
+	import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect';
+    import 'flatpickr/dist/flatpickr.css';
+	import 'flatpickr/dist/plugins/monthSelect/style.css'; 
+	import 'flatpickr/dist/themes/confetti.css';  
+	import { onMount } from 'svelte';
+	import { splitDate } from '$lib/utils';
+	
+
+    
+    
+	
+  	let selectedDate = ''; 
+	
+	let date = new Date()
 	export let nextStep: () => void;
 	export let previousStep: () => void;
 
-	let credit_card_number = '12345';
-	let credit_card_name = 'name';
-	let document = 'document';
-	let validity = 'City';
-	let cvv = 'Street';
-	let installments = 'Number';
+	interface PayerCost {
+		recommended_message: string;
+		installments: number;
+	}
+
+	interface InstallmentsResponse {
+		payer_costs: PayerCost[];
+		payment_method_id: string;
+	}
+
+	let cardToken = '';
+	let installments = [];
+	let value = '';
+	let formattedValue = '';
+
+	$: cart = cartStore();
+	$: creditCard = cartStore();
+	$: console.log(formattedValue);
+	
+
+	let optionInstallments: { label: string; value: number }[] = [];
+	let optionsDocuments: ("CPF" | "CNPJ")[] = ["CPF", "CNPJ"];
+
+	let creditCardBrand: string = '';
+	const groupName = 'select-group';
+	let selectedValue: string | null = '';
+	let credit_card_number = '5031433215406351';
+	let credit_card_name = 'APRO';
+	let type_document = 'CPF'
+	let document = '12345678909';
+	let cvv = '123';
+	const { year, month } = splitDate(formattedValue);
+	
+
 	let payment_type: string = 'credit_card';
+
+	let options = {
+    plugins: [new monthSelectPlugin({ shorthand: true, dateFormat: "Y-m"})],
+    disableMobile: true
+  };
+
+  const card = {
+
+		cardNumber: credit_card_number,
+     	cardholderName: credit_card_name,
+      	cardExpirationMonth: month,
+      	cardExpirationYear: year,
+      securityCode: cvv,
+      identificationType: type_document ,
+      identificationNumber: document,
+  }
+
+	async function getInstallments() {
+		showLoading();
+		const res: any = await mercadoPagoService.getInstallments({
+			amount: $cart.total,
+			bin: credit_card_number,
+			paymentTypeId: 'credit_card'
+		});
+
+		const { payer_costs: payerCosts } = res[0];
+		const options = payerCosts.map((payerCost: any) => ({
+			label: payerCost.recommended_message,
+			value: payerCost.installments
+		}));
+
+		optionInstallments = options;
+		creditCardBrand = res[0].payment_method_id;
+		hideLoading();
+	}
+
+	// async function createCardToken(){
+	// 	showLoading();
+	// 	const tokenResponse = await mercadoPagoService.createCardToken(card)
+
+	// 	if(tokenResponse){
+	// 		// nextStep
+	// 		console.log(tokenResponse)
+	// 		const { id, last_four_digits: lastFourDigits } = tokenResponse
+	// 	}
+
+	// 	hideLoading()
+	// }
+
+
+
+	onMount(() => {
+    
+  
+  });
 </script>
 
 <div class="w-full text-center">
@@ -54,6 +157,7 @@
 					id="credit_card_number"
 					type="text"
 					bind:value={credit_card_number}
+					on:blur={getInstallments}
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 				/>
 			</div>
@@ -75,13 +179,23 @@
 				<label for="document1" class="block mb-1 font-medium text-sm text-gray-700"
 					>{$_('checkout.payment.type_card')}</label
 				>
-				<input
-					id="document1"
-					type="text"
-					bind:value={document}
-					readonly
+
+				<select
+					id="select"
+					bind:value={type_document}
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				/>
+					
+				>
+					{#each optionsDocuments as option}
+						<option
+							value={option}
+							class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
+						>
+							{option}
+						</option>
+					{/each}
+				</select>
+				
 			</div>
 
 			<div>
@@ -102,13 +216,12 @@
 					<label for="validity" class="block mb-1 font-medium text-sm text-gray-700"
 						>{$_('checkout.payment.credit_card_validate')}</label
 					>
-					<input
-						id="validity"
-						type="text"
-						bind:value={validity}
-						readonly
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-					/>
+
+					<div class="w-full h-full">
+						<Flatpickr  children={null} {options} bind:value bind:formattedValue placeholder="selecione uma data"   name="date"  class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"/>
+					</div>
+					
+				
 				</div>
 
 				<div class="flex-1">
@@ -128,13 +241,22 @@
 				<label for="cep" class="block mb-1 font-medium text-sm text-gray-700"
 					>{$_('checkout.payment.installments')}</label
 				>
-				<input
-					id="installments"
-					type="text"
-					bind:value={installments}
-					readonly
+
+				<select
+					id="select"
+					bind:value={selectedValue}
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				/>
+					disabled={!optionInstallments.length}
+				>
+					{#each optionInstallments as option}
+						<option
+							value={option.value}
+							class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
+						>
+							{option.label}
+						</option>
+					{/each}
+				</select>
 			</div>
 
 			<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
@@ -147,7 +269,7 @@
 
 				<button
 					class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-					on:click={nextStep}
+					on:click={createCardToken}
 				>
 					<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
 				</button>
@@ -155,3 +277,9 @@
 		</div>
 	</div>
 </div>
+<style>
+
+
+
+
+  </style>

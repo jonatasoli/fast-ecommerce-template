@@ -4,6 +4,8 @@
 	import Shipping from '$lib/components/checkout/shipping/shipping.svelte';
 	import { isLoading } from '$lib/stores/loading';
 
+	export let data;
+
 	let activeStep = 2;
 	const steps = [
 		{ number: 1, label: 'Login', isActive: false },
@@ -61,9 +63,9 @@
 	<!-- Renderizar o componente correspondente ao passo ativo -->
 	<div class="w-full mt-8 flex flex-col items-center">
 		{#if activeStep === 2}
-			<Shipping {nextStep} {previousStep} />
+			<Shipping {nextStep} {previousStep} {data} />
 		{:else if activeStep === 3}
-			<Payment {nextStep} {previousStep} />
+			<Payment {nextStep} {previousStep}  />
 		{:else if activeStep === 4}
 			<Confirmation {nextStep} {previousStep} />
 		{/if}
