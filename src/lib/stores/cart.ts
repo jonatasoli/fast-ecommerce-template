@@ -49,7 +49,7 @@ const address: CartAddress = {
 	}
 };
 
-const user: UserData = {
+const userData: UserData = {
 	user_id: null,
 	name: '',
 	email: '',
@@ -107,6 +107,7 @@ export function cartStore() {
 	const cart = persisted('cart', initialCart);
 	const creditCard = persisted('creditCard', paymentCreditCard);
 	const affiliate = persisted('affiliate', initialffiliate);
+	const user = persisted('user', userData);
 
 	async function createCart() {
 		try {
@@ -262,22 +263,115 @@ export function cartStore() {
 				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
 				body: JSON.stringify({
 					...currentCart,
-					affiliate: affiliate,
-					coupon
+					affiliate: currentCart.affiliate,
+					coupon: currentCart.coupon
 				})
 			});
 
 			if (!res) {
 				console.log('ERROR_ADD_USER_CART');
 			}
+			const data = await res.json();
 
-			console.log(res.json());
+			user.set(data.user_data);
 		} catch {
 			console.log('ERROR_ADD_USER_CART');
 		} finally {
 			hideLoading();
 		}
 	}
+
+	async function addAddressCart(address: CartAddress) {
+		try {
+			const uuid = get(cart).uuid;
+			const currentCart = get(cart);
+			const currentUser = get(user);
+
+			if (!uuid) return;
+			showLoading();
+
+			const res = await fetch(`${serverUrl}/cart/${uuid}/address`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${address.token}` },
+				body: JSON.stringify({
+					cart: {
+						...currentCart,
+						affiliate: currentCart.affiliate,
+						coupon: currentCart.coupon,
+						user_data: currentUser
+					},
+					address: {
+						shipping_is_payment: address.shipping_is_payment,
+						user_address: {
+							...address.user_address,
+							user_id: currentUser.user_id,
+							address_id: null,
+							active: true,
+							address_complement: address.user_address.address_complement || ''
+						},
+						shipping_address: {
+							...address.shipping_address,
+							user_id: currentUser.user_id,
+							address_id: null,
+							active: true,
+							address_complement: address.shipping_address?.address_complement || ''
+						}
+					}
+				})
+			});
+
+			if (!res.ok) {
+				console.error('ERROR_ADD_ADDRESS_CART', res.status);
+				return;
+			}
+
+			const data = await res.json();
+
+			console.log('Resposta do servidor:', data);
+			// user.set(data.user_data);
+		} catch (error) {
+			console.error('ERROR_ADD_ADDRESS_CART', error);
+		} finally {
+			hideLoading();
+		}
+	}
+
+	async function getAddressByZipcode(zipcode: string, typeAddress: string) {
+		try {
+		  showLoading();
+	  
+		  const res = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
+		  if (!res.ok) {
+			throw new Error('Erro ao buscar endereço');
+		  }
+	  
+		  const responseData: AddressData = await res.json();
+	  
+		  if (!responseData.cep) {
+			throw new Error('CEP inválido');
+		  }
+	  
+		  const address: Record<string, Address> = {
+			[typeAddress]: {
+			  country: 'Brasil', // TODO: Integrar com i18n
+			  state: responseData.uf,
+			  city: responseData.localidade,
+			  neighborhood: responseData.bairro,
+			  street: responseData.logradouro,
+			  street_number: '',
+			  address_complement: '',
+			  zipcode: responseData.cep
+			}
+		  };
+	  
+		  return address[typeAddress];
+		} catch (error) {
+		  console.error('Erro ao buscar endereço:', error);
+		  return null;
+		} finally {
+		  hideLoading();
+		}
+	  }
 
 	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
 		try {
@@ -321,6 +415,7 @@ export function cartStore() {
 		subscribe: cart.subscribe,
 		createCart,
 		addUserCart,
+		addAddressCart,
 		addToCart,
 		addProduct,
 		clearCart,
