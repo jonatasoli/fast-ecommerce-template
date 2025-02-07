@@ -2,26 +2,53 @@
 	import { ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
+	import type { UserAddress } from '$lib/types';
 
 	$: cart = cartStore();
 	export let nextStep: () => void;
 	export let previousStep: () => void;
-	export let data: string;
-	let postalCode = 'Postal Code';
-	let country = 'Country';
-	let state = 'State';
-	let city = 'City';
-	let neighborhood = 'Neighborhood';
-	let street = 'Street';
-	let homeNumber = 'Number';
-	let pleaseEnter = 'Please enter';
-	let numberIsRequired = 'Number is required';
-	let complement = 'Complement';
-	
+	export let data: any;
 
-	async function handleSubmitUserAddress(){
-		const res = await cart.addUserCart(data);
-		console.log(res);
+	let userAddress: UserAddress = {
+		active: true,
+		address_complement: '',
+		address_id: null,
+		city: '',
+		country: '',
+		neighborhood: '',
+		state: '',
+		street: '',
+		street_number: '',
+		user_id: null,
+		zipcode: ''
+	};
+
+	let shippingAddress: UserAddress = {
+		active: true,
+		address_complement: '',
+		address_id: null,
+		city: '',
+		country: '',
+		neighborhood: '',
+		state: '',
+		street: '',
+		street_number: '',
+		user_id: null,
+		zipcode: ''
+	};
+	let shippingIsPayment: boolean = true;
+
+	async function handleSubmitUserAddress() {
+		const resCart = await cart.addUserCart(data.token);
+		const resAdress = await cart.addAddressCart({
+			shipping_is_payment: shippingIsPayment,
+			user_address: userAddress,
+			shipping_address: shippingAddress,
+			token: data.token,
+			user_address_id: null,
+			shipping_address_id: null
+		});
+		console.log(resCart, resAdress);
 	}
 </script>
 
@@ -36,8 +63,7 @@
 		<input
 			id="id"
 			type="text"
-			bind:value={postalCode}
-			readonly
+			bind:value={userAddress.zipcode}
 			class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 		/>
 	</div>
@@ -50,8 +76,7 @@
 			<input
 				id="name"
 				type="text"
-				bind:value={country}
-				readonly
+				bind:value={userAddress.country}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -63,8 +88,7 @@
 			<input
 				id="state"
 				type="text"
-				bind:value={state}
-				readonly
+				bind:value={userAddress.state}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -78,8 +102,7 @@
 			<input
 				id="form.city"
 				type="text"
-				bind:value={city}
-				readonly
+				bind:value={userAddress.city}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -91,8 +114,7 @@
 			<input
 				id="neighborhood"
 				type="text"
-				bind:value={neighborhood}
-				readonly
+				bind:value={userAddress.neighborhood}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -106,8 +128,7 @@
 			<input
 				id="street"
 				type="text"
-				value={street}
-				readonly
+				value={userAddress.street}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -119,8 +140,7 @@
 			<input
 				id="homeNumber"
 				type="text"
-				bind:value={homeNumber}
-				readonly
+				bind:value={userAddress.street_number}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -133,14 +153,10 @@
 		<input
 			id="complement"
 			type="text"
-			bind:value={complement}
-			readonly
+			bind:value={userAddress.address_complement}
 			class="w-full focus:ring-0 focus:ring-primary-500 border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 		/>
 	</div>
-
-
-   
 
 	<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
 		<button

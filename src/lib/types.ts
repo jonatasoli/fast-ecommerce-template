@@ -104,7 +104,24 @@ export interface CartAddress {
 	shipping_address_id: number | null;
 	user_address: UserAddress;
 	shipping_address: ShippingAddress;
+	token: string | null;
 }
+
+export type BaseAddress = {
+	address_id: number | null;
+	user_id: number | null;
+	country: string;
+	city: string;
+	state: string;
+	neighborhood: string;
+	street: string;
+	street_number: string;
+	address_complement: string | null;
+	zipcode: string;
+	active: boolean;
+};
+
+export type ShippingAddress = BaseAddress | null;
 
 export interface UserAddress {
 	active: boolean;

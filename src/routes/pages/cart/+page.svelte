@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { cartStore } from '$lib/stores/cart';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import type { Cart, CartItem } from '$lib/types';
@@ -62,6 +63,7 @@
 	async function estimate() {
 		await cart.updateZipcode(zipcode, freight_product_code);
 		const res = await cart.refreshEstimate();
+		console.log(res);
 
 		if (!res) {
 			zipcode = '';
@@ -79,6 +81,13 @@
 			coupon = '';
 			cart.updateCoupon(coupon);
 			showToast('Algo deu errado, tente novamente...');
+		}
+	}
+
+	function handleCheckout() {
+		if (freight) {
+			estimate(); // Chama a função de estimativa, se necessário
+			goto('/pages/checkout'); // Redireciona para a página de checkout
 		}
 	}
 
@@ -305,9 +314,11 @@
 
 			<button
 				class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-				on:click={() => (freight ? estimate() : null)}
-				disabled={!freight}>Finalizar Compra</button
+				on:click={handleCheckout}
+				disabled={!freight}
 			>
+				Finalizar Compra
+			</button>
 
 			<a href="/pages/dashboard"
 				><span class="text-primary-700 font-bold cursor-pointer my-3 underline"
