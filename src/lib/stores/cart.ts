@@ -17,7 +17,7 @@ const initialffiliate: string = '';
 
 const coupon: string = '';
 
-const address: CartAddress = {
+const initialAddress: CartAddress = {
 	shipping_is_payment: false,
 	user_address_id: null,
 	shipping_address_id: null,
@@ -46,7 +46,8 @@ const address: CartAddress = {
 		street_number: '',
 		user_id: null,
 		zipcode: ''
-	}
+	},
+	token: null
 };
 
 const userData: UserData = {
@@ -108,6 +109,7 @@ export function cartStore() {
 	const creditCard = persisted('creditCard', paymentCreditCard);
 	const affiliate = persisted('affiliate', initialffiliate);
 	const user = persisted('user', userData);
+	const address = persisted('address', initialAddress);
 
 	async function createCart() {
 		try {
@@ -144,6 +146,42 @@ export function cartStore() {
 			console.error(err);
 		} finally {
 			isLoading.set(false);
+		}
+	}
+
+	async function getAddressByZipcode(zipcode: string, typeAddress: string) {
+		try {
+			showLoading();
+			const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
+
+			if (!response.ok) {
+				throw new Error('Erro ao buscar endereço');
+			}
+
+			const responseData = await response.json();
+			console.log('Dados do ViaCEP:', responseData);
+
+			address.update((addr) => {
+				const newAddress = {
+					...addr,
+					[typeAddress]: {
+						country: 'Brasil', // TODO: i18n
+						state: responseData.uf,
+						city: responseData.localidade,
+						neighborhood: responseData.bairro,
+						street: responseData.logradouro,
+						street_number: '',
+						address_complement: '',
+						zipcode: responseData.cep
+					}
+				};
+
+				return newAddress;
+			});
+		} catch (error) {
+			console.error(error);
+		} finally {
+			hideLoading();
 		}
 	}
 
@@ -336,43 +374,6 @@ export function cartStore() {
 		}
 	}
 
-	async function getAddressByZipcode(zipcode: string, typeAddress: string) {
-		try {
-		  showLoading();
-	  
-		  const res = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
-		  if (!res.ok) {
-			throw new Error('Erro ao buscar endereço');
-		  }
-	  
-		  const responseData: AddressData = await res.json();
-	  
-		  if (!responseData.cep) {
-			throw new Error('CEP inválido');
-		  }
-	  
-		  const address: Record<string, Address> = {
-			[typeAddress]: {
-			  country: 'Brasil', // TODO: Integrar com i18n
-			  state: responseData.uf,
-			  city: responseData.localidade,
-			  neighborhood: responseData.bairro,
-			  street: responseData.logradouro,
-			  street_number: '',
-			  address_complement: '',
-			  zipcode: responseData.cep
-			}
-		  };
-	  
-		  return address[typeAddress];
-		} catch (error) {
-		  console.error('Erro ao buscar endereço:', error);
-		  return null;
-		} finally {
-		  hideLoading();
-		}
-	  }
-
 	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
 		try {
 			const uuid = get(cart).uuid;
@@ -413,7 +414,10 @@ export function cartStore() {
 
 	return {
 		subscribe: cart.subscribe,
+		// cart,
+		// address,
 		createCart,
+		getAddressByZipcode,
 		addUserCart,
 		addAddressCart,
 		addToCart,

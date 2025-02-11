@@ -2,9 +2,14 @@
 	import { ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
+
 	import type { UserAddress } from '$lib/types';
+	import { onMount } from 'svelte';
+
+	const { address } = cartStore();
 
 	$: cart = cartStore();
+
 	export let nextStep: () => void;
 	export let previousStep: () => void;
 	export let data: any;
@@ -50,6 +55,23 @@
 		});
 		console.log(resCart, resAdress);
 	}
+
+	onMount(async () => {
+		if (!$cart.zipcode) {
+			userAddress.zipcode = '';
+		} else {
+			userAddress.zipcode = $cart.zipcode;
+
+			await cart.getAddressByZipcode($cart.zipcode, 'user_address');
+
+			if ($address.user_address) {
+				userAddress = {
+					...userAddress,
+					...$address.user_address
+				};
+			}
+		}
+	});
 </script>
 
 <div class="my-4">
