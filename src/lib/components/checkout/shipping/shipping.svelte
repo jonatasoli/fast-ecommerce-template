@@ -2,11 +2,8 @@
 	import { ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
-
-	import type { UserAddress } from '$lib/types';
-	import { onMount } from 'svelte';
-
-	const { address } = cartStore();
+	import { address, getAddressByZipcode } from '$lib/stores/address';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
 
 	$: cart = cartStore();
 
@@ -14,21 +11,7 @@
 	export let previousStep: () => void;
 	export let data: any;
 
-	let userAddress: UserAddress = {
-		active: true,
-		address_complement: '',
-		address_id: null,
-		city: '',
-		country: '',
-		neighborhood: '',
-		state: '',
-		street: '',
-		street_number: '',
-		user_id: null,
-		zipcode: ''
-	};
-
-	let shippingAddress: UserAddress = {
+	let shippingAddress = {
 		active: true,
 		address_complement: '',
 		address_id: null,
@@ -43,35 +26,31 @@
 	};
 	let shippingIsPayment: boolean = true;
 
-	async function handleSubmitUserAddress() {
+	$: currentAddress = $address.user_address;
+
+	$: if ($cart.zipcode) {
+		getAddressByZipcode($cart.zipcode, 'user_address');
+	}
+
+	async function handleSubmitcurrentAddress() {
 		const resCart = await cart.addUserCart(data.token);
 		const resAdress = await cart.addAddressCart({
 			shipping_is_payment: shippingIsPayment,
-			user_address: userAddress,
+			user_address: currentAddress,
 			shipping_address: shippingAddress,
 			token: data.token,
 			user_address_id: null,
 			shipping_address_id: null
 		});
-		console.log(resCart, resAdress);
+
+		nextStep();
 	}
 
-	onMount(async () => {
-		if (!$cart.zipcode) {
-			userAddress.zipcode = '';
-		} else {
-			userAddress.zipcode = $cart.zipcode;
-
-			await cart.getAddressByZipcode($cart.zipcode, 'user_address');
-
-			if ($address.user_address) {
-				userAddress = {
-					...userAddress,
-					...$address.user_address
-				};
-			}
-		}
-	});
+	async function fetchAddress() {
+		showLoading();
+		await getAddressByZipcode(currentAddress.zipcode, 'user_address');
+		hideLoading();
+	}
 </script>
 
 <div class="my-4">
@@ -85,7 +64,8 @@
 		<input
 			id="id"
 			type="text"
-			bind:value={userAddress.zipcode}
+			bind:value={currentAddress.zipcode}
+			on:blur={fetchAddress}
 			class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 		/>
 	</div>
@@ -98,7 +78,7 @@
 			<input
 				id="name"
 				type="text"
-				bind:value={userAddress.country}
+				bind:value={currentAddress.country}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -110,7 +90,7 @@
 			<input
 				id="state"
 				type="text"
-				bind:value={userAddress.state}
+				bind:value={currentAddress.state}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -124,7 +104,7 @@
 			<input
 				id="form.city"
 				type="text"
-				bind:value={userAddress.city}
+				bind:value={currentAddress.city}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -136,7 +116,7 @@
 			<input
 				id="neighborhood"
 				type="text"
-				bind:value={userAddress.neighborhood}
+				bind:value={currentAddress.neighborhood}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -150,7 +130,7 @@
 			<input
 				id="street"
 				type="text"
-				value={userAddress.street}
+				value={currentAddress.street}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -162,7 +142,7 @@
 			<input
 				id="homeNumber"
 				type="text"
-				bind:value={userAddress.street_number}
+				bind:value={currentAddress.street_number}
 				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
@@ -175,7 +155,7 @@
 		<input
 			id="complement"
 			type="text"
-			bind:value={userAddress.address_complement}
+			bind:value={currentAddress.address_complement}
 			class="w-full focus:ring-0 focus:ring-primary-500 border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 		/>
 	</div>
@@ -183,7 +163,7 @@
 	<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
 		<button
 			class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-			on:click={handleSubmitUserAddress}
+			on:click={handleSubmitcurrentAddress}
 		>
 			<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
 		</button>

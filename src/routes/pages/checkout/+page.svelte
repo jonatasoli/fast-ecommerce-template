@@ -65,7 +65,7 @@
 		{#if activeStep === 2}
 			<Shipping {nextStep} {previousStep} {data} />
 		{:else if activeStep === 3}
-			<Payment {nextStep} {previousStep}  />
+			<Payment {nextStep} {previousStep} {data}  />
 		{:else if activeStep === 4}
 			<Confirmation {nextStep} {previousStep} />
 		{/if}

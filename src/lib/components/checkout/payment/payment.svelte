@@ -1,26 +1,21 @@
 <script lang="ts">
-
-import { mercadoPagoService } from '$lib/plugins/mercadopago';
+	import { mercadoPagoService } from '$lib/plugins/mercadopago';
 	import { cartStore } from '$lib/stores/cart';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
-	
+
 	import { ChevronDoubleLeft, ChevronDoubleRight } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
-    import Flatpickr from 'svelte-flatpickr';
+	import Flatpickr from 'svelte-flatpickr';
 	import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect';
-    import 'flatpickr/dist/flatpickr.css';
-	import 'flatpickr/dist/plugins/monthSelect/style.css'; 
-	import 'flatpickr/dist/themes/confetti.css';  
-	import { onMount } from 'svelte';
+	import 'flatpickr/dist/flatpickr.css';
+	import 'flatpickr/dist/plugins/monthSelect/style.css';
+	import 'flatpickr/dist/themes/confetti.css';
 	import { splitDate } from '$lib/utils';
-	
 
-    
-    
-	
-  	let selectedDate = ''; 
-	
-	let date = new Date()
+	export let data: any;
+	let selectedDate = '';
+
+	let date = new Date();
 	export let nextStep: () => void;
 	export let previousStep: () => void;
 
@@ -42,39 +37,36 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 	$: cart = cartStore();
 	$: creditCard = cartStore();
 	$: console.log(formattedValue);
-	
 
 	let optionInstallments: { label: string; value: number }[] = [];
-	let optionsDocuments: ("CPF" | "CNPJ")[] = ["CPF", "CNPJ"];
+	let optionsDocuments: ('CPF' | 'CNPJ')[] = ['CPF', 'CNPJ'];
 
 	let creditCardBrand: string = '';
 	const groupName = 'select-group';
-	let selectedValue: string | null = '';
+	let selectedInstallments: number = 0;
 	let credit_card_number = '5031433215406351';
 	let credit_card_name = 'APRO';
-	let type_document = 'CPF'
+	let type_document = 'CPF';
 	let document = '12345678909';
 	let cvv = '123';
 	const { year, month } = splitDate(formattedValue);
-	
 
 	let payment_type: string = 'credit_card';
 
 	let options = {
-    plugins: [new monthSelectPlugin({ shorthand: true, dateFormat: "Y-m"})],
-    disableMobile: true
-  };
+		plugins: [new monthSelectPlugin({ shorthand: true, dateFormat: 'Y-m' })],
+		disableMobile: true
+	};
 
-  const card = {
-
+	const card = {
 		cardNumber: credit_card_number,
-     	cardholderName: credit_card_name,
-      	cardExpirationMonth: month,
-      	cardExpirationYear: year,
-      securityCode: cvv,
-      identificationType: type_document ,
-      identificationNumber: document,
-  }
+		cardholderName: credit_card_name,
+		cardExpirationMonth: month,
+		cardExpirationYear: year,
+		securityCode: cvv,
+		identificationType: type_document,
+		identificationNumber: document
+	};
 
 	async function getInstallments() {
 		showLoading();
@@ -95,25 +87,27 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 		hideLoading();
 	}
 
-	// async function createCardToken(){
-	// 	showLoading();
-	// 	const tokenResponse = await mercadoPagoService.createCardToken(card)
+	async function createCardToken() {
+		showLoading();
+		const tokenResponse = await mercadoPagoService.createCardToken(card);
 
-	// 	if(tokenResponse){
-	// 		// nextStep
-	// 		console.log(tokenResponse)
-	// 		const { id, last_four_digits: lastFourDigits } = tokenResponse
-	// 	}
+		if (tokenResponse) {
+			// nextStep
+			const { id, last_four_digits: lastFourDigits } = tokenResponse;
+			await cart.addMercadoPagoCreditCardPayment(
+				{
+					card_token: id,
+					installments: selectedInstallments,
+					payment_gateway: 'MERCADOPAGO',
+					card_issuer: lastFourDigits,
+					card_brand: creditCardBrand
+				},
+				data.token
+			);
+		}
 
-	// 	hideLoading()
-	// }
-
-
-
-	onMount(() => {
-    
-  
-  });
+		hideLoading();
+	}
 </script>
 
 <div class="w-full text-center">
@@ -184,7 +178,6 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 					id="select"
 					bind:value={type_document}
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-					
 				>
 					{#each optionsDocuments as option}
 						<option
@@ -195,7 +188,6 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 						</option>
 					{/each}
 				</select>
-				
 			</div>
 
 			<div>
@@ -218,10 +210,16 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 					>
 
 					<div class="w-full h-full">
-						<Flatpickr  children={null} {options} bind:value bind:formattedValue placeholder="selecione uma data"   name="date"  class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"/>
+						<Flatpickr
+							children={null}
+							{options}
+							bind:value
+							bind:formattedValue
+							placeholder="selecione uma data"
+							name="date"
+							class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						/>
 					</div>
-					
-				
 				</div>
 
 				<div class="flex-1">
@@ -244,7 +242,7 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 
 				<select
 					id="select"
-					bind:value={selectedValue}
+					bind:value={selectedInstallments}
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 					disabled={!optionInstallments.length}
 				>
@@ -277,9 +275,6 @@ import { mercadoPagoService } from '$lib/plugins/mercadopago';
 		</div>
 	</div>
 </div>
+
 <style>
-
-
-
-
-  </style>
+</style>

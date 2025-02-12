@@ -2,14 +2,19 @@ import type {
 	Cart,
 	CartAddress,
 	CartItem,
+	CartUser,
 	CreditCard,
 	CreditCardPayment,
 	Payment,
+	ShippingAddress,
+	User,
+	UserAddress,
 	UserData
 } from '$lib/types';
 import { get } from 'svelte/store';
 import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
 import { persisted } from 'svelte-persisted-store';
+import { address } from './address';
 
 const serverUrl = import.meta.env.VITE_SERVER_BASE_URL;
 
@@ -17,45 +22,14 @@ const initialffiliate: string = '';
 
 const coupon: string = '';
 
-const initialAddress: CartAddress = {
-	shipping_is_payment: false,
-	user_address_id: null,
-	shipping_address_id: null,
-	user_address: {
-		active: true,
-		address_complement: '',
-		address_id: null,
-		city: '',
-		country: '',
-		neighborhood: '',
-		state: '',
-		street: '',
-		street_number: '',
+const userData: CartUser = {
+	user_data: {
 		user_id: null,
-		zipcode: ''
-	},
-	shipping_address: {
-		active: true,
-		address_complement: '',
-		address_id: null,
-		city: '',
-		country: '',
-		neighborhood: '',
-		state: '',
-		street: '',
-		street_number: '',
-		user_id: null,
-		zipcode: ''
-	},
-	token: null
-};
-
-const userData: UserData = {
-	user_id: null,
-	name: '',
-	email: '',
-	phone: '',
-	document: ''
+		name: '',
+		email: '',
+		phone: '',
+		document: ''
+	}
 };
 
 const initialCart: Cart = {
@@ -109,7 +83,6 @@ export function cartStore() {
 	const creditCard = persisted('creditCard', paymentCreditCard);
 	const affiliate = persisted('affiliate', initialffiliate);
 	const user = persisted('user', userData);
-	const address = persisted('address', initialAddress);
 
 	async function createCart() {
 		try {
@@ -146,42 +119,6 @@ export function cartStore() {
 			console.error(err);
 		} finally {
 			isLoading.set(false);
-		}
-	}
-
-	async function getAddressByZipcode(zipcode: string, typeAddress: string) {
-		try {
-			showLoading();
-			const response = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
-
-			if (!response.ok) {
-				throw new Error('Erro ao buscar endereço');
-			}
-
-			const responseData = await response.json();
-			console.log('Dados do ViaCEP:', responseData);
-
-			address.update((addr) => {
-				const newAddress = {
-					...addr,
-					[typeAddress]: {
-						country: 'Brasil', // TODO: i18n
-						state: responseData.uf,
-						city: responseData.localidade,
-						neighborhood: responseData.bairro,
-						street: responseData.logradouro,
-						street_number: '',
-						address_complement: '',
-						zipcode: responseData.cep
-					}
-				};
-
-				return newAddress;
-			});
-		} catch (error) {
-			console.error(error);
-		} finally {
-			hideLoading();
 		}
 	}
 
@@ -292,6 +229,7 @@ export function cartStore() {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
+			const currentUser = get(user);
 
 			if (!uuid) return;
 			showLoading();
@@ -311,12 +249,18 @@ export function cartStore() {
 			}
 			const data = await res.json();
 
-			user.set(data.user_data);
+			setUserCart(data.user_data);
+			console.log('resposta do user:', currentUser);
+			return data;
 		} catch {
 			console.log('ERROR_ADD_USER_CART');
 		} finally {
 			hideLoading();
 		}
+	}
+
+	function setUserCart(userCart) {
+		user.user_data = userCart;
 	}
 
 	async function addAddressCart(address: CartAddress) {
@@ -365,8 +309,18 @@ export function cartStore() {
 
 			const data = await res.json();
 
+			const { shipping_is_payment, shipping_address_id, user_address_id, ...restCart } = data;
+
+			setShippingIsPayment(shipping_is_payment);
+			setShippingAddress(address.shipping_address ?? null);
+			setUserAddress(address.user_address);
+			setShippingAddressId(shipping_address_id);
+			setUserAddressId(user_address_id);
+			cart.update((current) => ({
+				...current,
+				...restCart
+			}));
 			console.log('Resposta do servidor:', data);
-			// user.set(data.user_data);
 		} catch (error) {
 			console.error('ERROR_ADD_ADDRESS_CART', error);
 		} finally {
@@ -374,7 +328,27 @@ export function cartStore() {
 		}
 	}
 
-	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
+	function setShippingIsPayment(value: boolean) {
+		address.shipping_is_payment = value;
+	}
+
+	function setShippingAddress(shippingAddress: ShippingAddress) {
+		address.shipping_address = shippingAddress;
+	}
+
+	function setUserAddress(userAddress: UserAddress) {
+		address.user_address = userAddress;
+	}
+
+	function setShippingAddressId(shippingAddressId: number | null) {
+		address.shipping_address_id = shippingAddressId;
+	}
+
+	function setUserAddressId(userAddressId: number) {
+		address.user_address_id = userAddressId;
+	}
+
+	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment, token: string) {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
@@ -386,7 +360,7 @@ export function cartStore() {
 
 			const res = await fetch(`${serverUrl}/cart/${uuid}/payment/credit_card`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
 				body: JSON.stringify({
 					cart: {
 						...currentCart,
@@ -414,10 +388,7 @@ export function cartStore() {
 
 	return {
 		subscribe: cart.subscribe,
-		// cart,
-		// address,
 		createCart,
-		getAddressByZipcode,
 		addUserCart,
 		addAddressCart,
 		addToCart,

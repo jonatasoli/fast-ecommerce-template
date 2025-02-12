@@ -86,8 +86,10 @@
 
 	function handleCheckout() {
 		if (freight) {
-			estimate(); // Chama a função de estimativa, se necessário
-			goto('/pages/checkout'); // Redireciona para a página de checkout
+			showLoading();
+			estimate();
+			goto('/pages/checkout');
+			hideLoading();
 		}
 	}
 

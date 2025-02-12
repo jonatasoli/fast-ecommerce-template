@@ -56,14 +56,9 @@ export interface Address {
 export interface User {
 	user_id: number | null;
 	name: string;
-	password: string;
 	document: string;
 	phone: string;
-	role_id: number | null;
 	email: string;
-	full_name: string | null;
-	disabled: boolean | null;
-	addresses: Address[];
 }
 
 export interface Cart {
@@ -97,7 +92,6 @@ export interface CartItem {
 	discount_price: number;
 }
 
-// types/address.ts
 export interface CartAddress {
 	shipping_is_payment: boolean;
 	user_address_id: number | null;
@@ -168,14 +162,11 @@ export interface Payment {
 }
 
 export interface CreditCardPayment {
-	creditCardNumber: string;
-	creditCardName: string;
-	creditCardExpiration: string;
-	creditCardCvv: string;
+	payment_gateway: string;
+	card_token: string;
+	card_issuer: string;
+	card_brand: string;
 	installments: number;
-	installmentsMessage: string;
-	typeDocument: string;
-	document: string;
 }
 
 export interface AddPixPaymentMethodResponse {
