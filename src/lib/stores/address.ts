@@ -50,7 +50,6 @@ export async function getAddressByZipcode(
 		}
 
 		const responseData = await response.json();
-		console.log('Dados do ViaCEP:', response);
 
 		// Atualizando a store de endereço
 		address.update((addr) => ({

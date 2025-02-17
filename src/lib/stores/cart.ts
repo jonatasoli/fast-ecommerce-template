@@ -2,14 +2,12 @@ import type {
 	Cart,
 	CartAddress,
 	CartItem,
-	CartUser,
 	CreditCard,
 	CreditCardPayment,
 	Payment,
 	ShippingAddress,
 	User,
-	UserAddress,
-	UserData
+	UserAddress
 } from '$lib/types';
 import { get } from 'svelte/store';
 import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
@@ -22,14 +20,12 @@ const initialffiliate: string = '';
 
 const coupon: string = '';
 
-const userData: CartUser = {
-	user_data: {
-		user_id: null,
-		name: '',
-		email: '',
-		phone: '',
-		document: ''
-	}
+const userData: User = {
+	user_id: null,
+	name: '',
+	email: '',
+	phone: '',
+	document: ''
 };
 
 const initialCart: Cart = {
@@ -229,7 +225,6 @@ export function cartStore() {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
-			const currentUser = get(user);
 
 			if (!uuid) return;
 			showLoading();
@@ -247,20 +242,21 @@ export function cartStore() {
 			if (!res) {
 				console.log('ERROR_ADD_USER_CART');
 			}
-			const data = await res.json();
 
+			const data = await res.json();
+			
 			setUserCart(data.user_data);
-			console.log('resposta do user:', currentUser);
+
 			return data;
-		} catch {
-			console.log('ERROR_ADD_USER_CART');
+		} catch (error) {
+			console.log('ERROR_ADD_USER_CART', error);
 		} finally {
 			hideLoading();
 		}
 	}
 
-	function setUserCart(userCart) {
-		user.user_data = userCart;
+	function setUserCart(userCart: User) {
+		user.set(userCart);
 	}
 
 	async function addAddressCart(address: CartAddress) {
@@ -302,8 +298,8 @@ export function cartStore() {
 				})
 			});
 
-			if (!res.ok) {
-				console.error('ERROR_ADD_ADDRESS_CART', res.status);
+			if (!res) {
+				console.error('ERROR_ADD_ADDRESS_CART', res);
 				return;
 			}
 
@@ -316,11 +312,7 @@ export function cartStore() {
 			setUserAddress(address.user_address);
 			setShippingAddressId(shipping_address_id);
 			setUserAddressId(user_address_id);
-			cart.update((current) => ({
-				...current,
-				...restCart
-			}));
-			console.log('Resposta do servidor:', data);
+			setCart(restCart);
 		} catch (error) {
 			console.error('ERROR_ADD_ADDRESS_CART', error);
 		} finally {
@@ -340,6 +332,10 @@ export function cartStore() {
 		address.user_address = userAddress;
 	}
 
+	function setCart(userCart: Cart) {
+		cart.set(userCart);
+	}
+
 	function setShippingAddressId(shippingAddressId: number | null) {
 		address.shipping_address_id = shippingAddressId;
 	}
@@ -352,7 +348,8 @@ export function cartStore() {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
-
+			const currentUser = get(user);
+			const currentAffiliate = get(affiliate);
 			if (!uuid) {
 				return;
 			}
@@ -360,15 +357,19 @@ export function cartStore() {
 
 			const res = await fetch(`${serverUrl}/cart/${uuid}/payment/credit_card`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+					'Access-Control-Allow-Origin': '*'
+				},
 				body: JSON.stringify({
 					cart: {
 						...currentCart,
-						affiliate: affiliate,
+						affiliate: currentAffiliate,
 						coupon: coupon,
 						shipping_is_payment: address.shipping_is_payment,
 						user_address_id: address.user_address_id,
-						user_data: user
+						user_data: currentUser
 					},
 					payment
 				})
@@ -377,8 +378,8 @@ export function cartStore() {
 			if (!res) {
 				throw new Error('ERROR_ADD_MERCADO_PAGO_CREDIT_CARD_PAYMENT');
 			}
-
-			return res.json();
+			const data = await res.json();
+			return data;
 		} catch {
 			throw new Error('ERROR_ADD_MERCADO_PAGO_CREDIT_CARD_PAYMENT');
 		} finally {
