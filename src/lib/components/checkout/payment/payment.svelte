@@ -13,30 +13,14 @@
 	import { splitDate } from '$lib/utils';
 
 	export let data: any;
-	let selectedDate = '';
 
-	let date = new Date();
 	export let nextStep: () => void;
 	export let previousStep: () => void;
 
-	interface PayerCost {
-		recommended_message: string;
-		installments: number;
-	}
-
-	interface InstallmentsResponse {
-		payer_costs: PayerCost[];
-		payment_method_id: string;
-	}
-
-	let cardToken = '';
-	let installments = [];
 	let value = '';
 	let formattedValue = '';
 
 	$: cart = cartStore();
-	$: creditCard = cartStore();
-	$: console.log(formattedValue);
 
 	let optionInstallments: { label: string; value: number }[] = [];
 	let optionsDocuments: ('CPF' | 'CNPJ')[] = ['CPF', 'CNPJ'];
@@ -49,7 +33,7 @@
 	let type_document = 'CPF';
 	let document = '12345678909';
 	let cvv = '123';
-	const { year, month } = splitDate(formattedValue);
+	$: ({ year, month } = splitDate(formattedValue));
 
 	let payment_type: string = 'credit_card';
 
@@ -58,7 +42,7 @@
 		disableMobile: true
 	};
 
-	const card = {
+	$: card = {
 		cardNumber: credit_card_number,
 		cardholderName: credit_card_name,
 		cardExpirationMonth: month,
@@ -87,25 +71,34 @@
 		hideLoading();
 	}
 
+	function getRecommendedMessage(
+		installments: number,
+		options: { label: string; value: number }[]
+	): string | null {
+		const option = options.find((option) => option.value === installments);
+		return option ? option.label : null;
+	}
+
 	async function createCardToken() {
 		showLoading();
+
+		const message = getRecommendedMessage(selectedInstallments, optionInstallments);
+
+		await cart.setPaymentCreditCard(message ?? '');
+
 		const tokenResponse = await mercadoPagoService.createCardToken(card);
 
 		if (tokenResponse) {
-			// nextStep
 			const { id, last_four_digits: lastFourDigits } = tokenResponse;
-			await cart.addMercadoPagoCreditCardPayment(
-				{
-					card_token: id,
-					installments: selectedInstallments,
-					payment_gateway: 'MERCADOPAGO',
-					card_issuer: lastFourDigits,
-					card_brand: creditCardBrand
-				},
-				data.token
-			);
+			await cart.addMercadoPagoCreditCardPayment({
+				card_token: id,
+				installments: selectedInstallments,
+				payment_gateway: 'MERCADOPAGO',
+				card_issuer: lastFourDigits,
+				card_brand: creditCardBrand
+			});
 		}
-
+		nextStep();
 		hideLoading();
 	}
 </script>
@@ -164,7 +157,6 @@
 					id="credit_card_name"
 					type="text"
 					bind:value={credit_card_name}
-					readonly
 					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 				/>
 			</div>
@@ -230,7 +222,6 @@
 						id="cvv"
 						type="text"
 						value={cvv}
-						readonly
 						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 					/>
 				</div>

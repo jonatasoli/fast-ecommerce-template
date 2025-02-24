@@ -50,13 +50,13 @@ const paymentCreditCard: CreditCard = {
 	creditCardName: '',
 	creditCardExpiration: '',
 	creditCardCvv: '',
-	installments: 1,
+	installments: 0,
 	installmentsMessage: '',
 	typeDocument: '',
 	document: ''
 };
 
-const payment: Payment = {
+const initialPayment: Payment = {
 	payment_method: '',
 	payment_method_id: '',
 	payment_intent: '',
@@ -67,7 +67,7 @@ const payment: Payment = {
 	pix_payment_id: 0,
 	gateway_provider: '',
 	installments: 0,
-	shipping_address_id: '',
+	shipping_address_id: 0,
 	user_address_id: 0,
 	shipping_is_payment: false,
 	subtotal_with_fee: 0,
@@ -75,10 +75,11 @@ const payment: Payment = {
 };
 
 export function cartStore() {
-	const cart = persisted('cart', initialCart);
+	const cart = persisted<Cart>('cart', initialCart);
 	const creditCard = persisted('creditCard', paymentCreditCard);
 	const affiliate = persisted('affiliate', initialffiliate);
 	const user = persisted('user', userData);
+	const payment = persisted('payment', initialPayment);
 
 	async function createCart() {
 		try {
@@ -141,8 +142,11 @@ export function cartStore() {
 		}));
 	}
 
-	function setPaymentCreditCard(paymentCreditCardUser: CreditCard) {
-		creditCard.set(paymentCreditCardUser);
+	function setPaymentCreditCard(paymentCreditCardUser: string) {
+		creditCard.update((state) => ({
+			...state,
+			installmentsMessage: paymentCreditCardUser
+		}));
 	}
 
 	function updateCoupon(newCoupon: string) {
@@ -150,6 +154,12 @@ export function cartStore() {
 			...state,
 			coupon: newCoupon
 		}));
+	}
+
+	function getPaymentCreditCard() {
+		const message = get(creditCard);
+
+		return message;
 	}
 
 	async function addToCart(item: CartItem) {
@@ -234,8 +244,8 @@ export function cartStore() {
 				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
 				body: JSON.stringify({
 					...currentCart,
-					affiliate: currentCart.affiliate,
-					coupon: currentCart.coupon
+					affiliate: currentCart.affiliate ?? '',
+					coupon: currentCart.coupon ?? ''
 				})
 			});
 
@@ -244,8 +254,15 @@ export function cartStore() {
 			}
 
 			const data = await res.json();
-			
-			setUserCart(data.user_data);
+
+			data.affiliate = data.affiliate ?? '';
+			data.coupon = data.coupon ?? '';
+
+			const { user_data: userCart, ...restcart } = data;
+
+			setUserCart(userCart);
+			setCart(restcart);
+			console.log(currentCart);
 
 			return data;
 		} catch (error) {
@@ -321,15 +338,24 @@ export function cartStore() {
 	}
 
 	function setShippingIsPayment(value: boolean) {
-		address.shipping_is_payment = value;
+		address.update((addr) => {
+			addr.shipping_is_payment = value;
+			return addr;
+		});
 	}
 
 	function setShippingAddress(shippingAddress: ShippingAddress) {
-		address.shipping_address = shippingAddress;
+		address.update((addr) => {
+			addr.shipping_address = shippingAddress;
+			return addr;
+		});
 	}
 
 	function setUserAddress(userAddress: UserAddress) {
-		address.user_address = userAddress;
+		address.update((addr) => {
+			addr.user_address = userAddress;
+			return addr;
+		});
 	}
 
 	function setCart(userCart: Cart) {
@@ -337,51 +363,97 @@ export function cartStore() {
 	}
 
 	function setShippingAddressId(shippingAddressId: number | null) {
-		address.shipping_address_id = shippingAddressId;
+		address.update((addr) => {
+			addr.shipping_address_id = shippingAddressId;
+			return addr;
+		});
 	}
 
 	function setUserAddressId(userAddressId: number) {
-		address.user_address_id = userAddressId;
+		address.update((addr) => {
+			addr.user_address_id = userAddressId;
+			return addr;
+		});
 	}
 
-	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment, token: string) {
+	function setPayment(paymentUser: Payment) {
+		payment.set(paymentUser);
+	}
+
+	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
 			const currentUser = get(user);
 			const currentAffiliate = get(affiliate);
+			const currentAddress = get(address);
+
 			if (!uuid) {
-				return;
+				throw new Error('UUID do carrinho não encontrado.');
 			}
+
 			showLoading();
 
-			const res = await fetch(`${serverUrl}/cart/${uuid}/payment/credit_card`, {
+			const res = await fetch(`/api/mercadoPago`, {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-					'Access-Control-Allow-Origin': '*'
+					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
 					cart: {
 						...currentCart,
-						affiliate: currentAffiliate,
-						coupon: coupon,
-						shipping_is_payment: address.shipping_is_payment,
-						user_address_id: address.user_address_id,
-						user_data: currentUser
+						affiliate: currentAffiliate ?? null,
+						coupon: coupon ?? null,
+						shipping_is_payment: currentAddress?.shipping_is_payment ?? false,
+						user_address_id: currentAddress?.user_address_id ?? null,
+						user_data: currentUser ?? {}
 					},
 					payment
 				})
 			});
 
-			if (!res) {
-				throw new Error('ERROR_ADD_MERCADO_PAGO_CREDIT_CARD_PAYMENT');
+			if (!res.ok) {
+				const errorData = await res.json();
+				throw new Error(errorData.message || 'Erro ao processar pagamento.');
 			}
+
 			const data = await res.json();
+
 			return data;
-		} catch {
+		} catch (error) {
+			console.error('Erro no pagamento:', error);
 			throw new Error('ERROR_ADD_MERCADO_PAGO_CREDIT_CARD_PAYMENT');
+		} finally {
+			hideLoading();
+		}
+	}
+
+	async function getCartPreview(token: string) {
+		try {
+			showLoading();
+			const uuid = get(cart).uuid;
+			if (!uuid) return;
+
+			const res = await fetch(`${serverUrl}/cart/${uuid}/preview`, {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+			});
+
+			const responseData = await res.json();
+
+			if (!responseData) {
+				throw new Error('ERROR_GET_PREVIEW');
+			}
+
+			setCart(responseData);
+			setUserAddressId(responseData.user_address_id);
+			setShippingAddressId(responseData.shipping_address_id);
+			setShippingIsPayment(responseData.shipping_is_payment);
+			setPayment(responseData);
+			console.log(responseData);
+			return responseData;
+		} catch (err) {
+			console.error(err);
 		} finally {
 			hideLoading();
 		}
@@ -390,7 +462,9 @@ export function cartStore() {
 	return {
 		subscribe: cart.subscribe,
 		createCart,
+		getPaymentCreditCard,
 		addUserCart,
+		getCartPreview,
 		addAddressCart,
 		addToCart,
 		addProduct,
