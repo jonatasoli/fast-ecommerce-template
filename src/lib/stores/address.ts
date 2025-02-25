@@ -34,10 +34,8 @@ const initialAddress: CartAddress = {
 	token: null
 };
 
-// Criando a store do tipo writable
 export const address = writable<CartAddress>(initialAddress);
 
-// Função para buscar endereço via CEP e atualizar a store
 export async function getAddressByZipcode(
 	zipcode: string,
 	typeAddress: 'user_address' | 'shipping_address'
@@ -51,11 +49,10 @@ export async function getAddressByZipcode(
 
 		const responseData = await response.json();
 
-		// Atualizando a store de endereço
 		address.update((addr) => ({
 			...addr,
 			[typeAddress]: {
-				...addr[typeAddress], // Mantemos os outros valores inalterados
+				...addr[typeAddress],
 				country: 'Brasil', // TODO: i18n
 				state: responseData.uf,
 				city: responseData.localidade,
@@ -67,7 +64,6 @@ export async function getAddressByZipcode(
 			}
 		}));
 
-		// Retornando a response para o front
 		return responseData;
 	} catch (error) {
 		console.error('Erro ao buscar endereço:', error);

@@ -3,8 +3,6 @@
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
 	import { address, getAddressByZipcode } from '$lib/stores/address';
-	import { hideLoading, showLoading } from '$lib/stores/loading';
-
 	$: cart = cartStore();
 
 	export let nextStep: () => void;
@@ -27,14 +25,15 @@
 	let shippingIsPayment: boolean = true;
 
 	$: currentAddress = $address.user_address;
+	$: zipcode = $cart.zipcode;
 
-	$: if ($cart.zipcode) {
-		getAddressByZipcode($cart.zipcode, 'user_address');
+	$: if (zipcode) {
+		getAddressByZipcode(zipcode, 'user_address');
 	}
 
 	async function handleSubmitcurrentAddress() {
-		const resCart = await cart.addUserCart(data.token);
-		const resAdress = await cart.addAddressCart({
+		await cart.addUserCart(data.token);
+		await cart.addAddressCart({
 			shipping_is_payment: shippingIsPayment,
 			user_address: currentAddress,
 			shipping_address: shippingAddress,
@@ -44,12 +43,6 @@
 		});
 
 		nextStep();
-	}
-
-	async function fetchAddress() {
-		showLoading();
-		await getAddressByZipcode(currentAddress.zipcode, 'user_address');
-		hideLoading();
 	}
 </script>
 
@@ -65,7 +58,7 @@
 			id="id"
 			type="text"
 			bind:value={currentAddress.zipcode}
-			on:blur={fetchAddress}
+			readonly
 			class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 		/>
 	</div>

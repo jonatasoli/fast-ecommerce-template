@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { cartStore } from '$lib/stores/cart';
-	import type { CartPreview } from '$lib/types';
+	import type { CartPreview, CreditCard } from '$lib/types';
 	import { onMount } from 'svelte';
-	import { ChevronDoubleLeft, ChevronDoubleRight, Pencil } from 'svelte-heros-v2';
+	import { ChevronDoubleRight, Pencil } from 'svelte-heros-v2';
+	import { address } from '$lib/stores/address';
+	import { currencyFormat } from '$lib/utils';
 
 	$: cart = cartStore();
 	export let nextStep: () => void;
@@ -11,12 +13,23 @@
 
 	let cartPreview: CartPreview | null = null;
 
-	let message = '';
+	$: currentAddress = $address.user_address;
+
+	let CreditCard: CreditCard = {
+		creditCardNumber: '',
+		creditCardName: '',
+		creditCardExpiration: '',
+		creditCardCvv: '',
+		installments: 0,
+		installmentsMessage: '',
+		typeDocument: '',
+		document: ''
+	};
 
 	async function getMercadoPagoMessage() {
-		const res = await cart.getPaymentCreditCard().installmentsMessage;
+		const res = await cart.getPaymentCreditCard();
 
-		message = res;
+		CreditCard = res;
 	}
 	async function getCartPreview() {
 		const res = await cart.getCartPreview(data.token);
@@ -55,8 +68,10 @@
 				<div class="flex flex-col gap-2 border-b border-gray-200 py-2 md:border-none">
 					<h3 class="text-base font-semibold text-primary-500">Endereço de entrega</h3>
 					<span>{cartPreview?.zipcode}</span>
-					<span>A definir</span>
-					<span>Cuiabá - MT</span>
+					<span>{currentAddress?.street} - {currentAddress?.street_number}</span>
+					<span
+						>{currentAddress?.neighborhood} - {currentAddress?.city} - {currentAddress?.state}</span
+					>
 				</div>
 			</div>
 
@@ -73,11 +88,15 @@
 						<div class="flex justify-between p-4 border-b border-gray-200 py-2">
 							<div class="flex flex-col gap-2">
 								<span>Unit.</span>
-								<span class="text-base font-bold text-black">R$ {item.price}</span>
+								<span class="text-base font-bold text-black"
+									>{currencyFormat(Number(item.price))}</span
+								>
 							</div>
 							<div class="flex flex-col gap-2">
 								<span>Total</span>
-								<span class="text-base font-bold text-black">R$ {item.price * item.quantity}</span>
+								<span class="text-base font-bold text-black">
+									{currencyFormat(Number(item.price * item.quantity))}</span
+								>
 							</div>
 						</div>
 					{/each}
@@ -86,27 +105,35 @@
 				<div class="flex flex-col md:flex-row md:justify-between gap-2 py-2">
 					<div class="flex flex-col gap-2">
 						<h3 class="text-base font-semibold text-primary-500">Pagamento</h3>
-						<span>{cartPreview?.gateway_provider}</span>
+						<span>{CreditCard.creditCardName}</span>
 						<span>****** {cartPreview?.payment_method_id.slice(-4)}</span>
-						<span>{message ?? ''}</span>
+						<span>{CreditCard.installmentsMessage}</span>
 					</div>
 
 					<div class="flex flex-col gap-2 py-2">
-						<div class="flex justify-between">
+						<div class="flex gap-2 justify-between">
 							<span>Subtotal:</span>
-							<span class="text-base font-bold text-black">R$ {cartPreview?.subtotal}</span>
+							<span class="text-base font-bold text-black">
+								{currencyFormat(Number(cartPreview?.subtotal))}</span
+							>
 						</div>
 						<div class="flex justify-between">
 							<span>Frete:</span>
-							<span class="text-base font-bold text-black">R$ {cartPreview?.freight.price}</span>
+							<span class="text-base font-bold text-black">
+								{currencyFormat(Number(cartPreview?.freight.price))}</span
+							>
 						</div>
 						<div class="flex justify-between">
 							<span>Desconto:</span>
-							<span class="text-base font-bold text-black">R$ {cartPreview?.discount}</span>
+							<span class="text-base font-bold text-black">
+								{currencyFormat(Number(cartPreview?.discount))}</span
+							>
 						</div>
 						<div class="flex justify-between">
 							<span>Total:</span>
-							<span class="text-base font-bold text-black">R$ {cartPreview?.total}</span>
+							<span class="text-base font-bold text-black">
+								{currencyFormat(Number(cartPreview?.total))}</span
+							>
 						</div>
 					</div>
 				</div>

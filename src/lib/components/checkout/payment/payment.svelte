@@ -84,8 +84,6 @@
 
 		const message = getRecommendedMessage(selectedInstallments, optionInstallments);
 
-		await cart.setPaymentCreditCard(message ?? '');
-
 		const tokenResponse = await mercadoPagoService.createCardToken(card);
 
 		if (tokenResponse) {
@@ -98,6 +96,18 @@
 				card_brand: creditCardBrand
 			});
 		}
+
+		cart.setPaymentCreditCard({
+			creditCardNumber: card.cardNumber,
+			creditCardName: card.cardholderName,
+			creditCardExpiration: `${card.cardExpirationMonth}/${card.cardExpirationYear}`,
+			creditCardCvv: card.securityCode,
+			installments: selectedInstallments || 0,
+			installmentsMessage: message || '',
+			typeDocument: card.identificationType,
+			document: card.identificationNumber
+		});
+
 		nextStep();
 		hideLoading();
 	}

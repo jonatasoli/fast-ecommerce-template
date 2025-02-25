@@ -142,11 +142,8 @@ export function cartStore() {
 		}));
 	}
 
-	function setPaymentCreditCard(paymentCreditCardUser: string) {
-		creditCard.update((state) => ({
-			...state,
-			installmentsMessage: paymentCreditCardUser
-		}));
+	function setPaymentCreditCard(paymentCreditCardUser: CreditCard) {
+		creditCard.set(paymentCreditCardUser);
 	}
 
 	function updateCoupon(newCoupon: string) {
@@ -464,6 +461,7 @@ export function cartStore() {
 		createCart,
 		getPaymentCreditCard,
 		addUserCart,
+		setUserAddress,
 		getCartPreview,
 		addAddressCart,
 		addToCart,
