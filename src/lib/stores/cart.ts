@@ -447,12 +447,47 @@ export function cartStore() {
 			setShippingAddressId(responseData.shipping_address_id);
 			setShippingIsPayment(responseData.shipping_is_payment);
 			setPayment(responseData);
-			console.log(responseData);
 			return responseData;
 		} catch (err) {
 			console.error(err);
 		} finally {
 			hideLoading();
+		}
+	}
+	async function finishCheckout(token: string) {
+		const uuid = get(cart).uuid;
+		const currentCart = get(cart);
+		const currentAffiliate = get(affiliate);
+		const currentAddress = get(address);
+		const currentPayment = get(payment);
+
+		try {
+			if (!uuid) {
+				return;
+			}
+
+			const res = await fetch(`${serverUrl}/cart/${uuid}/checkout`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				body: JSON.stringify({
+					...currentCart,
+					...currentPayment,
+					affiliate: currentAffiliate,
+					coupon: coupon,
+					shipping_is_payment: currentAddress.shipping_is_payment,
+					user_address_id: currentAddress.user_address_id,
+					shipping_address_id: currentAddress.shipping_address_id
+				})
+			});
+			const data = await res.json();
+
+			if (!data) return;
+
+			console.log(data);
+
+			return data;
+		} catch (err) {
+			console.error(err);
 		}
 	}
 
@@ -473,6 +508,7 @@ export function cartStore() {
 		updateQuantity,
 		updateZipcode,
 		updateCoupon,
-		addMercadoPagoCreditCardPayment
+		addMercadoPagoCreditCardPayment,
+		finishCheckout
 	};
 }
