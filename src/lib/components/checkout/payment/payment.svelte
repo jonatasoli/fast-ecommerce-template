@@ -113,7 +113,7 @@
 	}
 </script>
 
-<div class="w-full text-center">
+<div class="w-full text-center my-4">
 	<div class="flex flex-col gap-4 items-center">
 		<div class="my-4 w-full">
 			<h2 class="text-lg font-semibold text-primary-500">Formas de pagamento</h2>
