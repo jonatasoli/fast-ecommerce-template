@@ -11,7 +11,9 @@
 	import 'flatpickr/dist/plugins/monthSelect/style.css';
 	import 'flatpickr/dist/themes/confetti.css';
 	import { splitDate } from '$lib/utils';
+	import { paymentMethod } from '$lib/stores/paymentStore';
 
+	type PaymentMethod = 'credit_card' | 'pix';
 	export let data: any;
 
 	export let nextStep: () => void;
@@ -35,7 +37,9 @@
 	let cvv = '123';
 	$: ({ year, month } = splitDate(formattedValue));
 
-	let payment_type: string = 'credit_card';
+	let payment_type: PaymentMethod = 'credit_card';
+
+	$: paymentMethod.set(payment_type);
 
 	let options = {
 		plugins: [new monthSelectPlugin({ shorthand: true, dateFormat: 'Y-m' })],
@@ -143,137 +147,145 @@
 				<p class=" ">Pix</p>
 			</label>
 		</div>
-		<div
-			class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
-		>
-			<div>
-				<label for="credit_card_number" class="block mb-1 font-medium text-sm text-gray-700"
-					>{$_('checkout.payment.credit_card_number')}</label
-				>
-				<input
-					id="credit_card_number"
-					type="text"
-					bind:value={credit_card_number}
-					on:blur={getInstallments}
-					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				/>
-			</div>
+		{#if $paymentMethod === 'credit_card'}
+			<div
+				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
+			>
+				<div>
+					<label for="credit_card_number" class="block mb-1 font-medium text-sm text-gray-700"
+						>{$_('checkout.payment.credit_card_number')}</label
+					>
+					<input
+						id="credit_card_number"
+						type="text"
+						bind:value={credit_card_number}
+						on:blur={getInstallments}
+						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+					/>
+				</div>
 
-			<div>
-				<label for="credit_card_name" class="block mb-1 font-medium text-sm text-gray-700"
-					>{$_('checkout.payment.credit_card_name')}</label
-				>
-				<input
-					id="credit_card_name"
-					type="text"
-					bind:value={credit_card_name}
-					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				/>
-			</div>
+				<div>
+					<label for="credit_card_name" class="block mb-1 font-medium text-sm text-gray-700"
+						>{$_('checkout.payment.credit_card_name')}</label
+					>
+					<input
+						id="credit_card_name"
+						type="text"
+						bind:value={credit_card_name}
+						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+					/>
+				</div>
 
-			<div>
-				<label for="document1" class="block mb-1 font-medium text-sm text-gray-700"
-					>{$_('checkout.payment.type_card')}</label
-				>
-
-				<select
-					id="select"
-					bind:value={type_document}
-					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				>
-					{#each optionsDocuments as option}
-						<option
-							value={option}
-							class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
-						>
-							{option}
-						</option>
-					{/each}
-				</select>
-			</div>
-
-			<div>
-				<label for="document" class="block mb-1 font-medium text-sm text-gray-700"
-					>{$_('checkout.payment.document')}</label
-				>
-				<input
-					id="document"
-					type="text"
-					bind:value={document}
-					readonly
-					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-				/>
-			</div>
-
-			<div class="w-full flex justify-between gap-5">
-				<div class="flex-1">
-					<label for="validity" class="block mb-1 font-medium text-sm text-gray-700"
-						>{$_('checkout.payment.credit_card_validate')}</label
+				<div>
+					<label for="document1" class="block mb-1 font-medium text-sm text-gray-700"
+						>{$_('checkout.payment.type_card')}</label
 					>
 
-					<div class="w-full h-full">
-						<Flatpickr
-							children={null}
-							{options}
-							bind:value
-							bind:formattedValue
-							placeholder="selecione uma data"
-							name="date"
-							class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+					<select
+						id="select"
+						bind:value={type_document}
+						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+					>
+						{#each optionsDocuments as option}
+							<option
+								value={option}
+								class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
+							>
+								{option}
+							</option>
+						{/each}
+					</select>
+				</div>
+
+				<div>
+					<label for="document" class="block mb-1 font-medium text-sm text-gray-700"
+						>{$_('checkout.payment.document')}</label
+					>
+					<input
+						id="document"
+						type="text"
+						bind:value={document}
+						readonly
+						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+					/>
+				</div>
+
+				<div class="w-full flex justify-between gap-5">
+					<div class="flex-1">
+						<label for="validity" class="block mb-1 font-medium text-sm text-gray-700"
+							>{$_('checkout.payment.credit_card_validate')}</label
+						>
+
+						<div class="w-full h-full">
+							<Flatpickr
+								children={null}
+								{options}
+								bind:value
+								bind:formattedValue
+								placeholder="selecione uma data"
+								name="date"
+								class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+							/>
+						</div>
+					</div>
+
+					<div class="flex-1">
+						<label for="cvv" class="block mb-1 font-medium text-sm text-gray-700"
+							>{$_('checkout.payment.credit_card_cvv')}</label
+						>
+						<input
+							id="cvv"
+							type="text"
+							value={cvv}
+							class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 						/>
 					</div>
 				</div>
-
-				<div class="flex-1">
-					<label for="cvv" class="block mb-1 font-medium text-sm text-gray-700"
-						>{$_('checkout.payment.credit_card_cvv')}</label
+				<div>
+					<label for="cep" class="block mb-1 font-medium text-sm text-gray-700"
+						>{$_('checkout.payment.installments')}</label
 					>
-					<input
-						id="cvv"
-						type="text"
-						value={cvv}
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
-					/>
+
+					<select
+						id="select"
+						bind:value={selectedInstallments}
+						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						disabled={!optionInstallments.length}
+					>
+						{#each optionInstallments as option}
+							<option
+								value={option.value}
+								class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
+							>
+								{option.label}
+							</option>
+						{/each}
+					</select>
+				</div>
+
+				<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
+					<button
+						class="md:w-28 py-2 md:px-4 my-1 bg-white font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80"
+						on:click={previousStep}
+					>
+						<div class="flex justify-center"><ChevronDoubleLeft /> Voltar</div>
+					</button>
+
+					<button
+						class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
+						on:click={createCardToken}
+					>
+						<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
+					</button>
 				</div>
 			</div>
-			<div>
-				<label for="cep" class="block mb-1 font-medium text-sm text-gray-700"
-					>{$_('checkout.payment.installments')}</label
-				>
-
-				<select
-					id="select"
-					bind:value={selectedInstallments}
-					class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
-					disabled={!optionInstallments.length}
-				>
-					{#each optionInstallments as option}
-						<option
-							value={option.value}
-							class="text-sm transition-colors duration-200 ease-in-out hover:bg-primary-500 hover:text-white"
-						>
-							{option.label}
-						</option>
-					{/each}
-				</select>
+		{:else if $paymentMethod === 'pix'}
+			<div
+				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
+			>
+				modal PIX QR code
 			</div>
-
-			<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
-				<button
-					class="md:w-28 py-2 md:px-4 my-1 bg-white font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80"
-					on:click={previousStep}
-				>
-					<div class="flex justify-center"><ChevronDoubleLeft /> Voltar</div>
-				</button>
-
-				<button
-					class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-					on:click={createCardToken}
-				>
-					<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
-				</button>
-			</div>
-		</div>
+		{/if}
 	</div>
 </div>
 

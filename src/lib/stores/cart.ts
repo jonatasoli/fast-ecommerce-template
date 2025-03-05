@@ -173,6 +173,10 @@ export function cartStore() {
 		cart.set(initialCart);
 	}
 
+	function clearAffiliate() {
+		affiliate.set(initialffiliate);
+	}
+
 	function removeItem(id: number) {
 		try {
 			isLoading.set(true);
@@ -502,6 +506,7 @@ export function cartStore() {
 		addToCart,
 		addProduct,
 		clearCart,
+		clearAffiliate,
 		removeItem,
 		setPaymentCreditCard,
 		refreshEstimate,

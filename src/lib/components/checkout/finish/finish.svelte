@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { cartStore } from '$lib/stores/cart';
-	import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
-	import type { Checkout } from '$lib/types';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { CheckCircle } from 'svelte-heros-v2';
-	import { writable } from 'svelte/store';
 
 	export let data: any;
-	export let checkout = writable<Checkout | null>(null);
+
+	let checkout = false;
+	let pending = false;
 
 	$: cart = cartStore();
 
@@ -26,16 +26,25 @@
 
 	async function getPayment() {
 		showLoading();
-		const res = await cart.finishCheckout(data.token);
+		pending = true;
+		try {
+			const res = await cart.finishCheckout(data.token);
 
-		if (res.success) {
-			checkout.set(res.data); 
-		} else {
-			checkout.set(null); 
-			console.error('Erro ao finalizar o checkout:', res.message);
+			if (res.order_id) {
+				checkout = true;
+
+				cart.clearCart();
+				cart.clearAffiliate();
+			} else {
+				checkout = false;
+				console.error('Erro ao finalizar o checkout:', res.message);
+			}
+		} catch (err) {
+			console.log('Erro ao finalizar o checkout:', err);
+		} finally {
+			hideLoading();
+			pending = false;
 		}
-
-		hideLoading();
 	}
 	onMount(() => {
 		getPayment();
@@ -43,7 +52,7 @@
 </script>
 
 <div class="w-full text-center my-4">
-	{#if $checkout}
+	{#if checkout}
 		<div class="flex flex-col gap-4 items-center w-full">
 			<CheckCircle class="text-primary-500" size="63" />
 			<h2 class="text-lg font-semibold text-primary-500">Seu pagamento está sendo processado</h2>
@@ -53,19 +62,22 @@
 				on:click={handlenagigateHome}>Voltar para a página inicial</button
 			>
 		</div>
+	{:else if pending}
+		<div class="flex flex-col gap-4 items-center w-full">
+			<h2 class="text-lg font-semibold text-primary-500">Aguarde um momento...</h2>
+			<span> Por favor aguarde, não feche ou atualize a página! </span>
+		</div>
 	{:else}
-	<div class="flex flex-col gap-4 items-center w-full">
-
-	
-		<h2 class="text-lg font-semibold text-primary-500">Erro ao realizar o pedido</h2>
-		<span>
-			Houve um problema ao realizar o seu pedido, verifique o email enviado e tente novamente em
-			instantes
-		</span>
-		<button
-			class="py-2 flex-1 sm:w-72 sm:flex-none my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-			on:click={handleNagigateCart}>Voltar para o carrinho</button
-		>
-	</div>
+		<div class="flex flex-col gap-4 items-center w-full">
+			<h2 class="text-lg font-semibold text-primary-500">Erro ao realizar o pedido</h2>
+			<span>
+				Houve um problema ao realizar o seu pedido, verifique o email enviado e tente novamente em
+				instantes
+			</span>
+			<button
+				class="py-2 flex-1 sm:w-72 sm:flex-none my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
+				on:click={handleNagigateCart}>Voltar para o carrinho</button
+			>
+		</div>
 	{/if}
 </div>
