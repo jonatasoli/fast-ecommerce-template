@@ -4,6 +4,8 @@
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 	import { CheckCircle } from 'svelte-heros-v2';
+	import ModalPix from '../payment/modalPix/modalPix.svelte';
+	import { isOpenModal, showPixModal } from '$lib/stores/modalPix';
 
 	export let data: any;
 
@@ -25,19 +27,25 @@
 	}
 
 	async function getPayment() {
+		const paymentType = cart.getPaymentType();
 		showLoading();
 		pending = true;
+
+		if (!paymentType) return;
+
 		try {
-			const res = await cart.finishCheckout(data.token);
+			if (paymentType === 'credit_cart') {
+				const res = await cart.finishCheckout(data.token);
 
-			if (res.order_id) {
-				checkout = true;
+				if (res.order_id) {
+					checkout = true;
 
-				cart.clearCart();
-				cart.clearAffiliate();
-			} else {
-				checkout = false;
-				console.error('Erro ao finalizar o checkout:', res.message);
+					cart.clearCart();
+					cart.clearAffiliate();
+				} else {
+					checkout = false;
+					console.error('Erro ao finalizar o checkout:', res.message);
+				}
 			}
 		} catch (err) {
 			console.log('Erro ao finalizar o checkout:', err);
@@ -48,6 +56,7 @@
 	}
 	onMount(() => {
 		getPayment();
+		showPixModal();
 	});
 </script>
 
@@ -80,4 +89,6 @@
 			>
 		</div>
 	{/if}
+
+	<ModalPix visible={$isOpenModal} />
 </div>

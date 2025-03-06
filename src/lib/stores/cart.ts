@@ -1,4 +1,5 @@
 import type {
+	AddPixPaymentMethodResponse,
 	Cart,
 	CartAddress,
 	CartItem,
@@ -157,6 +158,17 @@ export function cartStore() {
 		const message = get(creditCard);
 
 		return message;
+	}
+
+	function getPaymentType() {
+		const type = get(payment).payment_method;
+		return type.toUpperCase();
+	}
+
+	function getPaymentPix() {
+		const pix = get(payment);
+
+		return pix;
 	}
 
 	async function addToCart(item: CartItem) {
@@ -381,6 +393,27 @@ export function cartStore() {
 		payment.set(paymentUser);
 	}
 
+	function setPaymentData(data: Partial<Payment>) {
+		payment.update((current) => ({
+			...current,
+			...data
+		}));
+	}
+
+	function getCartData() {
+		const currentCart = get(cart);
+		const currentUser = get(user);
+		const currentAffiliate = get(affiliate);
+		const currentAddress = get(address);
+		return {
+			...currentCart,
+			affiliate: currentAffiliate,
+			shipping_is_payment: currentAddress.shipping_is_payment,
+			user_address_id: currentAddress.user_address_id,
+			user_data: currentUser
+		};
+	}
+
 	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
 		try {
 			const uuid = get(cart).uuid;
@@ -495,10 +528,90 @@ export function cartStore() {
 		}
 	}
 
+	async function addPixPaymentMethod(token: string) {
+		try {
+			const currentCart = get(cart);
+
+			if (!currentCart?.uuid) {
+				throw new Error('UUID do carrinho não encontrado.');
+			}
+
+			showLoading();
+
+			const res = await fetch(`${serverUrl}/cart/${currentCart.uuid}/payment/pix`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Access-Control-Allow-Origin': '*',
+					Authorization: `Bearer ${token}`
+				},
+				body: JSON.stringify({
+					cart: getCartData(),
+					payment: {
+						payment_gateway: 'MERCADOPAGO'
+					}
+				})
+			});
+
+			if (!res.ok) {
+				throw new Error(`Erro na requisição: ${res.status} - ${res.statusText}`);
+			}
+
+			const data = await res.json();
+
+			if (!data.pix_qr_code || !data.payment_method_id) {
+				throw new Error('Resposta inválida: dados do pagamento ausentes');
+			}
+
+			const {
+				shipping_is_payment,
+				user_address_id,
+				shipping_address_id,
+				payment_method,
+				payment_intent,
+				customer_id,
+				pix_qr_code,
+				pix_qr_code_base64,
+				pix_payment_id,
+				gateway_provider,
+				installments,
+				total_with_fee,
+				subtotal_with_fee,
+				payment_method_id
+			} = data;
+
+			setPaymentData({
+				shipping_is_payment,
+				user_address_id,
+				shipping_address_id,
+				payment_method,
+				payment_method_id,
+				payment_intent: payment_intent?.toString(),
+				customer_id,
+				pix_qr_code,
+				pix_qr_code_base64,
+				pix_payment_id: pix_payment_id ? parseInt(pix_payment_id) : 0,
+				gateway_provider,
+				installments,
+				subtotal_with_fee: subtotal_with_fee ? parseInt(subtotal_with_fee) : 0,
+				total_with_fee: total_with_fee ? parseInt(total_with_fee) : 0
+			});
+
+			return data;
+		} catch (error) {
+			console.error('Erro ao adicionar pagamento Pix:', error);
+			throw new Error('ERROR_ADD_PIX_PAYMENT_METHOD');
+		} finally {
+			hideLoading();
+		}
+	}
+
 	return {
 		subscribe: cart.subscribe,
 		createCart,
 		getPaymentCreditCard,
+		getPaymentType,
+		getPaymentPix,
 		addUserCart,
 		setUserAddress,
 		getCartPreview,
@@ -514,6 +627,7 @@ export function cartStore() {
 		updateZipcode,
 		updateCoupon,
 		addMercadoPagoCreditCardPayment,
+		addPixPaymentMethod,
 		finishCheckout
 	};
 }

@@ -12,6 +12,7 @@
 	export let data: any;
 
 	let cartPreview: CartPreview | null = null;
+	let pixLogo = '/pix-icon.svg';
 
 	$: currentAddress = $address.user_address;
 
@@ -105,10 +106,18 @@
 				<div class="flex flex-col md:flex-row md:justify-between gap-2 py-2">
 					<div class="flex flex-col gap-2">
 						<h3 class="text-base font-semibold text-primary-500">Pagamento</h3>
-						<span>{CreditCard.creditCardName}</span>
-						<span>****** {cartPreview?.payment_method_id.slice(-4)}</span>
-						<span>{CreditCard.installmentsMessage}</span>
+						{#if cartPreview?.payment_method === 'credit_card'}
+							<span>{CreditCard.creditCardName}</span>
+							<span>****** {cartPreview?.payment_method_id.slice(-4)}</span>
+							<span>{CreditCard.installmentsMessage}</span>
+						{:else if cartPreview?.payment_method === 'pix'}
+							<div class="flex gap-2 justify-center items-center">
+								<img src={pixLogo} alt="pixLogo" />
+								<span class="text-base font-bold text-black">PIX</span>
+							</div>
+						{/if}
 					</div>
+					<div></div>
 
 					<div class="flex flex-col gap-2 py-2">
 						<div class="flex gap-2 justify-between">

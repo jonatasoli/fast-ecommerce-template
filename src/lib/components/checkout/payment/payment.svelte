@@ -115,6 +115,23 @@
 		nextStep();
 		hideLoading();
 	}
+
+	async function createCardPix() {
+		showLoading();
+		await cart.addPixPaymentMethod(data.token);
+		nextStep();
+		hideLoading();
+	}
+
+	function handleSubmit() {
+		if ($paymentMethod === 'credit_card') {
+			createCardToken();
+		}
+
+		if ($paymentMethod === 'pix') {
+			createCardPix();
+		}
+	}
 </script>
 
 <div class="w-full text-center my-4">
@@ -262,30 +279,29 @@
 						{/each}
 					</select>
 				</div>
-
-				<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
-					<button
-						class="md:w-28 py-2 md:px-4 my-1 bg-white font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80"
-						on:click={previousStep}
-					>
-						<div class="flex justify-center"><ChevronDoubleLeft /> Voltar</div>
-					</button>
-
-					<button
-						class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
-						on:click={createCardToken}
-					>
-						<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
-					</button>
-				</div>
 			</div>
 		{:else if $paymentMethod === 'pix'}
 			<div
-				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
+				class="p-3 space-y-4 w-full items-center sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
 			>
-				modal PIX QR code
+				<h2 class="text-lg font-semibold text-primary-500">PIX com QR code</h2>
 			</div>
 		{/if}
+		<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-center">
+			<button
+				class="md:w-28 py-2 md:px-4 my-1 bg-white font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80"
+				on:click={previousStep}
+			>
+				<div class="flex justify-center"><ChevronDoubleLeft /> Voltar</div>
+			</button>
+
+			<button
+				class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
+				on:click={handleSubmit}
+			>
+				<div class="flex justify-center"><ChevronDoubleRight /> Próximo</div>
+			</button>
+		</div>
 	</div>
 </div>
 
