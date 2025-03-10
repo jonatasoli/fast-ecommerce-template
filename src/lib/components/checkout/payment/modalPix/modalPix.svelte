@@ -1,12 +1,42 @@
 <script lang="ts">
 	import { cartStore } from '$lib/stores/cart';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import { onMount } from 'svelte';
 
 	export let visible = false;
-	export let qrCodeUrl = ''; // URL da imagem do QR Code
-	export let pixCode = ''; // Código Pix para cópia
+	export let qrCodeUrl = ''; 
+	export let pixCode = ''; 
+	let paymentStatus = 'Pendente';
 
 	let cart = cartStore();
+
+	async function checkPaymentStatus(paymentId: string) {
+		showLoading();
+		try {
+			const response = await fetch(`/api/webhook`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					action: 'payment.created', 
+					data: { id: paymentId } 
+				})
+			});
+			if (response.ok) {
+				const data = await response.json();
+				paymentStatus = data.status;
+				console.log(paymentStatus);
+			} else {
+				paymentStatus = 'Erro ao consultar status';
+			}
+		} catch (error) {
+			console.error('Erro ao consultar status do pagamento:', error);
+			paymentStatus = 'Erro ao consultar status';
+		} finally {
+			hideLoading();
+		}
+	}
 
 	// Função para copiar o código Pix
 	const copyToClipboard = async () => {
@@ -19,12 +49,14 @@
 	};
 
 	// Atualiza os dados do Pix
-	function pixPayment() {
+	async function pixPayment() {
 		const res = cart.getPaymentPix();
 
 		if (res && res.pix_qr_code_base64 && res.pix_qr_code) {
 			qrCodeUrl = `data:image/png;base64,${res.pix_qr_code_base64}`;
 			pixCode = res.pix_qr_code;
+
+			await checkPaymentStatus(res.payment_method_id);
 		} else {
 			console.warn('Erro ao obter código Pix');
 		}
