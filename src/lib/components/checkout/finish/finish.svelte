@@ -90,5 +90,5 @@
 		</div>
 	{/if}
 
-	<ModalPix visible={$isOpenModal} />
+	<ModalPix visible={$isOpenModal} {data} />
 </div>

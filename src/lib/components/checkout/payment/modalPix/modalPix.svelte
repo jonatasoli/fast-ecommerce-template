@@ -1,44 +1,33 @@
 <script lang="ts">
+	import { onDestroy, onMount } from 'svelte';
 	import { cartStore } from '$lib/stores/cart';
-	import { hideLoading, showLoading } from '$lib/stores/loading';
-	import { onMount } from 'svelte';
+	import { usePaymentStatus } from '$lib/stores/paymentStatus/paymentStatus';
 
 	export let visible = false;
-	export let qrCodeUrl = ''; 
-	export let pixCode = ''; 
+	export let data: any;
+
+	let qrCodeUrl = '';
+	let pixCode = '';
 	let paymentStatus = 'Pendente';
 
 	let cart = cartStore();
+	let payment_method_id: string | null = null;
 
-	async function checkPaymentStatus(paymentId: string) {
-		showLoading();
-		try {
-			const response = await fetch(`/api/webhook`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					action: 'payment.created', 
-					data: { id: paymentId } 
-				})
-			});
-			if (response.ok) {
-				const data = await response.json();
-				paymentStatus = data.status;
-				console.log(paymentStatus);
-			} else {
-				paymentStatus = 'Erro ao consultar status';
-			}
-		} catch (error) {
-			console.error('Erro ao consultar status do pagamento:', error);
-			paymentStatus = 'Erro ao consultar status';
-		} finally {
-			hideLoading();
+	const { status, start, stop, timeLeft } = usePaymentStatus({
+		onSuccess: () => {
+			console.log('Pagamento Aprovado! 🎉');
+			paymentStatus = 'Aprovado';
+		},
+		onError: () => {
+			console.log('Pagamento Rejeitado ❌');
+			paymentStatus = 'Rejeitado';
+		},
+		onTimeout: () => {
+			console.log('Tempo Limite Excedido ⏳');
+			paymentStatus = 'Tempo Esgotado';
 		}
-	}
+	});
 
-	// Função para copiar o código Pix
 	const copyToClipboard = async () => {
 		try {
 			await navigator.clipboard.writeText(pixCode);
@@ -48,23 +37,30 @@
 		}
 	};
 
-	// Atualiza os dados do Pix
 	async function pixPayment() {
 		const res = cart.getPaymentPix();
 
 		if (res && res.pix_qr_code_base64 && res.pix_qr_code) {
 			qrCodeUrl = `data:image/png;base64,${res.pix_qr_code_base64}`;
 			pixCode = res.pix_qr_code;
+			payment_method_id = res.payment_method_id;
 
-			await checkPaymentStatus(res.payment_method_id);
+			if (payment_method_id) {
+				console.log('Iniciando monitoramento do pagamento:', payment_method_id);
+				await cart.finishCheckout(data.token);
+				start(payment_method_id);
+			}
 		} else {
 			console.warn('Erro ao obter código Pix');
 		}
 	}
 
-	// Chama a função ao montar o componente
 	onMount(() => {
 		pixPayment();
+	});
+
+	onDestroy(() => {
+		stop();
 	});
 </script>
 
@@ -75,7 +71,6 @@
 			<p class="text-gray-600 text-center">Siga as instruções abaixo para finalizar!</p>
 
 			<div class="grid grid-cols-2 gap-4 mt-6">
-				<!-- Seção QR Code -->
 				<div class="border rounded-lg p-4 flex flex-col items-center">
 					<h3 class="font-semibold">Escaneie o QR Code abaixo</h3>
 					<p class="text-sm text-gray-600 text-center">
@@ -84,7 +79,6 @@
 					<img class="mt-4 w-40 h-40" src={qrCodeUrl} alt="QR Code" />
 				</div>
 
-				<!-- Seção Código Pix -->
 				<div class="border rounded-lg p-4 flex flex-col items-center">
 					<h3 class="font-semibold">Ou copie este código para fazer o pagamento</h3>
 					<p class="text-sm text-gray-600 text-center">
@@ -97,15 +91,21 @@
 						readonly
 					/>
 					<button
-						class="mt-2 px-4 py-2 bg-white-500 border border-primary-500 font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80 text-primary-500"
+						class="mt-2 px-4 py-2 bg-white border border-primary-500 font-semibold rounded-xl hover:bg-primary-200 transition-all ease-in-out duration-300 hover:bg-opacity-80 text-primary-500"
 						on:click={copyToClipboard}
 					>
-						Copiar Link
+						Copiar Código
 					</button>
 				</div>
 			</div>
 
-			<!-- Botão de Cancelar -->
+			<div class="text-center mt-6">
+				<p class="text-lg font-semibold">
+					Status do Pagamento: <span class="text-primary-500">{paymentStatus}</span>
+				</p>
+				<p class="text-sm text-gray-600">Tempo restante: {$timeLeft} segundos</p>
+			</div>
+
 			<div class="text-center mt-6">
 				<button
 					class="px-4 py-2 border border-red-500 font-semibold text-red-500 rounded-xl hover:bg-red-200 hover:bg-opacity-80 transition-all ease-in-out duration-300"
