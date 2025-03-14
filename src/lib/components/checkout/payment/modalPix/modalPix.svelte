@@ -2,6 +2,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { cartStore } from '$lib/stores/cart';
 	import { usePaymentStatus } from '$lib/stores/paymentStatus/paymentStatus';
+	import { showLoading } from '$lib/stores/loading';
+	import { handleNagigateDashboard } from '$lib/utils';
 
 	export let visible = false;
 	export let data: any;
@@ -9,6 +11,7 @@
 	let qrCodeUrl = '';
 	let pixCode = '';
 	let paymentStatus = 'Pendente';
+	let buttonTimout: boolean = false;
 
 	let cart = cartStore();
 	let payment_method_id: string | null = null;
@@ -25,6 +28,10 @@
 		onTimeout: () => {
 			console.log('Tempo Limite Excedido ⏳');
 			paymentStatus = 'Tempo Esgotado';
+			showLoading();
+			buttonTimout = true;
+			cart.clearCart();
+			cart.clearAffiliate();
 		}
 	});
 
@@ -107,12 +114,19 @@
 			</div>
 
 			<div class="text-center mt-6">
-				<button
-					class="px-4 py-2 border border-red-500 font-semibold text-red-500 rounded-xl hover:bg-red-200 hover:bg-opacity-80 transition-all ease-in-out duration-300"
-					on:click={() => (visible = false)}
-				>
-					Cancelar
-				</button>
+				{#if !buttonTimout}
+					<button
+						class="px-4 py-2 border border-red-500 font-semibold text-red-500 rounded-xl hover:bg-red-200 hover:bg-opacity-80 transition-all ease-in-out duration-300"
+						on:click={() => (visible = false)}
+					>
+						Cancelar
+					</button>
+				{:else}
+					<button
+						class="py-2 flex-1 sm:w-72 sm:flex-none my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all ease-in-out duration-300 hover:bg-opacity-80"
+						on:click={handleNagigateDashboard}>Voltar para o carrinho</button
+					>
+				{/if}
 			</div>
 		</div>
 	</div>
