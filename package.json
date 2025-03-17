@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "svelte-kit build",
-    "preview": "svelte-kit preview",
+    "build": "vite build",
+    "preview": "vite preview",
     "start": "node build",
     "test": "npm run test:integration && npm run test:unit",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
