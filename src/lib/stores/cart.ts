@@ -1,5 +1,4 @@
 import type {
-	AddPixPaymentMethodResponse,
 	Cart,
 	CartAddress,
 	CartItem,
