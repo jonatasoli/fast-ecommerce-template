@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { cartStore } from '$lib/stores/cart';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import type { Cart, CartItem } from '$lib/types';
@@ -48,28 +49,48 @@
 		cart.updateQuantity(item.product_id, new_quantity);
 
 		await cart.refreshEstimate();
-		await cart.refreshEstimate();
 
+		const res = await cart.refreshEstimate();
+
+		if (!res) {
+			coupon = '';
+			cart.updateCoupon(coupon);
+			showToast('Algo deu errado, tente novamente');
+		}
 		hideLoading();
 	}
 
 	async function estimate() {
 		await cart.updateZipcode(zipcode, freight_product_code);
 		const res = await cart.refreshEstimate();
+		console.log(res);
 
 		if (!res) {
+			zipcode = '';
+			cart.updateZipcode(zipcode, freight_product_code);
 			showToast('Algo deu errado, tente novamente...');
 		}
 	}
 
 	async function estimateCoupon() {
 		cart.updateCoupon(coupon);
-		const res = await cart.refreshEstimate();
+		await cart.refreshEstimate();
 
+		const res = await cart.refreshEstimate();
 		if (!res) {
+			coupon = '';
+			cart.updateCoupon(coupon);
 			showToast('Algo deu errado, tente novamente...');
 		}
-		await cart.refreshEstimate();
+	}
+
+	function handleCheckout() {
+		if (freight) {
+			showLoading();
+			estimate();
+			goto('/pages/checkout');
+			hideLoading();
+		}
 	}
 
 	onDestroy(async () => {
@@ -269,6 +290,14 @@
 				>
 			</div>
 
+			{#if $cart.discount !== '0'}
+				<div class="flex justify-between w-full my-3">
+					<span class="text-sm font-sans">Desconto</span><span
+						>-{currencyFormat(Number($cart.discount))}</span
+					>
+				</div>
+			{/if}
+
 			<div class="flex justify-between w-full my-3">
 				<span class="text-sm font-sans">Frete</span><span
 					>{$cart.freight
@@ -287,9 +316,11 @@
 
 			<button
 				class="w-full py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-				on:click={() => (freight ? estimate() : null)}
-				disabled={!freight}>Finalizar Compra</button
+				on:click={handleCheckout}
+				disabled={!freight}
 			>
+				Finalizar Compra
+			</button>
 
 			<a href="/pages/dashboard"
 				><span class="text-primary-700 font-bold cursor-pointer my-3 underline"

@@ -52,7 +52,11 @@
 					<div
 						class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1 hover:text-primaryHover"
 					>
-						{product.name}
+					{#if product.name.length > 35}
+					{product.name.slice(0, 35)}...
+				  {:else}
+					{product.name}
+				  {/if}
 					</div>
 
 					<div class="container-price flex flex-col gap-2 mt-6">
@@ -65,7 +69,7 @@
 			{#if product.quantity}
 				<button
 					on:click={() => handleAddToCart(product)}
-					class="product-item__buy w-full inline-flex justify-center items-center text-white bg-primary-500 cursor-pointer text-xl py-4 transition-all duration-300 hover:bg-opacity-80"
+					class="w-full inline-flex justify-center items-center text-white bg-primary-500 cursor-pointer text-xl py-4 transition-all duration-300 hover:bg-opacity-80"
 				>
 					{$_('productItem.buy')}
 				</button>

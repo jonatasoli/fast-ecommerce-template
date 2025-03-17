@@ -1,121 +1,77 @@
 <script>
-	import { ChevronDoubleRight } from 'svelte-heros-v2';
-	import { _ } from 'svelte-i18n';
+	import Confirmation from '$lib/components/checkout/confirmation/confirmation.svelte';
+	import Finish from '$lib/components/checkout/finish/finish.svelte';
+	import Payment from '$lib/components/checkout/payment/payment.svelte';
+	import Shipping from '$lib/components/checkout/shipping/shipping.svelte';
+	import { isLoading } from '$lib/stores/loading';
 
-	let postalCode = 'Postal Code';
-	let country = 'Country';
-	let state = 'State';
-	let city = 'City';
-	let neighborhood = 'Neighborhood';
-	let street = 'Street';
-	let homeNumber = 'Number';
-	let pleaseEnter = 'Please enter';
-	let numberIsRequired = 'Number is required';
-	let complement = 'Complement';
+	export let data;
+
+	let activeStep = 2;
+	const steps = [
+		{ number: 1, label: 'Login', isActive: false },
+		{ number: 2, label: 'Entrega', isActive: true },
+		{ number: 3, label: 'Pagamento', isActive: false },
+		{ number: 4, label: 'Confirmação', isActive: false },
+		{ number: 5, label: 'finish', isActive: false }
+	];
+
+	// Avançar para o próximo passo
+	function nextStep() {
+		$isLoading = true;
+		if (activeStep < steps.length) {
+			activeStep++;
+
+			$isLoading = false;
+		}
+		$isLoading = false;
+	}
+
+	// Voltar para o passo anterior
+	function previousStep() {
+		$isLoading = true;
+		if (activeStep > 1) {
+			activeStep--;
+			$isLoading = false;
+		}
+		$isLoading = false;
+	}
 </script>
 
-<div class="flex flex-col items-center justify-center h-full p-4">
+<div class="flex flex-col items-center h-full p-4">
+	<!-- Barra de Progresso dos Passos -->
+	<div class="hidden sm:flex items-center w-full text-sm text-gray-500 font-medium sm:text-base">
+		{#each steps as step, index}
+			<li class="flex items-center justify-between w-full">
+				<div class="flex items-center whitespace-nowrap">
+					<span
+						class="w-6 h-6 lg:w-10 lg:h-10 border rounded-full flex justify-center items-center mr-3 text-sm
+				{step.number === activeStep
+							? 'text-white bg-primary-600 border-primary-200'
+							: 'text-gray-400 bg-gray-100 border-gray-200'}"
+					>
+						{step.number}
+					</span>
+					{step.label}
+				</div>
 
-    <div class="my-4"><h2 class="text-lg font-semibold text-primary-500">Endereço de entrega</h2></div>
-	<div class="p-3  space-y-4 w-full border border-gray-300 flex flex-col gap-2 rounded-lg ">
-		<div>
-			<label for="id" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.zipcode')}</label
-			>
-			<input
-				id="id"
-				type="text"
-				bind:value={postalCode}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
+				{#if index < steps.length - 1}
+					<div class="flex-grow mx-2 border-t border-gray-300"></div>
+				{/if}
+			</li>
+		{/each}
+	</div>
 
-		<div>
-			<label for="name" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.country')}</label
-			>
-			<input
-				id="name"
-				type="text"
-				bind:value={country}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div>
-			<label for="document" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.state')}</label
-			>
-			<input
-				id="state"
-				type="text"
-				bind:value={state}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div>
-			<label for="phone" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.city')}</label
-			>
-			<input
-				id="form.city"
-				type="text"
-				bind:value={city}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div>
-			<label for="email" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.neighborhood')}</label
-			>
-			<input
-				id="neighborhood"
-				type="text"
-				bind:value={neighborhood}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div>
-			<label for="address" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.street')}</label
-			>
-			<input
-				id="street"
-				type="text"
-				value={street}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div>
-			<label for="cep" class="block mb-1 font-medium text-sm text-gray-700"
-				>{$_('checkout.shipping.form.number')}</label
-			>
-			<input
-				id="homeNumber"
-				type="text"
-				bind:value={homeNumber}
-				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
-			/>
-		</div>
-
-		<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
-			
-			<button
-				class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all  ease-in-out  duration-300 hover:bg-opacity-80"
-			>
-				<div class="flex justify-center"><ChevronDoubleRight/> Próximo</div>
-			</button>
-		</div>
+	<!-- Renderizar o componente correspondente ao passo ativo -->
+	<div class="w-full h-full mt-8 flex flex-col items-center justify-center">
+		{#if activeStep === 2}
+			<Shipping {nextStep} {previousStep} {data} />
+		{:else if activeStep === 3}
+			<Payment {nextStep} {previousStep} {data} />
+		{:else if activeStep === 4}
+			<Confirmation {nextStep} {previousStep} {data} />
+		{:else if activeStep === 5}
+			<Finish {data} />
+		{/if}
 	</div>
 </div>

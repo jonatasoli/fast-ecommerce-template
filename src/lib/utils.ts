@@ -1,4 +1,6 @@
+import { goto } from '$app/navigation';
 import { CURRENCIES, LOCALES } from './enums';
+import { hideLoading, showLoading } from './stores/loading';
 
 export function formatDocument(document: string) {
 	// Verifica se já está formatado (document no formato ###.###.###-##)
@@ -18,6 +20,10 @@ export function formatDocument(document: string) {
 	return document;
 }
 
+export function splitDate(date: string): { year: string; month: string } {
+	const [year, month] = date.split('-');
+	return { year, month };
+}
 export const locales = [
 	{ name: 'Inglês (Estados Unidos)', value: 'en-US', isDefault: false },
 	{ name: 'Inglês (Reino Unido)', value: 'en-GB', isDefault: false },
@@ -98,6 +104,18 @@ export function getRoleName(roleId: number): string {
 		default:
 			return 'Unknown';
 	}
+}
+
+export function handleNagigateCart() {
+	showLoading();
+	goto('/pages/cart');
+	hideLoading();
+}
+
+export function handleNagigateDashboard() {
+	showLoading();
+	goto('/pages/dasboard');
+	hideLoading();
 }
 
 export function setRoleId(roleName: string): number {

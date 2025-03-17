@@ -38,7 +38,7 @@
 
 		const data = {
 			name: formData.name,
-			username: formData.usuario,
+			username: formData.username,
 			mail: formData.email,
 			password: formData.password,
 			document: formData.document,

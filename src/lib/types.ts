@@ -26,6 +26,17 @@ export interface Product {
 	sku: string;
 }
 
+export interface CreditCard {
+	creditCardNumber: string;
+	creditCardName: string;
+	creditCardExpiration: string;
+	creditCardCvv: string;
+	installments: number;
+	installmentsMessage: string;
+	typeDocument: string;
+	document: string;
+}
+
 export interface ResponseProduct {
 	product: Product;
 }
@@ -45,22 +56,17 @@ export interface Address {
 export interface User {
 	user_id: number | null;
 	name: string;
-	password: string;
 	document: string;
 	phone: string;
-	role_id: number | null;
 	email: string;
-	full_name: string | null;
-	disabled: boolean | null;
-	addresses: Address[];
 }
 
 export interface Cart {
 	uuid: string;
-	affiliate: string;
-	coupon: string;
+	affiliate: string | null;
+	coupon: string | null;
 	discount: string;
-	freight_product_code: string;
+	freight_product_code?: string;
 	freight: Freight;
 	zipcode: string;
 	subtotal: string;
@@ -86,14 +92,30 @@ export interface CartItem {
 	discount_price: number;
 }
 
-// types/address.ts
 export interface CartAddress {
 	shipping_is_payment: boolean;
-	user_address_id: number | null;
-	shipping_address_id: number | null;
+	user_address_id?: number | null;
+	shipping_address_id?: number | null;
 	user_address: UserAddress;
 	shipping_address: ShippingAddress;
+	token: string | null;
 }
+
+export type BaseAddress = {
+	address_id: number | null;
+	user_id: number | null;
+	country: string;
+	city: string;
+	state: string;
+	neighborhood: string;
+	street: string;
+	street_number: string;
+	address_complement: string | null;
+	zipcode: string;
+	active: boolean;
+};
+
+export type ShippingAddress = BaseAddress | null;
 
 export interface UserAddress {
 	active: boolean;
@@ -109,7 +131,7 @@ export interface UserAddress {
 	zipcode: string;
 }
 
-export interface User {
+export interface UserData {
 	user_id: number | null;
 	name: string;
 	email: string;
@@ -132,7 +154,7 @@ export interface Payment {
 	pix_payment_id: number;
 	gateway_provider: string;
 	installments: number;
-	shipping_address_id: string;
+	shipping_address_id: number | null;
 	user_address_id: number;
 	shipping_is_payment: boolean;
 	subtotal_with_fee: number;
@@ -140,14 +162,11 @@ export interface Payment {
 }
 
 export interface CreditCardPayment {
-	creditCardNumber: string;
-	creditCardName: string;
-	creditCardExpiration: string;
-	creditCardCvv: string;
+	payment_gateway: string;
+	card_token: string;
+	card_issuer: string;
+	card_brand: string;
 	installments: number;
-	installmentsMessage: string;
-	typeDocument: string;
-	document: string;
 }
 
 export interface AddPixPaymentMethodResponse {
@@ -206,3 +225,48 @@ export type ProductItem = {
 	length?: number;
 	sku: string;
 };
+
+type Response<T> = {
+	success: boolean;
+	data?: T;
+	error?: string;
+};
+
+export interface CartPreview {
+	uuid: string;
+	affiliate: string;
+	cart_items: CartItem[];
+	coupon: string;
+	discount: string;
+	zipcode: string;
+	freight_product_code: string;
+	freight: Freight;
+	subtotal: string;
+	total: string;
+	user_data: UserData;
+	shipping_is_payment: boolean;
+	user_address_id: number;
+	shipping_address_id: number | null;
+	payment_method: string;
+	payment_method_id: string;
+	payment_intent: string | null;
+	customer_id: string;
+	card_token: string;
+	pix_qr_code: string | null;
+	pix_qr_code_base64: string | null;
+	pix_payment_id: string | null;
+	gateway_provider: string;
+	installments: number;
+	subtotal_with_fee: string;
+	total_with_fee: string;
+}
+
+export type CreditCardResponse = Response<Checkout>;
+export type PreviewResponse = Response<Checkout>;
+
+export interface Checkout extends Cart, Payment {
+	user_data: User;
+	shipping_is_payment: boolean;
+	user_address_id: number;
+	shipping_address_id: number | null;
+}

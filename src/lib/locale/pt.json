@@ -54,6 +54,11 @@
         "composition": "Composição",
         "howToUse": "Como usar"
     },
+    "pageNotFound": {
+        "notFound": "O produto que você digitou não existe ou a url fornecida está incorreta",
+        "tryAgain": "visite nossa página de início",
+        "home": "Voltar para página inicial"
+    },
     "cart": {
         "title": "Meu Carrinho",
         "empty": "Seu carrinho está vazio",
@@ -248,6 +253,8 @@
             "credit_card_number": "Número do cartão",
             "credit_card_name": "Nome impresso no cartão",
             "credit_card_validate": "Validade",
+            "type_card": "Tipo de documento",
+            "document": "Documento",
             "credit_card_cvv": "CVV",
             "installments": "Parcelas",
             "form": {
