@@ -2,11 +2,10 @@
 	import { _ } from 'svelte-i18n';
 	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
-	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
 
 	const logo = import.meta.env.VITE_URL_LOGO;
-
-	initializeStores();
 
 	let error = '';
 	let loading = false;
@@ -19,19 +18,6 @@
 		document: '',
 		phone: ''
 	};
-
-	const toastStore = getToastStore();
-
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message,
-			autohide: false,
-			hideDismiss: true,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
 
 	async function handleSignup(event: Event) {
 		event.preventDefault();
@@ -57,16 +43,16 @@
 
 			if (response.ok) {
 				const result = await response.json();
-				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${result.name}`, 'bg-primary-500');
+				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${result.name}`, 'success');
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
 				error = errorData.message || 'Erro ao realizar cadastro.';
-				showToast('Falha no cadastro. Tente novamente.', 'bg-red');
+				showToast('Falha no cadastro. Tente novamente.', 'error');
 			}
 		} catch (err) {
 			error = 'Erro de conexão. Tente novamente mais tarde.';
-			showToast(error, 'bg-red');
+			showToast(error, 'error');
 		} finally {
 			loading = false;
 		}
@@ -129,5 +115,5 @@
 		</div>
 	</div>
 
-	<Toast rounded="rounded-lg" position="tr" />
+	<Toaster position="top-right" />
 </div>

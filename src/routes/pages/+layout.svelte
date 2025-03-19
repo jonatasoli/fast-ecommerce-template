@@ -32,10 +32,12 @@
 	import PageHeader from '$lib/components/Navigation/Navigation.svelte';
 	import Footer from '$lib/components/Footer/Footer.svelte';
 	import Loading from '$lib/components/Loading/Loading.svelte';
-	import { isLoading } from '$lib/stores/loading';
+	import { hideLoading, isLoading, showLoading } from '$lib/stores/loading';
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 	import { goto } from '$app/navigation';
+	import { Toaster } from 'svelte-french-toast';
+	import { setSearchQuery } from '$lib/stores/search';
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
@@ -51,8 +53,15 @@
 
 	const drawerStore = getDrawerStore();
 
-	function doSearch() {
-		console.log(search);
+	function doSearch(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			showLoading();
+			setSearchQuery(search);
+
+			goto(`/pages/search?q=${encodeURIComponent(search)}`);
+
+			hideLoading();
+		}
 	}
 
 	function drawerOpen(): void {
@@ -107,6 +116,8 @@
 						<input
 							class="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-primary-500 rounded-l-lg py-2 transition duration-300 ease focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 shadow-sm focus:shadow"
 							placeholder={$_('header.type')}
+							bind:value={search}
+							on:keydown={doSearch}
 						/>
 						<button
 							class="flex items-center justify-center rounded-r-lg bg-transparent p-2 border border-primary-500 border-l-0 text-sm text-white transition-all shadow-sm hover:shadow focus:bg-primary-500 focus:shadow-none active:bg-primary-500 hover:bg-primary-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -127,6 +138,8 @@
 					<input
 						class="w-full bg-transparent placeholder:text-slate-400 text-white text-sm border border-primary-500 rounded-l-lg py-2 transition duration-300 ease focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 shadow-sm focus:shadow"
 						placeholder={$_('header.type')}
+						bind:value={search}
+						on:keydown={doSearch}
 					/>
 					<button
 						class="flex items-center justify-center rounded-r-lg bg-transparent p-2 border border-primary-500 border-l-0 text-sm text-white transition-all shadow-sm hover:shadow focus:bg-primary-500 focus:shadow-none active:bg-primary-500 hover:bg-primary-500 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -195,6 +208,7 @@
 	</svelte:fragment>
 
 	<Loading visible={$isLoading} />
+	<Toaster position="top-right" />
 
 	<slot />
 

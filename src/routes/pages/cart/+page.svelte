@@ -2,9 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { cartStore } from '$lib/stores/cart';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
-	import type { Cart, CartItem } from '$lib/types';
-	import { currencyFormat, currencyFormatFreight } from '$lib/utils';
-	import { getToastStore, Toast } from '@skeletonlabs/skeleton';
+	import type { CartItem } from '$lib/types';
+	import { currencyFormat, currencyFormatFreight, showToast } from '$lib/utils';
 	import { onDestroy } from 'svelte';
 	import { Banknotes, Minus, Plus, ShoppingCart, Trash } from 'svelte-heros-v2';
 	import { _ } from 'svelte-i18n';
@@ -14,22 +13,6 @@
 	let freight_product_code: string = 'PAC';
 	const cart = cartStore();
 	const freeText = $_('cart.free');
-	const toastStore = getToastStore();
-	function showToast(message: string) {
-		const t = {
-			message: `
-				<div class="flex items-center space-x-2 text-gray-700">
-					
-					<span>${message}</span>
-				</div>
-			`,
-			autohide: false,
-			hideDismiss: true,
-			classes: 'flex items-center bg-white shadow-sm'
-		};
-
-		toastStore.trigger(t);
-	}
 
 	let products: CartItem[] = [];
 
@@ -55,7 +38,7 @@
 		if (!res) {
 			coupon = '';
 			cart.updateCoupon(coupon);
-			showToast('Algo deu errado, tente novamente');
+			showToast('Algo deu errado, tente novamente', 'error');
 		}
 		hideLoading();
 	}
@@ -68,7 +51,7 @@
 		if (!res) {
 			zipcode = '';
 			cart.updateZipcode(zipcode, freight_product_code);
-			showToast('Algo deu errado, tente novamente...');
+			showToast('Algo deu errado, tente novamente...', 'error');
 		}
 	}
 
@@ -80,7 +63,7 @@
 		if (!res) {
 			coupon = '';
 			cart.updateCoupon(coupon);
-			showToast('Algo deu errado, tente novamente...');
+			showToast('Algo deu errado, tente novamente...', 'error');
 		}
 	}
 
@@ -330,7 +313,7 @@
 		</div>
 		<div></div>
 
-		<Toast position="tr" />
+		
 	</div>
 {:else}
 	<div class="flex flex-col items-center justify-center h-full">
