@@ -68,6 +68,12 @@
 		drawerStore.open({});
 	}
 
+	function handleOrders() {
+		showLoading();
+		goto('/pages/orders');
+		hideLoading();
+	}
+
 	function drawerClose(): void {
 		drawerStore.close();
 	}
@@ -182,9 +188,16 @@
 								</span>
 							</div>
 							<div class="flex flex-col text-slate-500 my-1 py-2">
-								<span class="hover:text-primary-500">Meus pedidos</span>
-								<span class="hover:text-primary-500"><a href="/pages/profile">Perfil</a></span>
-								<span class="hover:text-primary-500" on:click={logout}>Sair</span>
+								<span class="cursor-pointer hover:text-primary-500 transition-colors">
+									<a href="/pages/orders">Meus pedidos</a>
+								</span>
+								<span class="cursor-pointer hover:text-primary-500 transition-colors"
+									><a href="/pages/profile">Perfil</a></span
+								>
+								<span
+									class="cursor-pointer hover:text-primary-500 transition-colors"
+									on:click={logout}>Sair</span
+								>
 							</div>
 							<div class="arrow bg-surface-100-800-token"></div>
 						</div>

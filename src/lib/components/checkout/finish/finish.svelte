@@ -6,6 +6,7 @@
 	import { CheckCircle } from 'svelte-heros-v2';
 	import ModalPix from '../payment/modalPix/modalPix.svelte';
 	import { isOpenModal, showPixModal } from '$lib/stores/modalPix';
+	import { showToast } from '$lib/utils';
 
 	export let data: any;
 
@@ -34,7 +35,7 @@
 		if (!paymentType) return;
 
 		try {
-			if (paymentType === 'credit_cart') {
+			if (paymentType === 'CREDIT_CARD') {
 				const res = await cart.finishCheckout(data.token);
 
 				if (res.order_id) {
@@ -42,13 +43,13 @@
 
 					cart.clearCart();
 					cart.clearAffiliate();
-				} else {
-					checkout = false;
-					console.error('Erro ao finalizar o checkout:', res.message);
 				}
 			}
+			if (paymentType === 'PIX') {
+				showPixModal();
+			}
 		} catch (err) {
-			console.log('Erro ao finalizar o checkout:', err);
+			showToast('Erro ao finalizar o Checkout', 'error');
 		} finally {
 			hideLoading();
 			pending = false;
@@ -56,7 +57,6 @@
 	}
 	onMount(() => {
 		getPayment();
-		showPixModal();
 	});
 </script>
 
