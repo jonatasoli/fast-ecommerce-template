@@ -1,6 +1,7 @@
 import { goto } from '$app/navigation';
 import { CURRENCIES, LOCALES } from './enums';
 import { hideLoading, showLoading } from './stores/loading';
+import { toast } from 'svelte-french-toast';
 
 export function formatDocument(document: string) {
 	// Verifica se já está formatado (document no formato ###.###.###-##)
@@ -112,9 +113,18 @@ export function handleNagigateCart() {
 	hideLoading();
 }
 
+export function showToast(text: string, type: string) {
+	if (type === 'error') {
+		toast.error(text, { duration: 3000 });
+	}
+	if (type === 'success') {
+		toast.success(text);
+	}
+}
+
 export function handleNagigateDashboard() {
 	showLoading();
-	goto('/pages/dasboard');
+	goto('/pages/dashboard');
 	hideLoading();
 }
 

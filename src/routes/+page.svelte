@@ -8,6 +8,8 @@
 	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { loginSchema } from '$lib/schemas/login.js';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
 
 	initializeStores();
 
@@ -15,17 +17,6 @@
 	let error = '';
 	let username = '';
 	let password = '';
-	const toastStore = getToastStore();
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message: message,
-			autohide: false,
-			hideDismiss: true,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
 
 	async function handleLogin(formData: FormData) {
 		try {
@@ -42,7 +33,7 @@
 			const result = loginSchema.safeParse(data);
 
 			if (!result.success) {
-				showToast($_('login.invalid_data'), 'bg-red');
+				showToast($_('login.invalid_data'), 'error');
 				console.error('Erro na validação:', result.error.errors);
 				return;
 			}
@@ -57,7 +48,7 @@
 
 			if (!response.ok) {
 				const errorMessage = await response.text();
-				showToast($_('login.failure'), 'bg-red');
+				showToast($_('login.failure'), 'error');
 				console.error('Erro ao realizar login:', errorMessage);
 				return;
 			}
@@ -65,15 +56,15 @@
 			const res = await response.json();
 
 			if (res.success) {
-				showToast($_('login.success'), 'bg-primary-500');
+				showToast($_('login.success'), 'success');
 				goto('/pages/dashboard');
 			} else {
-				showToast($_('login.failure'), 'bg-primary-500');
+				showToast($_('login.failure'), 'error');
 				error = 'Falha ao fazer login, verifique suas credenciais.';
 				console.error('Falha ao fazer login:', res.message || 'Erro desconhecido.');
 			}
 		} catch (error) {
-			showToast($_('login.error'), 'bg-red');
+			showToast($_('login.error'), 'error');
 			console.error('Erro inesperado no login:', error);
 		}
 	}
@@ -161,6 +152,5 @@
 			</a>
 		</div>
 	</div>
-
-	<Toast rounded="rounded-lg" position="tr" />
+	<Toaster position="top-right" />
 </div>
