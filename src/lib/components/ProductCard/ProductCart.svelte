@@ -3,7 +3,7 @@
 	import { currencyFormat } from '$lib/utils';
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
-	import type { Cart, CartItem, Product, ProductItem } from '$lib/types';
+	import type { CartItem } from '$lib/types';
 
 	export let latestProducts;
 	export let columns = 'xl:grid-cols-4';
