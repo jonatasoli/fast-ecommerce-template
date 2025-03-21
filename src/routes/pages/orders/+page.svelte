@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { getStatusTranslation } from '$lib/utils.js';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
+	import { getStatusTranslation, showToast } from '$lib/utils';
+	import { onMount } from 'svelte';
+	const BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
 
 	export let data;
 
-	const orders = data.orders;
+	let orders = data.orders;
 
 	function statusColor(status: string) {
 		return status === 'PAYMENT_PENDING' ? 'text-primary-600' : 'text-green-600';
@@ -13,6 +16,32 @@
 		const date = new Date(dateString);
 		return new Intl.DateTimeFormat('pt-BR').format(date);
 	}
+
+	async function getOrders() {
+		try {
+			showLoading();
+			const res = await fetch(`${BASE_URL}/order/user/${data.user.user_id}`, {
+				headers: {
+					Authorization: `Bearer ${data.token}`
+				}
+			});
+
+			if (!res.ok) {
+				throw new Error('Falha ao buscar pedidos');
+			}
+
+			const ordersData = await res.json();
+			orders = ordersData;
+		} catch (err) {
+			showToast('Falha ao Buscar Pedidos', 'error');
+		} finally {
+			hideLoading();
+		}
+	}
+
+	onMount(() => {
+		getOrders();
+	});
 </script>
 
 <div class="flex flex-col items-center gap-4 p-4">

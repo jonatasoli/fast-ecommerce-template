@@ -53,8 +53,10 @@
   "dependencies": {
     "@floating-ui/dom": "1.6.11",
     "@mercadopago/sdk-js": "^0.0.3",
+    "cpf-cnpj-validator": "^1.0.3",
     "dompurify": "^3.2.3",
     "highlight.js": "11.10.0",
+    "inputmask": "^5.0.9",
     "svelte-flatpickr": "^3.3.5",
     "svelte-french-toast": "^1.2.0",
     "svelte-heros-v2": "^1.3.0",
