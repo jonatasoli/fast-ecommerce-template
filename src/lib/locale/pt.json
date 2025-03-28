@@ -46,6 +46,14 @@
             "treatments": "Tratamentos"
         }
     },
+    "orderPage": {
+        "myOrder": "Meus pedidos",
+        "order": "Pedido",
+        "status": "Status:",
+        "date": "Data:",
+        "unitValue": "Valor unitário:",
+        "quantity": "Quantidade"
+    },
     "productPage": {
         "installments": "em até {count} de {amount} sem juros",
         "variants": "Selecione uma opção:"
@@ -70,7 +78,8 @@
         "products": {
             "title": "Produto",
             "quantity": "Quantidade",
-            "unitPrice": "Preço Unitário"
+            "price": "Preço",
+            "action": "Ação"
         },
         "summary": {
             "products": "Produtos",
@@ -81,7 +90,8 @@
         "inputs": {
             "shipping": {
                 "title": "Insira seu CEP para calcular o frete e o prazo de entrega",
-                "buttonText": "Calcular"
+                "buttonText": "Calcular",
+                "placeholderShipping": "Informe seu CEP"
             },
             "discount": {
                 "title": "Cupom de desconto",
@@ -89,8 +99,12 @@
             }
         },
         "freight": {
-            "part1": "Entrega - até",
-            "part2": "dias úteis"
+            "delivery_time": "Entrega - até {days} dias úteis",
+            "send": "Envio para todo o Brasil",
+            "typeSend": {
+                "type1": "PAC",
+                "type2": "SEDEX"
+            }
         }
     },
     "login": {
