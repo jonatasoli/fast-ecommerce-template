@@ -92,20 +92,20 @@
 		<div class="border border-gray-300 p-4 flex flex-col gap-2 rounded-lg">
 			<div class="text-primary-500 flex items-center gap-2">
 				<Banknotes size="35" />
-				<h3 class="text-lg font-semibold text-primary-500">Cupom de desconto</h3>
+				<h3 class="text-lg font-semibold text-primary-500">{$_('cart.inputs.discount.title')}</h3>
 			</div>
 
 			<div class="flex items-center gap-4 my-7">
 				<input
 					type="text"
-					placeholder="Cupom de desconto"
+					placeholder={$_('cart.inputs.discount.title')}
 					bind:value={coupon}
 					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 				/>
 
 				<button
 					class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out"
-					on:click={estimateCoupon}>Adicionar</button
+					on:click={estimateCoupon}>{$_('cart.inputs.discount.buttonText')}</button
 				>
 			</div>
 		</div>
@@ -115,28 +115,30 @@
 			<div class="text-primary-500 flex items-center gap-2">
 				<ShoppingCart size="50" />
 				<h3 class="text-lg font-semibold text-primary-500">
-					Insira seu CEP para calcular o frete e o prazo de entrega
+					{$_('cart.inputs.shipping.title')}
 				</h3>
 			</div>
 
 			<div class="flex items-center gap-4 my-7">
 				<input
 					type="text"
-					placeholder="Informe seu CEP"
+					placeholder={$_('cart.inputs.shipping.placeholderShipping')}
 					bind:value={zipcode}
 					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 				/>
 
 				<button
 					class="py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-400 transition-all duration-200 ease-in-out active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-					on:click={estimate}>Calcular</button
+					on:click={estimate}>{$_('cart.inputs.shipping.buttonText')}</button
 				>
 			</div>
 
 			{#if freight}
 				<div class="flex items-center justify-between my-3">
-					<span class="text-sm font-bold"
-						>Entrega - até {$cart.freight.delivery_time} dias úteis</span
+					<span class="text-sm font-bold">
+						{$_('cart.freight.delivery_time', {
+							values: { days: $cart.freight.delivery_time }
+						})}</span
 					>
 					<span class="text-sm font-bold"
 						>{currencyFormatFreight(Number($cart.freight.price), freeText)}</span
@@ -145,7 +147,7 @@
 			{/if}
 
 			<div class="flex items-center justify-between">
-				<span class="text-sm">Envio para todo o Brasil</span>
+				<span class="text-sm">{$_('cart.freight.send')}</span>
 				<div class="flex items-center">
 					<label class="flex items-center space-x-2 mx-2">
 						<input
@@ -155,7 +157,7 @@
 							value="PAC"
 							bind:group={freight_product_code}
 						/>
-						<p class="font-normal text-sm">PAC</p>
+						<p class="font-normal text-sm">{$_('cart.freight.typeSend.type1')}</p>
 					</label>
 					<label class="flex items-center space-x-2">
 						<input
@@ -165,7 +167,7 @@
 							value="SEDEX"
 							bind:group={freight_product_code}
 						/>
-						<p class="font-normal text-sm">SEDEX</p>
+						<p class="font-normal text-sm">{$_('cart.freight.typeSend.type2')}</p>
 					</label>
 				</div>
 			</div>
@@ -176,7 +178,7 @@
 		<div
 			class="flex flex-col items-center justify-center border border-gray-300 p-4 gap-2 rounded-lg"
 		>
-			<h1 class="text-2xl font-bold my-5">Meu Carrinho</h1>
+			<h1 class="text-2xl font-bold my-5">{$_('cart.title')}</h1>
 
 			<div class="overflow-x-auto w-full">
 				<table class="w-full bg-white border border-gray-200 rounded-lg">
@@ -184,20 +186,20 @@
 						<tr class="bg-gray-100 border-b">
 							<th
 								class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
-								>Produto</th
+								>{$_('cart.products.title')}</th
 							>
 
 							<th
 								class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
-								>Quantidade</th
+								>{$_('cart.products.quantity')}</th
 							>
 							<th
 								class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700 hidden sm:table-cell"
-								>Preço</th
+								>{$_('cart.products.price')}</th
 							>
 							<th
 								class="px-4 py-2 sm:px-6 sm:py-3 text-left text-xs sm:text-sm font-medium text-gray-700"
-								>Ação</th
+								>{$_('cart.products.action')}</th
 							>
 						</tr>
 					</thead>
@@ -282,7 +284,7 @@
 			{/if}
 
 			<div class="flex justify-between w-full my-3">
-				<span class="text-sm font-sans">Frete</span><span
+				<span class="text-sm font-sans">{$_('cart.summary.shipping')}</span><span
 					>{$cart.freight
 						? currencyFormatFreight(Number($cart.freight.price), freeText)
 						: 'R$ 0,00'}</span
@@ -292,7 +294,7 @@
 			<hr class="w-full border-t-2 !border-gray-300" />
 
 			<div class="flex justify-between w-full my-3">
-				<h3 class="text-lg font-semibold">Total</h3>
+				<h3 class="text-lg font-semibold">{$_('cart.summary.total')}</h3>
 
 				<h3 class="text-lg font-semibold">{currencyFormat(Number($cart.total))}</h3>
 			</div>
@@ -302,25 +304,23 @@
 				on:click={handleCheckout}
 				disabled={!freight}
 			>
-				Finalizar Compra
+				{$_('cart.finish')}
 			</button>
 
 			<a href="/pages/dashboard"
 				><span class="text-primary-700 font-bold cursor-pointer my-3 underline"
-					>Continuar comprando</span
+					>{$_('cart.continue')}</span
 				>
 			</a>
 		</div>
 		<div></div>
-
-		
 	</div>
 {:else}
 	<div class="flex flex-col items-center justify-center h-full">
 		<h3>Seu carrinho está vazio</h3>
 		<button
 			class="font-bold flex justify-center items-center bg-white text-primary-500 hover:bg-primary-200 transition rounded-full px-4 py-2"
-			><a href="/pages/dashboard">Continuar Comprando</a></button
+			><a href="/pages/dashboard">{$_('cart.continue')}</a></button
 		>
 	</div>
 {/if}
