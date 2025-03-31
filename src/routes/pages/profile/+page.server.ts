@@ -5,7 +5,7 @@ import { json, redirect } from '@sveltejs/kit';
 export const load = async ({ cookies }) => {
 	const token = cookies.get('access_token');
 	const document = cookies.get('userDocument');
-
+	const i18nRedirected = cookies.get('i18n_redirected') || null;
 	if (!token) {
 		throw redirect(302, '/');
 	}
@@ -24,7 +24,8 @@ export const load = async ({ cookies }) => {
 		const user = await res.json();
 		return {
 			token,
-			user
+			user,
+			i18nRedirected
 		};
 	} catch (error) {
 		console.error('Error fetching categories:', error);

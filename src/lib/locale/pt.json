@@ -211,6 +211,7 @@
             "email": "E-mail",
             "phone": "Telefone",
             "address": "Endereço",
+            "locale": "Locale",
             "zipcode": "CEP",
             "login": {
                 "part1": "Faça seu",

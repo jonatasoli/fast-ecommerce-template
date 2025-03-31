@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { hideLoading, showLoading } from '$lib/stores/loading';
 	import type { User } from '$lib/types';
+	import { locales } from '$lib/utils.js';
 	import { _ } from 'svelte-i18n';
 	export let data;
+
 	let user: User = {
 		user_id: 0,
 		name: '',
@@ -37,6 +39,12 @@
 		hideLoading();
 		return address.join(', ');
 	}
+
+	function changeLanguage(event: Event) {
+		const selectedLang = (event.target as HTMLSelectElement).value;
+		document.cookie = `i18n_redirected=${selectedLang}; path=/; max-age=31536000`;
+		location.reload();
+	}
 </script>
 
 <div class="p-4 flex flex-col max-w-2xl mx-auto">
@@ -56,7 +64,7 @@
 				type="text"
 				bind:value={user.user_id}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -69,7 +77,7 @@
 				type="text"
 				bind:value={user.name}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -82,7 +90,7 @@
 				type="text"
 				bind:value={user.document}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -95,7 +103,7 @@
 				type="text"
 				bind:value={user.phone}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -108,7 +116,7 @@
 				type="text"
 				bind:value={user.email}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -121,7 +129,7 @@
 				type="text"
 				value={getAddress()}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
 		</div>
 
@@ -134,8 +142,24 @@
 				type="text"
 				bind:value={user.addresses[0].zipcode}
 				readonly
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			/>
+		</div>
+
+		<div>
+			<label for="language" class="block mb-1 font-medium text-sm text-gray-700"
+				>Escolha o idioma:</label
+			>
+			<select
+				id="language"
+				on:change={changeLanguage}
+				bind:value={data.i18nRedirected}
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+			>
+				{#each locales as locale}
+					<option value={locale.value}>{locale.name}</option>
+				{/each}
+			</select>
 		</div>
 
 		<div class="flex flex-col mt-4 w-full md:flex md:flex-row md:justify-end">
