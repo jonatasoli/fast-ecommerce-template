@@ -1,46 +1,35 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
 	import { ChevronRight } from 'svelte-heros-v2';
-	import { goto } from '$app/navigation';
-	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { hideLoading, showLoading } from '$lib/stores/loading';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
+	import { onMount } from 'svelte';
+	import Inputmask from 'inputmask';
 
 	const logo = import.meta.env.VITE_URL_LOGO;
 	const BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
 
-	initializeStores();
-
 	let error = '';
-	let loading = false;
 	let document = '';
 	let success = '';
-
-	const toastStore = getToastStore();
-
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message,
-			autohide: true,
-			timeout: 5000,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
+	let inputRef: HTMLInputElement | null = null;
 
 	async function handleRequestResetPassword(event: Event) {
 		event.preventDefault();
 
 		if (!document || document.trim().length < 11) {
 			error = 'Por favor, insira um CPF válido (11 dígitos)';
-			showToast(error, 'bg-red-500');
+			showToast(error, 'error');
 			return;
 		}
+
+		let data = document.replace(/\D/g, '');
 
 		try {
 			showLoading();
 			const response = await fetch(
-				`${BASE_URL}/user/request-reset-password?document=${encodeURIComponent(document)}`,
+				`${BASE_URL}/user/request-reset-password?document=${encodeURIComponent(data)}`,
 				{
 					method: 'POST',
 					headers: {
@@ -51,19 +40,26 @@
 
 			if (response.ok) {
 				success = 'Link de recuperação enviado com sucesso!';
-				showToast('Enviamos um link de recuperação para seu e-mail cadastrado.', 'bg-green-500');
+				showToast('Enviamos um link de recuperação para seu e-mail cadastrado.', 'success');
 			} else {
 				const errorData = await response.json();
 				error = errorData.detail?.[0]?.msg || 'Não encontramos este CPF em nosso sistema.';
-				showToast(error, 'bg-red-500');
+				showToast(error, 'error');
 			}
 		} catch (err) {
 			error = 'Erro ao conectar com o servidor. Tente novamente.';
-			showToast(error, 'bg-red-500');
+			showToast(error, 'error');
 		} finally {
 			hideLoading();
 		}
 	}
+
+	onMount(() => {
+		if (inputRef) {
+			const mask = new Inputmask('999.999.999-99');
+			mask.mask(inputRef);
+		}
+	});
 </script>
 
 <div
@@ -88,11 +84,10 @@
 					id="document"
 					name="document"
 					bind:value={document}
+					bind:this={inputRef}
 					placeholder="000.000.000-00"
 					class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-400 transition duration-200"
 					type="text"
-					inputmode="numeric"
-					maxlength="11"
 				/>
 			</div>
 
@@ -128,5 +123,5 @@
 		</div>
 	</div>
 
-	<Toast position="tr" />
+	<Toaster position="top-right" />
 </div>
