@@ -3,6 +3,7 @@
 	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
 	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { hideLoading, showLoading } from '$lib/stores/loading';
 
 	const logo = import.meta.env.VITE_URL_LOGO;
 
@@ -12,18 +13,7 @@
 	let loading = false;
 	let document = '';
 
-	const toastStore = getToastStore();
-
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message,
-			autohide: true,
-			timeout: 5000,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
+	
 
 	async function handleRequestResetPassword(event: Event) {
 		event.preventDefault();
@@ -36,7 +26,7 @@
 		}
 
 		try {
-			loading = true;
+			showLoading();
 			const response = await fetch('/user/request-reset-password', {
 				method: 'POST',
 				body: JSON.stringify({ document }),
@@ -57,12 +47,14 @@
 			error = 'Erro ao conectar com o servidor. Tente novamente.';
 			showToast(error, 'bg-red-500');
 		} finally {
-			loading = false;
+			hideLoading();
 		}
 	}
 </script>
 
-<div class="request-reset-password flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 bg-gray-50">
+<div
+	class="request-reset-password flex flex-col items-center justify-center min-h-screen px-4 sm:px-8 bg-gray-50"
+>
 	<a href="/" class="mb-8">
 		<img src={logo} alt="Logo" width="220" class="hover:opacity-90 transition-opacity" />
 	</a>
@@ -87,7 +79,6 @@
 					type="text"
 					inputmode="numeric"
 					maxlength="11"
-					pattern="\d{11}"
 				/>
 			</div>
 
@@ -103,9 +94,19 @@
 				disabled={loading}
 			>
 				{#if loading}
-					<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-						<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+					<svg
+						class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+						></circle>
+						<path
+							class="opacity-75"
+							fill="currentColor"
+							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+						></path>
 					</svg>
 					Enviando...
 				{:else}
@@ -115,7 +116,10 @@
 		</form>
 
 		<div class="mt-6 pt-5 border-t border-gray-200">
-			<a href="/auth/login" class="flex items-center justify-center text-primary-500 hover:text-primary-600 font-medium text-sm">
+			<a
+				href="/auth/login"
+				class="flex items-center justify-center text-primary-500 hover:text-primary-600 font-medium text-sm"
+			>
 				<ChevronRight class="w-4 h-4 transform rotate-180 mr-1" />
 				Voltar para o login
 			</a>

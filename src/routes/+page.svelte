@@ -143,14 +143,15 @@
 		</form>
 
 		<div class="mt-4 flex flex-col items-center gap-4">
-			<button
-				class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primary-400 transition rounded-full px-4 py-2"
-				on:click={handleForgotPassword}
-			>
-				{$_('login.forgotPassword')}
-				<ChevronRight class="w-5 h-5 " />
-			</button>
-
+			<a href="/forgot-password" class="block w-full">
+				<button
+					class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primary-400 transition rounded-full px-4 py-2"
+					on:click={handleForgotPassword}
+				>
+					{$_('login.forgotPassword')}
+					<ChevronRight class="w-5 h-5 " />
+				</button>
+			</a>
 			<a href="/register" class="block w-full">
 				<button
 					class="font-bold w-full flex justify-center items-center bg-white text-primary-500 hover:bg-primary-400 transition rounded-full px-4 py-2"
