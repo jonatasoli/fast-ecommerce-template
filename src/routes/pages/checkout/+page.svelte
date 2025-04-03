@@ -39,8 +39,10 @@
 </script>
 
 <div class="flex flex-col items-center h-full p-4">
-	<!-- Barra de Progresso dos Passos -->
-	<div class="hidden sm:flex items-center w-full text-sm text-gray-500 font-medium sm:text-base">
+	
+	<div
+		class="hidden sm:flex w-full h-full mt-8 sm:w-3/4 items-center justify-center text-sm text-gray-500 font-medium sm:text-base"
+	>
 		{#each steps as step, index}
 			<li class="flex items-center justify-between w-full">
 				<div class="flex items-center whitespace-nowrap">

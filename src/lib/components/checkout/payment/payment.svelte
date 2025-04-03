@@ -10,8 +10,9 @@
 	import 'flatpickr/dist/flatpickr.css';
 	import 'flatpickr/dist/plugins/monthSelect/style.css';
 	import 'flatpickr/dist/themes/confetti.css';
-	import { splitDate } from '$lib/utils';
+	import { convertToSmallestUnit, splitDate } from '$lib/utils';
 	import { paymentMethod } from '$lib/stores/paymentStore';
+	import { getStripeInstallments } from '$lib/plugins/stripe';
 
 	type PaymentMethod = 'credit_card' | 'pix';
 	export let data: any;
@@ -30,7 +31,7 @@
 	let creditCardBrand: string = '';
 	const groupName = 'select-group';
 	let selectedInstallments: number = 0;
-	let credit_card_number = '5031433215406351';
+	let credit_card_number = '5555555555554444';
 	let credit_card_name = 'APRO';
 	let type_document = 'CPF';
 	let document = '12345678909';
@@ -57,22 +58,39 @@
 	};
 
 	async function getInstallments() {
-		showLoading();
-		const res: any = await mercadoPagoService.getInstallments({
-			amount: $cart.total,
-			bin: credit_card_number,
-			paymentTypeId: 'credit_card'
-		});
+		console.log(data);
 
-		const { payer_costs: payerCosts } = res[0];
-		const options = payerCosts.map((payerCost: any) => ({
-			label: payerCost.recommended_message,
-			value: payerCost.installments
-		}));
+		optionInstallments = []; // Sempre limpa antes de popular
 
-		optionInstallments = options;
-		creditCardBrand = res[0].payment_method_id;
-		hideLoading();
+		try {
+			showLoading();
+
+			if (data.i18nRedirected === 'pt-br') {
+				const res: any = await mercadoPagoService.getInstallments({
+					amount: $cart.total,
+					bin: credit_card_number,
+					paymentTypeId: 'credit_card'
+				});
+
+				const { payer_costs: payerCosts } = res[0];
+
+				optionInstallments = payerCosts.map((payerCost: any) => ({
+					label: payerCost.recommended_message,
+					value: payerCost.installments
+				}));
+
+				creditCardBrand = res[0].payment_method_id;
+			} else if (data.i18nRedirected === 'en-US') {
+				optionInstallments = Array.from({ length: 12 }, (_, i) => ({
+					label: `${i + 1}x sem juros`,
+					value: i + 1
+				}));
+			}
+		} catch (error) {
+			console.error('Erro ao obter parcelas:', error);
+		} finally {
+			hideLoading();
+		}
 	}
 
 	function getRecommendedMessage(
@@ -123,9 +141,45 @@
 		hideLoading();
 	}
 
+	async function createStripePayment() {
+		const message = getRecommendedMessage(selectedInstallments, optionInstallments);
+		try {
+			showLoading();
+			await cart.addMercadoPagoCreditCardPayment({
+				payment_gateway: 'STRIPE',
+				number: card.cardNumber,
+				exp_month: Number(card.cardExpirationMonth),
+				exp_year: Number(card.cardExpirationYear),
+				cvc: card.securityCode,
+				name: card.cardholderName,
+				installments: selectedInstallments
+			});
+
+			cart.setPaymentCreditCard({
+				creditCardNumber: card.cardNumber,
+				creditCardName: card.cardholderName,
+				creditCardExpiration: `${card.cardExpirationMonth}/${card.cardExpirationYear}`,
+				creditCardCvv: card.securityCode,
+				installments: selectedInstallments || 0,
+				installmentsMessage: message || '',
+				typeDocument: card.identificationType,
+				document: card.identificationNumber
+			});
+
+			nextStep();
+		} catch {
+		} finally {
+			hideLoading();
+		}
+	}
+
 	function handleSubmit() {
 		if ($paymentMethod === 'credit_card') {
-			createCardToken();
+			if (data.i18nRedirected === 'pt-br') {
+				createCardToken();
+			} else if (data.i18nRedirected === 'en-US') {
+				createStripePayment();
+			}
 		}
 
 		if ($paymentMethod === 'pix') {
@@ -141,7 +195,7 @@
 		</div>
 
 		<div
-			class="p-3 flex w-full sm:w-3/4 border border-gray-300 gap-2 rounded-lg justify-center font-semibold text-base"
+			class="p-3 flex w-full sm:w-3/4 border border-gray-300 text-gray-600 gap-2 rounded-lg justify-center font-semibold text-base"
 		>
 			<label class="flex items-center space-x-2 mx-2">
 				<input
@@ -166,7 +220,7 @@
 		</div>
 		{#if $paymentMethod === 'credit_card'}
 			<div
-				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
+				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 text-gray-600 flex flex-col gap-2 rounded-lg"
 			>
 				<div>
 					<label for="credit_card_number" class="block mb-1 font-medium text-sm text-gray-700"
@@ -177,7 +231,7 @@
 						type="text"
 						bind:value={credit_card_number}
 						on:blur={getInstallments}
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 					/>
 				</div>
 
@@ -189,7 +243,7 @@
 						id="credit_card_name"
 						type="text"
 						bind:value={credit_card_name}
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 					/>
 				</div>
 
@@ -201,7 +255,7 @@
 					<select
 						id="select"
 						bind:value={type_document}
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 					>
 						{#each optionsDocuments as option}
 							<option
@@ -223,7 +277,7 @@
 						type="text"
 						bind:value={document}
 						readonly
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 					/>
 				</div>
 
@@ -241,7 +295,7 @@
 								bind:formattedValue
 								placeholder="selecione uma data"
 								name="date"
-								class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+								class="w-full border border-gray-300  text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 							/>
 						</div>
 					</div>
@@ -254,7 +308,7 @@
 							id="cvv"
 							type="text"
 							value={cvv}
-							class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
+							class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 						/>
 					</div>
 				</div>
@@ -266,7 +320,7 @@
 					<select
 						id="select"
 						bind:value={selectedInstallments}
-						class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+						class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 						disabled={!optionInstallments.length}
 					>
 						{#each optionInstallments as option}
@@ -282,7 +336,7 @@
 			</div>
 		{:else if $paymentMethod === 'pix'}
 			<div
-				class="p-3 space-y-4 w-full items-center sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg"
+				class="p-3 space-y-4 w-full items-center sm:w-3/4 border border-gray-300 text-gray-600 flex flex-col gap-2 rounded-lg"
 			>
 				<h2 class="text-lg font-semibold text-primary-500">PIX com QR code</h2>
 			</div>
