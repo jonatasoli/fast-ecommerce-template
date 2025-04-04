@@ -59,6 +59,15 @@
         "tryAgain": "visite nossa página de início",
         "home": "Voltar para página inicial"
     },
+    "buttons": {
+        "edit": "Editar",
+        "save": "Salvar"
+    },
+    "profile": {
+        "myOrders": "Meus pedidos",
+        "myProfile": "Perfil",
+        "outProfile": "Sair"
+    },
     "cart": {
         "title": "Meu Carrinho",
         "empty": "Seu carrinho está vazio",
@@ -70,7 +79,8 @@
         "products": {
             "title": "Produto",
             "quantity": "Quantidade",
-            "unitPrice": "Preço Unitário"
+            "price": "Preço",
+            "action": "Ação"
         },
         "summary": {
             "products": "Produtos",
@@ -81,6 +91,7 @@
         "inputs": {
             "shipping": {
                 "title": "Insira seu CEP para calcular o frete e o prazo de entrega",
+                "content": "Informe seu CEP",
                 "buttonText": "Calcular"
             },
             "discount": {
@@ -89,8 +100,16 @@
             }
         },
         "freight": {
-            "part1": "Entrega - até",
-            "part2": "dias úteis"
+            "deliveryTime": "Entrega - até {delivery} dias úteis",
+            "send": "Envio para todo o Brasil",
+            "typeSend": {
+                "type1": "PAC",
+                "type2": "SEDEX"
+            }
+        },
+        "notification": {
+            "success": "ok",
+            "error": "Algo deu errado, tente novamente..."
         }
     },
     "login": {
@@ -169,7 +188,7 @@
         },
         "notification": {
             "success": {
-                "title": "Cadastro realizado com sucesso",
+                "title": "Cadastro realizado com sucesso! Bem-vindo, {result}",
                 "content": "Você já pode realizar o login"
             },
             "error": {
@@ -211,6 +230,7 @@
             "email": "E-mail",
             "phone": "Telefone",
             "address": "Endereço",
+            "locale": "Locale",
             "zipcode": "CEP",
             "login": {
                 "part1": "Faça seu",

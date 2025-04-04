@@ -43,12 +43,17 @@
 
 			if (response.ok) {
 				const result = await response.json();
-				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${result.name}`, 'success');
+				showToast(
+					$_('register.notification.success.title', {
+						values: result.name
+					}),
+					'success'
+				);
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
 				error = errorData.message || 'Erro ao realizar cadastro.';
-				showToast('Falha no cadastro. Tente novamente.', 'error');
+				showToast($_('register.notification.error.content'), 'error');
 			}
 		} catch (err) {
 			error = 'Erro de conexão. Tente novamente mais tarde.';
