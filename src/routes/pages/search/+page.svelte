@@ -17,7 +17,11 @@
 </script>
 
 <div class="flex flex-col justify-start items-center text-center mb-12 mt-8">
-	<h1 class="text-lg sm:text-3xl font-semibold text-primary-500">Resultados para : {$searchQuery}</h1>
+	<h1 class="text-lg sm:text-3xl font-semibold text-primary-500">
+		{$_('search.title', {
+			values: { search: $searchQuery }
+		})}
+	</h1>
 	<ProductCart {latestProducts} columns="md:grid-cols-3" />
 
 	<Pagination {currentPage} {totalPages} onPageChange={handlePageChange} />

@@ -166,13 +166,13 @@
 			<button
 				class="md:w-28 w-full py-2 px-4 md:mx-3 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all duration-200 ease-in-out"
 			>
-				Editar
+				{$_('buttons.edit')}
 			</button>
 
 			<button
 				class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all duration-200 ease-in-out"
 			>
-				Salvar
+			{$_('buttons.save')}
 			</button>
 		</div>
 	</div>
