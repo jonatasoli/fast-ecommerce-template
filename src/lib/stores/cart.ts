@@ -6,6 +6,7 @@ import type {
 	CreditCardPayment,
 	Payment,
 	ShippingAddress,
+	StripeCreditCardPayment,
 	User,
 	UserAddress
 } from '$lib/types';
@@ -133,6 +134,8 @@ export function cartStore() {
 			};
 		});
 	}
+
+	async function stripePayment() {}
 
 	function updateZipcode(newZipcode: string, freightProductCode: string) {
 		cart.update((state) => ({
@@ -413,7 +416,9 @@ export function cartStore() {
 		};
 	}
 
-	async function addMercadoPagoCreditCardPayment(payment: CreditCardPayment) {
+	async function addMercadoPagoCreditCardPayment(
+		payment: CreditCardPayment | StripeCreditCardPayment
+	) {
 		try {
 			const uuid = get(cart).uuid;
 			const currentCart = get(cart);
@@ -608,6 +613,7 @@ export function cartStore() {
 	return {
 		subscribe: cart.subscribe,
 		createCart,
+		stripePayment,
 		getPaymentCreditCard,
 		getPaymentType,
 		getPaymentPix,
