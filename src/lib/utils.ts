@@ -48,6 +48,10 @@ export const locales = [
 	{ name: 'Finlandês (Finlândia)', value: 'fi-FI', isDefault: false }
 ];
 
+export function convertToSmallestUnit(amount: number): number {
+	return Math.round(amount * 100); // Multiplica por 100 para converter para centavos
+}
+
 export function generateURI(productName: string) {
 	return productName
 		.toString()

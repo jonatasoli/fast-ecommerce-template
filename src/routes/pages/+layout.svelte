@@ -189,14 +189,20 @@
 							</div>
 							<div class="flex flex-col text-slate-500 my-1 py-2">
 								<span class="cursor-pointer hover:text-primary-500 transition-colors">
-									<a href="/pages/orders">Meus pedidos</a>
+									<a href="/pages/orders">{$_('profile.myOrders')}</a>
 								</span>
 								<span class="cursor-pointer hover:text-primary-500 transition-colors"
-									><a href="/pages/profile">Perfil</a></span
+									><a href="/pages/profile">{$_('profile.myProfile')}</a></span
 								>
 								<span
+									role="button"
+									tabindex="0"
+									on:keydown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') logout();
+									}}
+									on:click={logout}
 									class="cursor-pointer hover:text-primary-500 transition-colors"
-									on:click={logout}>Sair</span
+									>{$_('profile.outProfile')}</span
 								>
 							</div>
 							<div class="arrow bg-surface-100-800-token"></div>

@@ -16,7 +16,7 @@
 
 	$: currentAddress = $address.user_address;
 
-	let CreditCard: CreditCard = {
+	let creditCardInfo: CreditCard = {
 		creditCardNumber: '',
 		creditCardName: '',
 		creditCardExpiration: '',
@@ -30,7 +30,7 @@
 	async function getMercadoPagoMessage() {
 		const res = await cart.getPaymentCreditCard();
 
-		CreditCard = res;
+		creditCardInfo = res;
 	}
 	async function getCartPreview() {
 		const res = await cart.getCartPreview(data.token);
@@ -107,9 +107,9 @@
 					<div class="flex flex-col gap-2">
 						<h3 class="text-base font-semibold text-primary-500">Pagamento</h3>
 						{#if cartPreview?.payment_method === 'credit_card'}
-							<span>{CreditCard.creditCardName}</span>
+							<span>{creditCardInfo.creditCardName}</span>
 							<span>****** {cartPreview?.payment_method_id.slice(-4)}</span>
-							<span>{CreditCard.installmentsMessage}</span>
+							<span>{creditCardInfo.installmentsMessage}</span>
 						{:else if cartPreview?.payment_method === 'pix'}
 							<div class="flex gap-2 justify-center items-center">
 								<img src={pixLogo} alt="pixLogo" />

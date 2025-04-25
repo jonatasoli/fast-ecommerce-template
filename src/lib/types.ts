@@ -169,6 +169,27 @@ export interface CreditCardPayment {
 	installments: number;
 }
 
+export type PaymentGateway = 'STRIPE' | 'MERCADO_PAGO' | 'PAYPAL';
+
+export interface BaseCreditCardPayment {
+	payment_gateway: PaymentGateway;
+	installments: number;
+}
+
+export interface MercadoPagoCreditCardPayment extends BaseCreditCardPayment {
+	card_token: string;
+	card_issuer: string;
+	card_brand: string;
+}
+
+export interface StripeCreditCardPayment extends BaseCreditCardPayment {
+	number: string;
+	exp_month: number;
+	exp_year: number;
+	cvc: string;
+	name: string;
+}
+
 export interface AddPixPaymentMethodResponse {
 	success: boolean;
 	data: {
