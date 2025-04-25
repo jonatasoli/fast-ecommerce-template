@@ -25,7 +25,7 @@
     "@skeletonlabs/tw-plugin": "0.4.0",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/adapter-node": "^5.2.12",
-    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/kit": "^2.20.6",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@tailwindcss/forms": "0.5.9",
     "@tailwindcss/typography": "0.5.15",
@@ -45,9 +45,13 @@
     "tslib": "^2.4.1",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0-alpha.20",
-    "vite": "^5.0.3",
+    "vite": "^5.2.0",
     "vite-plugin-tailwind-purgecss": "0.3.3",
     "vitest": "^1.6.1"
+  },
+  "resolutions": {
+    "esbuild": "^0.25.0",
+    "cookie": "^0.7.0"
   },
   "type": "module",
   "dependencies": {
