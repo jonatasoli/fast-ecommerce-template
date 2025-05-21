@@ -1,10 +1,13 @@
 import { VITE_SERVER_BASE_URL } from '$env/static/private';
+import { detectCurrencyByLocale } from '$lib/utils';
 import { json } from '@sveltejs/kit';
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ params, cookies }) => {
 	const token = cookies.get('access_token');
 	const category = params.category || '';
 	const offset = 10;
+	const locale = cookies.get('i18n_redirected') || 'pt-BR';
+	const currency = detectCurrencyByLocale(locale);
 
 	if (!token) {
 		return json({ success: false, message: 'Unauthorized' }, { status: 401 });
@@ -12,7 +15,7 @@ export const load = async ({ params, cookies }) => {
 
 	try {
 		const response = await fetch(
-			`${VITE_SERVER_BASE_URL}/catalog/category/products/${category}?offset=${offset}`,
+			`${VITE_SERVER_BASE_URL}/catalog/category/products/${category}?offset=${offset}&currency=${currency}`,
 			{
 				headers: {
 					Authorization: `Bearer ${token}`
@@ -48,6 +51,8 @@ export const actions = {
 		const category = params.category;
 		const direction = formData.get('direction'); // 'next' ou 'previous'
 		let offset = 10;
+		const locale = cookies.get('i18n_redirected') || 'pt-BR';
+		const currency = detectCurrencyByLocale(locale);
 
 		if (!token) {
 			return json({ success: false, message: 'Unauthorized' }, { status: 401 });
@@ -62,7 +67,7 @@ export const actions = {
 
 		try {
 			const response = await fetch(
-				`${VITE_SERVER_BASE_URL}/catalog/category/products/${category}?offset=${offset}`,
+				`${VITE_SERVER_BASE_URL}/catalog/category/products/${category}?offset=${offset}&currency=${currency}`,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`
