@@ -38,6 +38,8 @@
 	import { goto } from '$app/navigation';
 	import { Toaster } from 'svelte-french-toast';
 	import { setSearchQuery } from '$lib/stores/search';
+	import { onMount } from 'svelte';
+	import { syncLocaleWithCookie } from '$lib/i18n/sync';
 
 	const popupFeatured: PopupSettings = {
 		event: 'click',
@@ -90,6 +92,11 @@
 			goto('/');
 		}
 	}
+
+	  onMount(() => {
+    syncLocaleWithCookie();
+  });
+
 </script>
 
 <Drawer><SideBar {data} on:close={drawerClose} /></Drawer>

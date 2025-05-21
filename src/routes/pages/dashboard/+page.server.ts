@@ -1,21 +1,23 @@
 import { VITE_SERVER_BASE_URL } from '$env/static/private';
+import { detectCurrencyByLocale } from '$lib/utils';
 import { json } from '@sveltejs/kit';
 /** @type {import('./$types').PageLoad} */
 export const load = async ({ cookies }) => {
 	const token = cookies.get('access_token');
-
+	const locale = cookies.get('i18n_redirected') || 'pt-BR';
+	const currency = detectCurrencyByLocale(locale);
 	if (!token) {
 		return json({ success: false, message: 'Unauthorized' }, { status: 401 });
 	}
 
 	try {
-		const response = await fetch(`${VITE_SERVER_BASE_URL}/catalog/latest`, {
+		const response = await fetch(`${VITE_SERVER_BASE_URL}/catalog/latest?currency=${currency}`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}
 		});
 
-		const res = await fetch(`${VITE_SERVER_BASE_URL}/catalog/categories`, {
+		const res = await fetch(`${VITE_SERVER_BASE_URL}/catalog/categories?currency=${currency}`, {
 			headers: {
 				Authorization: `Bearer ${token}`
 			}

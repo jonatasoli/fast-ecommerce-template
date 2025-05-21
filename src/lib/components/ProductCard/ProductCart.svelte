@@ -32,9 +32,9 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 {columns} gap-8 p-4">
 	{#each latestProducts as product}
 		<div
-			class=" flex flex-col rounded-3xl border border-primary-500 overflow-hidden shadow-lg lg:w-64"
+			class="flex flex-col rounded-3xl border border-primary-500 overflow-hidden shadow-lg lg:w-64"
 		>
-			<a href={`/pages/products/${product.product_id}`}>
+			<a href={`/pages/products/${product.product_id}`} class="flex-1 flex flex-col">
 				<div class="relative w-full h-0 pb-[76.03%] overflow-hidden">
 					<img
 						class="absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -43,7 +43,7 @@
 					/>
 				</div>
 
-				<div class="product-item__content p-3 pb-4 flex-1">
+				<div class="product-item__content p-3 pb-4 flex-1 flex flex-col">
 					<div
 						class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1 hover:text-primaryHover"
 					>
@@ -54,7 +54,7 @@
 						{/if}
 					</div>
 
-					<div class="container-price flex flex-col gap-2 mt-6">
+					<div class="container-price flex flex-col gap-2 mt-auto">
 						<p class="price text-primary-500 font-semibold text-xl m-0">
 							{currencyFormat(product.price)}
 						</p>
