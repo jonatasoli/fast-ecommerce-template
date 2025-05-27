@@ -50,12 +50,23 @@ export const locales = [
 ];
 
 export function convertToSmallestUnit(amount: number): number {
-	return Math.round(amount * 100); // Multiplica por 100 para converter para centavos
+	return Math.round(amount * 100);
 }
 
 export function detectCurrencyByLocale(locale: string): 'BRL' | 'USD' | 'EUR' {
 	return CURRENCY_MAP[locale] || 'BRL';
 }
+
+export const supportedFlags = ['br', 'us', 'es', 'pt'] as const;
+
+export const flagLabels: Record<string, string> = {
+	br: 'Português (BR)',
+	us: 'English (US)',
+	es: 'Español',
+	pt: 'Português (PT)'
+};
+
+export type SupportedFlag = (typeof supportedFlags)[number];
 
 export function generateURI(productName: string) {
 	return productName
