@@ -31,11 +31,11 @@
 		const paymentType = cart.getPaymentType();
 		showLoading();
 		pending = true;
-
+		
 		if (!paymentType) return;
 
 		try {
-			if (paymentType === 'CREDIT_CARD') {
+			if (paymentType === 'CREDIT-CARD') {
 				const res = await cart.finishCheckout(data.token);
 
 				if (res.order_id) {

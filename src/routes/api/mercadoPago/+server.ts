@@ -11,7 +11,7 @@ export async function POST({ request, cookies }: { request: Request; cookies: Co
 	}
 
 	try {
-		const response = await fetch(`${VITE_SERVER_BASE_URL}/cart/${cart.uuid}/payment/credit_card`, {
+		const response = await fetch(`${VITE_SERVER_BASE_URL}/cart/${cart.uuid}/payment/credit-card`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',

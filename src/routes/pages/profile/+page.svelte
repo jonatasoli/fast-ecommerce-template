@@ -19,6 +19,7 @@
 	};
 
 	$: user = data.user;
+	let lang = data.i18nRedirected;
 
 	function getAddress() {
 		showLoading();
@@ -43,6 +44,7 @@
 	function changeLanguage(event: Event) {
 		const selectedLang = (event.target as HTMLSelectElement).value;
 		document.cookie = `i18n_redirected=${selectedLang}; path=/; max-age=31536000`;
+		const cookie = document.cookie;
 		location.reload();
 	}
 </script>
@@ -153,7 +155,7 @@
 			<select
 				id="language"
 				on:change={changeLanguage}
-				bind:value={data.i18nRedirected}
+				bind:value={lang}
 				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 			>
 				{#each locales as locale}
@@ -172,7 +174,7 @@
 			<button
 				class="md:w-28 py-2 md:px-4 my-1 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-dark transition-all duration-200 ease-in-out"
 			>
-			{$_('buttons.save')}
+				{$_('buttons.save')}
 			</button>
 		</div>
 	</div>
