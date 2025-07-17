@@ -1,4 +1,7 @@
+import { goto } from '$app/navigation';
 import { CURRENCIES, LOCALES } from './enums';
+import { hideLoading, showLoading } from './stores/loading';
+import { toast } from 'svelte-french-toast';
 
 export function formatDocument(document: string) {
 	// Verifica se já está formatado (document no formato ###.###.###-##)
@@ -18,10 +21,10 @@ export function formatDocument(document: string) {
 	return document;
 }
 
-export function splitDate(date: string): { year: string, month: string } {
+export function splitDate(date: string): { year: string; month: string } {
 	const [year, month] = date.split('-');
 	return { year, month };
-  }
+}
 export const locales = [
 	{ name: 'Inglês (Estados Unidos)', value: 'en-US', isDefault: false },
 	{ name: 'Inglês (Reino Unido)', value: 'en-GB', isDefault: false },
@@ -44,6 +47,10 @@ export const locales = [
 	{ name: 'Norueguês (Noruega)', value: 'no-NO', isDefault: false },
 	{ name: 'Finlandês (Finlândia)', value: 'fi-FI', isDefault: false }
 ];
+
+export function convertToSmallestUnit(amount: number): number {
+	return Math.round(amount * 100); // Multiplica por 100 para converter para centavos
+}
 
 export function generateURI(productName: string) {
 	return productName
@@ -102,6 +109,27 @@ export function getRoleName(roleId: number): string {
 		default:
 			return 'Unknown';
 	}
+}
+
+export function handleNagigateCart() {
+	showLoading();
+	goto('/pages/cart');
+	hideLoading();
+}
+
+export function showToast(text: string, type: string) {
+	if (type === 'error') {
+		toast.error(text, { duration: 3000 });
+	}
+	if (type === 'success') {
+		toast.success(text);
+	}
+}
+
+export function handleNagigateDashboard() {
+	showLoading();
+	goto('/pages/dashboard');
+	hideLoading();
 }
 
 export function setRoleId(roleName: string): number {

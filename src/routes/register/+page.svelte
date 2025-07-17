@@ -2,11 +2,10 @@
 	import { _ } from 'svelte-i18n';
 	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
-	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
 
 	const logo = import.meta.env.VITE_URL_LOGO;
-
-	initializeStores();
 
 	let error = '';
 	let loading = false;
@@ -20,6 +19,7 @@
 		phone: '',
 		terms: false
 	};
+
 
 	const toastStore = getToastStore();
 
@@ -71,17 +71,24 @@
 
 			if (response.ok) {
 				const result = await response.json();
-				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${result.name}`, 'bg-primary-500');
+				showToast(
+					$_('register.notification.success.title', {
+						values: result.name
+					}),
+					'success'
+				);
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
+
 				error = errorData.detail?.[0]?.msg || errorData.message || 'Erro ao realizar cadastro.';
 				showToast(error, 'bg-red');
+
 			}
 		} catch (err) {
 			console.error('Registration error:', err);
 			error = 'Erro de conexão. Tente novamente mais tarde.';
-			showToast(error, 'bg-red');
+			showToast(error, 'error');
 		} finally {
 			loading = false;
 		}
@@ -250,5 +257,5 @@
 		</div>
 	</div>
 
-	<Toast rounded="rounded-lg" position="tr" />
+	<Toaster position="top-right" />
 </div>

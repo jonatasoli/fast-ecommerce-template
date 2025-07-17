@@ -3,8 +3,6 @@
 	import { _ } from 'svelte-i18n';
 	import { cartStore } from '$lib/stores/cart';
 	import { address, getAddressByZipcode } from '$lib/stores/address';
-	import { hideLoading, showLoading } from '$lib/stores/loading';
-
 	$: cart = cartStore();
 
 	export let nextStep: () => void;
@@ -27,14 +25,15 @@
 	let shippingIsPayment: boolean = true;
 
 	$: currentAddress = $address.user_address;
+	$: zipcode = $cart.zipcode;
 
-	$: if ($cart.zipcode) {
-		getAddressByZipcode($cart.zipcode, 'user_address');
+	$: if (zipcode) {
+		getAddressByZipcode(zipcode, 'user_address');
 	}
 
 	async function handleSubmitcurrentAddress() {
-		const resCart = await cart.addUserCart(data.token);
-		const resAdress = await cart.addAddressCart({
+		await cart.addUserCart(data.token);
+		await cart.addAddressCart({
 			shipping_is_payment: shippingIsPayment,
 			user_address: currentAddress,
 			shipping_address: shippingAddress,
@@ -45,18 +44,14 @@
 
 		nextStep();
 	}
-
-	async function fetchAddress() {
-		showLoading();
-		await getAddressByZipcode(currentAddress.zipcode, 'user_address');
-		hideLoading();
-	}
 </script>
 
 <div class="my-4">
 	<h2 class="text-lg font-semibold text-primary-500">Endereço de entrega</h2>
 </div>
-<div class="p-3 space-y-4 w-full sm:w-3/4 border border-gray-300 flex flex-col gap-2 rounded-lg">
+<div
+	class="p-3 space-y-4 w-full sm:w-3/4 border border-gray-300 text-gray-600 flex flex-col gap-2 rounded-lg"
+>
 	<div>
 		<label for="id" class="block mb-1 font-medium text-sm text-gray-700"
 			>{$_('checkout.shipping.form.zipcode')}</label
@@ -65,8 +60,8 @@
 			id="id"
 			type="text"
 			bind:value={currentAddress.zipcode}
-			on:blur={fetchAddress}
-			class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+			readonly
+			class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 		/>
 	</div>
 
@@ -79,7 +74,7 @@
 				id="name"
 				type="text"
 				bind:value={currentAddress.country}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 
@@ -91,7 +86,7 @@
 				id="state"
 				type="text"
 				bind:value={currentAddress.state}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 	</div>
@@ -105,7 +100,7 @@
 				id="form.city"
 				type="text"
 				bind:value={currentAddress.city}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 
@@ -117,7 +112,7 @@
 				id="neighborhood"
 				type="text"
 				bind:value={currentAddress.neighborhood}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 	</div>
@@ -131,7 +126,7 @@
 				id="street"
 				type="text"
 				value={currentAddress.street}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500 focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 
@@ -143,7 +138,7 @@
 				id="homeNumber"
 				type="text"
 				bind:value={currentAddress.street_number}
-				class="w-full border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
+				class="w-full border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out focus:ring-0 focus:ring-primary-500"
 			/>
 		</div>
 	</div>
@@ -156,7 +151,7 @@
 			id="complement"
 			type="text"
 			bind:value={currentAddress.address_complement}
-			class="w-full focus:ring-0 focus:ring-primary-500 border border-gray-300 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
+			class="w-full focus:ring-0 focus:ring-primary-500 border border-gray-300 text-gray-600 rounded-xl px-3 py-2 focus:outline-none focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 transition duration-200 ease-in-out"
 		/>
 	</div>
 

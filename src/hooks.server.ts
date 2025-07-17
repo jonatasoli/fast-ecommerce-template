@@ -8,13 +8,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const accessToken = event.cookies.get('access_token');
 
 	const protectedPaths = url.pathname.includes('/pages');
+	const isHomePage = url.pathname === '/';
+
 	if (!accessToken && protectedPaths) {
 		throw redirect(302, '/');
 	}
+
+	if (accessToken && isHomePage) {
+		throw redirect(302, '/pages/dashboard'); // Redireciona para a área autenticada
+	}
+
 	if (lang) {
 		locale.set(lang);
 	}
-	const response = await resolve(event);
 
+	const response = await resolve(event);
 	return response;
 };

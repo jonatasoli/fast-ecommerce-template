@@ -5,27 +5,28 @@
 	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
 	const logo = import.meta.env.VITE_URL_LOGO;
-	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { enhance } from '$app/forms';
 	import { loginSchema } from '$lib/schemas/login.js';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
 
-	initializeStores();
+	import Inputmask from 'inputmask';
 
 	export let data;
 	let error = '';
 	let username = '';
 	let password = '';
-	const toastStore = getToastStore();
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message: message,
-			autohide: false,
-			hideDismiss: true,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
+
+	let inputRef: HTMLInputElement | null = null;
+
+	import { onMount } from 'svelte';
+
+	onMount(() => {
+		if (inputRef) {
+			const mask = new Inputmask('999.999.999-99');
+			mask.mask(inputRef);
+		}
+	});
 
 	async function handleLogin(formData: FormData) {
 		try {
@@ -42,7 +43,7 @@
 			const result = loginSchema.safeParse(data);
 
 			if (!result.success) {
-				showToast($_('login.invalid_data'), 'bg-red');
+				showToast($_('login.invalid_data'), 'error');
 				console.error('Erro na validação:', result.error.errors);
 				return;
 			}
@@ -57,7 +58,7 @@
 
 			if (!response.ok) {
 				const errorMessage = await response.text();
-				showToast($_('login.failure'), 'bg-red');
+				showToast($_('login.failure'), 'error');
 				console.error('Erro ao realizar login:', errorMessage);
 				return;
 			}
@@ -65,15 +66,15 @@
 			const res = await response.json();
 
 			if (res.success) {
-				showToast($_('login.success'), 'bg-primary-500');
+				showToast($_('login.success'), 'success');
 				goto('/pages/dashboard');
 			} else {
-				showToast($_('login.failure'), 'bg-primary-500');
+				showToast($_('login.failure'), 'error');
 				error = 'Falha ao fazer login, verifique suas credenciais.';
 				console.error('Falha ao fazer login:', res.message || 'Erro desconhecido.');
 			}
 		} catch (error) {
-			showToast($_('login.error'), 'bg-red');
+			showToast($_('login.error'), 'error');
 			console.error('Erro inesperado no login:', error);
 		}
 	}
@@ -102,11 +103,13 @@
 				<label for="username" class="block mb-1 font-medium text-gray-700">
 					{$_('login.username')}
 				</label>
+
 				<input
 					id="username"
 					name="username"
 					bind:value={username}
-					placeholder={$_('login.username')}
+					bind:this={inputRef}
+					placeholder="000.000.000-00"
 					class="w-full border border-gray-300 rounded-xl px-3 focus:outline-none focus:ring-0 focus:border-primary-500 hover:border-primary-500 placeholder-gray-400 placeholder-opacity-75 focus:ring-primary-500 transition duration-200 ease-in-out"
 					type="text"
 				/>
@@ -162,6 +165,5 @@
 			</a>
 		</div>
 	</div>
-
-	<Toast rounded="rounded-lg" position="tr" />
+	<Toaster position="top-right" />
 </div>
