@@ -1,12 +1,13 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-export const supportedFlags = ['br', 'us', 'es', 'pt'] as const;
+export const supportedFlags = ['br', 'us', 'es', 'pt', 'gb'] as const;
 export type SupportedFlag = (typeof supportedFlags)[number];
 
 const localeToFlag: Record<string, SupportedFlag> = {
 	'pt-BR': 'br',
 	'en-US': 'us',
+	'en-GB': 'gb',
 	'es-ES': 'es',
 	'pt-PT': 'pt'
 };
@@ -14,6 +15,7 @@ const localeToFlag: Record<string, SupportedFlag> = {
 const flagToLocale: Record<SupportedFlag, string> = {
 	br: 'pt-BR',
 	us: 'en-US',
+	gb: 'en-GB',
 	es: 'es-ES',
 	pt: 'pt-PT'
 };

@@ -17,6 +17,7 @@ export const CURRENCY_MAP: Record<string, 'BRL' | 'USD' | 'EUR'> = {
 	'en-IN': 'USD',
 
 	'pt-PT': 'EUR',
+	'en-GB': 'EUR',
 	'fr-FR': 'EUR',
 	'de-DE': 'EUR',
 	'es-ES': 'EUR',

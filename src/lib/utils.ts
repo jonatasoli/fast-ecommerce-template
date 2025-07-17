@@ -57,12 +57,13 @@ export function detectCurrencyByLocale(locale: string): 'BRL' | 'USD' | 'EUR' {
 	return CURRENCY_MAP[locale] || 'BRL';
 }
 
-export const supportedFlags = ['br', 'us', 'es', 'pt'] as const;
+export const supportedFlags = ['br', 'us', 'es', 'pt', 'gb'] as const;
 
 export const flagLabels: Record<string, string> = {
 	br: 'Português (BR)',
 	us: 'English (US)',
 	es: 'Español',
+	gb: 'English (UK)',
 	pt: 'Português (PT)'
 };
 

@@ -21,11 +21,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (!existingLocale) {
 		event.cookies.set('i18n_redirected', lang, {
 			path: '/',
-			maxAge: 60 * 60 * 24 * 30
+			maxAge: 60 * 60 * 24 * 30,
+			httpOnly: false,
+			secure: false,
+			sameSite: 'lax'
 		});
 	}
 
-	locale.set(lang);
+	locale.set(existingLocale || lang);
 
 	// Resolve a requisição
 	const response = await resolve(event);
