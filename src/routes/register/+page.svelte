@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
-	import { ChevronRight } from 'svelte-heros-v2';
 	import { goto } from '$app/navigation';
 	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
 
@@ -34,11 +33,6 @@
 		toastStore.trigger(t);
 	}
 
-	function openTerms() {
-		// Substitua pela URL real dos termos de uso
-		window.open('/termos-de-uso', '_blank');
-	}
-
 	async function handleSignup(event: Event) {
 		event.preventDefault();
 
@@ -70,8 +64,7 @@
 			});
 
 			if (response.ok) {
-				const result = await response.json();
-				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${result.name}`, 'bg-primary-500');
+				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${formData.name}`, 'bg-primary-500');
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
@@ -217,7 +210,13 @@
 				</div>
 				<div class="ml-3 text-sm">
 					<label for="terms" class="font-medium text-gray-700">
-						Eu li e aceito os <button type="button" on:click={openTerms} class="text-primary-600 hover:underline">Termos e Condições</button>
+						Eu li e aceito os <a 
+							href="../terms-of-service" 
+							target="_blank"
+							class="text-primary-600 hover:underline"
+						>
+							Termos e Condições
+						</a>
 					</label>
 					{#if !formData.terms && error.includes('termos')}
 						<p class="mt-1 text-red-600">Você deve aceitar os termos para continuar</p>
