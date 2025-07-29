@@ -23,16 +23,31 @@ export const load = async ({ cookies }) => {
 			}
 		});
 
+		const showCase = await fetch(
+			`${VITE_SERVER_BASE_URL}/catalog/showcase/all?currency=${currency}`,
+			{
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+
 		if (!response.ok && !res) {
 			throw new Error('Failed to fetch categories');
 		}
 
 		const data = await response.json();
 		const result = await res.json();
+		const showcase = await showCase.json();
+
+		
 
 		return {
 			products: data.products,
-			categories: result.categories
+			categories: result.categories,
+			showcase,
+			success: true,
+			message: 'OK'
 		};
 	} catch (error) {
 		console.error('Error fetching categories:', error);

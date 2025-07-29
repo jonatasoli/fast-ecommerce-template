@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Carousel from '$lib/components/Carousel/Carousel.svelte';
 	import ProductCart from '$lib/components/ProductCard/ProductCart.svelte';
 
 	import { _ } from 'svelte-i18n';
@@ -14,6 +15,10 @@
 	<h1 class="text-primary-500 text-2xl lg:text-5xl font-light my-8 mt-8 mb-4 text-center uppercase">
 		{$_('navigation.latest')}
 	</h1>
+</div>
+
+<div class="flex justify-center items-center mb-12 sm:hidden">
+	<Carousel height="h-80" images={data.showcase} />
 </div>
 
 <div class="flex justify-center items-center mb-12">

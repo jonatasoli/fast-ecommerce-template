@@ -39,6 +39,7 @@ export interface CreditCard {
 
 export interface ResponseProduct {
 	product: Product;
+	medias: MediaItem[];
 }
 
 export interface Address {
@@ -220,6 +221,12 @@ type Variant = {
 	value: string;
 	label: string;
 };
+
+export interface MediaItem {
+	media_id: string;
+	type: 'PHOTO' | 'VIDEO';
+	uri: string;
+}
 
 export type ProductItem = {
 	product_id: number;
