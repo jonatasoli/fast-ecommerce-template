@@ -30,7 +30,7 @@ function getInitialFlag(): SupportedFlag {
 	return localeToFlag[cookie || 'pt-BR'] || 'br';
 }
 
-// Store reativa
+
 export const locale = writable<SupportedFlag>(getInitialFlag());
 
 

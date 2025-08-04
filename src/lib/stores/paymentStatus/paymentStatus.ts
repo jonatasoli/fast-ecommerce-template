@@ -13,14 +13,14 @@ const PAYMENT_STATUS = {
 	WAITING: null
 } as const;
 
-const STATUS_CHECK_INTERVAL = 1000; // 1 segundo
-const STATUS_CHECK_TIMEOUT = 1000 * 60 * 5; // 5 minutos
+const STATUS_CHECK_INTERVAL = 1000; 
+const STATUS_CHECK_TIMEOUT = 1000 * 60 * 5; 
 
 type Status = (typeof PAYMENT_STATUS)[keyof typeof PAYMENT_STATUS];
 
 export function usePaymentStatus({ onError, onSuccess, onTimeout }: IConfig) {
 	const status = writable<Status>(PAYMENT_STATUS.WAITING);
-	const timeLeft = writable(STATUS_CHECK_TIMEOUT / 1000); // Tempo restante em segundos
+	const timeLeft = writable(STATUS_CHECK_TIMEOUT / 1000); 
 
 	let checkingInterval: NodeJS.Timeout;
 	let checkingTimeout: NodeJS.Timeout;
@@ -56,9 +56,9 @@ export function usePaymentStatus({ onError, onSuccess, onTimeout }: IConfig) {
 
 	function startChecking(paymentId: string) {
 		timeoutStart = Date.now();
-		timeLeft.set(STATUS_CHECK_TIMEOUT / 1000); // Resetando tempo ao iniciar
+		timeLeft.set(STATUS_CHECK_TIMEOUT / 1000); 
 
-		// Atualiza `timeLeft` a cada segundo
+		
 		timeUpdateInterval = setInterval(() => {
 			const elapsed = Date.now() - timeoutStart;
 			const remaining = Math.max(Math.ceil((STATUS_CHECK_TIMEOUT - elapsed) / 1000), 0);
@@ -69,7 +69,7 @@ export function usePaymentStatus({ onError, onSuccess, onTimeout }: IConfig) {
 			}
 		}, 1000);
 
-		// Faz chamadas periódicas para verificar o status do pagamento
+		
 		checkingInterval = setInterval(async () => {
 			const newStatus = await getPaymentStatus(paymentId);
 			console.log('Novo status recebido:', newStatus);
@@ -84,7 +84,7 @@ export function usePaymentStatus({ onError, onSuccess, onTimeout }: IConfig) {
 			}
 		}, STATUS_CHECK_INTERVAL);
 
-		// Define um timeout global para encerrar após 5 minutos
+
 		checkingTimeout = setTimeout(() => {
 			stopChecking();
 			onTimeout();

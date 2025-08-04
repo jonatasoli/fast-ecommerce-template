@@ -49,7 +49,7 @@ export const actions = {
 		const token = cookies.get('access_token');
 		const formData = await request.formData();
 		const category = params.category;
-		const direction = formData.get('direction'); // 'next' ou 'previous'
+		const direction = formData.get('direction'); 
 		let offset = 10;
 		const locale = cookies.get('i18n_redirected') || 'pt-BR';
 		const currency = detectCurrencyByLocale(locale);
@@ -58,11 +58,11 @@ export const actions = {
 			return json({ success: false, message: 'Unauthorized' }, { status: 401 });
 		}
 
-		// Ajusta o offset com base na direção (next ou previous)
+		
 		if (direction === 'next') {
 			offset += 10;
 		} else if (direction === 'previous') {
-			offset = Math.max(0, offset - 10); // Garantir que o offset não seja menor que 0
+			offset = Math.max(0, offset - 10);
 		}
 
 		try {

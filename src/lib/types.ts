@@ -12,7 +12,7 @@ export interface Product {
 	};
 	image_path: string;
 	installments_config: number;
-	installments_list: null | any[]; // pode ser atualizado para um tipo específico se houver dados estruturados
+	installments_list: null | any[]; 
 	discount: number;
 	category_id: number;
 	showcase: boolean;

@@ -6,7 +6,7 @@
 	import { ChevronLeft, ChevronRight } from 'svelte-heros-v2';
 
 	export let height: string = 'h-64';
-	export let images: any[] = []; // Lista de imagens recebida via prop
+	export let images: any[] = []; 
 
 	let embla: EmblaCarouselType | null = null;
 	let selectedIndex = 0;

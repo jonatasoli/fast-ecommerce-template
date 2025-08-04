@@ -30,7 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	locale.set(existingLocale || lang);
 
-	// Resolve a requisição
+	
 	const response = await resolve(event);
 	return response;
 };

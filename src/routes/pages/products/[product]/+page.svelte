@@ -32,11 +32,15 @@
 	<div
 		class="flex flex-col items-center justify-center p-10 space-y-4 max-w-auto mx-auto bg-white rounded-lg shadow-lg"
 	>
+	{#if data.medias && data.medias.length > 0}
+			<ProductMediaCarousel carousel={data.medias} autoplay={true} height="h-96" />
+		{:else}
 		<img
 			src={data.product.image_path}
 			alt={data.product.name}
 			class="w-full h-72 object-cover rounded-lg"
 		/>
+		{/if}
 
 		<h1 class="text-lg sm:text-xl md:text-2xl font-semibold text-primary-500 text-center">
 			{data.product.name}

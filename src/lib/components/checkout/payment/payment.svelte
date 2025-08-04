@@ -60,7 +60,7 @@
 	async function getInstallments() {
 		console.log(data);
 
-		optionInstallments = []; // Sempre limpa antes de popular
+		optionInstallments = [];
 
 		try {
 			showLoading();
