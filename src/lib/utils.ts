@@ -1,23 +1,24 @@
 import { goto } from '$app/navigation';
-import { CURRENCIES, LOCALES } from './enums';
+import { CURRENCY_MAP } from './enums';
+import { getLocale } from './getLocale';
 import { hideLoading, showLoading } from './stores/loading';
 import { toast } from 'svelte-french-toast';
 
 export function formatDocument(document: string) {
-	// Verifica se já está formatado (document no formato ###.###.###-##)
+	
 	if (/^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(document)) {
 		return document;
 	}
 
-	// Remove qualquer caractere que não seja número
+	
 	document = document.replace(/\D/g, '');
 
-	// Se o document tiver 11 dígitos, aplica a máscara de document (###.###.###-##)
+	
 	if (document.length === 11) {
 		return document.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 	}
 
-	// Retorna o document não formatado se não tiver o número correto de dígitos
+	
 	return document;
 }
 
@@ -28,7 +29,7 @@ export function splitDate(date: string): { year: string; month: string } {
 export const locales = [
 	{ name: 'Inglês (Estados Unidos)', value: 'en-US', isDefault: false },
 	{ name: 'Inglês (Reino Unido)', value: 'en-GB', isDefault: false },
-	{ name: 'Português (Brasil)', value: 'pt-br', isDefault: true },
+	{ name: 'Português (Brasil)', value: 'pt-BR', isDefault: true },
 	{ name: 'Português (Portugal)', value: 'pt-PT', isDefault: false },
 	{ name: 'Espanhol (Espanha)', value: 'es-ES', isDefault: false },
 	{ name: 'Espanhol (México)', value: 'es-MX', isDefault: false },
@@ -49,8 +50,24 @@ export const locales = [
 ];
 
 export function convertToSmallestUnit(amount: number): number {
-	return Math.round(amount * 100); // Multiplica por 100 para converter para centavos
+	return Math.round(amount * 100);
 }
+
+export function detectCurrencyByLocale(locale: string): 'BRL' | 'USD' | 'EUR' {
+	return CURRENCY_MAP[locale] || 'BRL';
+}
+
+export const supportedFlags = ['br', 'us', 'es', 'pt', 'gb'] as const;
+
+export const flagLabels: Record<string, string> = {
+	br: 'Português (BR)',
+	us: 'English (US)',
+	es: 'Español',
+	gb: 'English (UK)',
+	pt: 'Português (PT)'
+};
+
+export type SupportedFlag = (typeof supportedFlags)[number];
 
 export function generateURI(productName: string) {
 	return productName
@@ -75,27 +92,24 @@ export function currencyFormatFreight(value: number, freeLabel: string, locale =
 	}).format(value);
 }
 
-export function currencyFormat(
-	value: number | undefined | null,
-	locale = LOCALES.PT_BR,
-	type = ''
-): string {
-	const currency = CURRENCIES[locale] || LOCALES.PT_BR;
+export function currencyFormat(value: number, passedLocale?: string, type: string = ''): string {
+	const locale = passedLocale || getLocale();
+	const currency = CURRENCY_MAP[locale] || CURRENCY_MAP['pt-BR'];
 
-	const { format } = new Intl.NumberFormat(locale, {
+	const formatter = new Intl.NumberFormat(locale, {
 		style: 'currency',
 		currency
 	});
 
 	if (!value) {
-		return format(0);
+		return formatter.format(0);
 	}
 
 	if (type === 'freight') {
-		return format(value);
+		return formatter.format(value);
 	}
 
-	return format(value);
+	return formatter.format(value);
 }
 
 export function getRoleName(roleId: number): string {

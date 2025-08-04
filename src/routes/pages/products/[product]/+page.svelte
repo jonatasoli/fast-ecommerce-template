@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import ProductMediaCarousel from '$lib/components/ProductMediaCarousel/ProductMediaCarousel.svelte';
 	import { cartStore } from '$lib/stores/cart';
 	import type { CartItem, ResponseProduct } from '$lib/types';
 	import { currencyFormat } from '$lib/utils';
@@ -31,11 +32,15 @@
 	<div
 		class="flex flex-col items-center justify-center p-10 space-y-4 max-w-auto mx-auto bg-white rounded-lg shadow-lg"
 	>
+	{#if data.medias && data.medias.length > 0}
+			<ProductMediaCarousel carousel={data.medias} autoplay={true} height="h-96" />
+		{:else}
 		<img
 			src={data.product.image_path}
 			alt={data.product.name}
 			class="w-full h-72 object-cover rounded-lg"
 		/>
+		{/if}
 
 		<h1 class="text-lg sm:text-xl md:text-2xl font-semibold text-primary-500 text-center">
 			{data.product.name}
@@ -124,11 +129,15 @@
 
 <div class="hidden md:flex md:flex-col container mx-auto p-8 my-16 pt-16">
 	<div class="hidden md:flex md:items-start md:justify-between">
-		<img
-			src={data.product.image_path}
-			alt={data.product.name}
-			class="md:w-modal-slim h-96 object-cover rounded-lg"
-		/>
+		{#if data.medias && data.medias.length > 0}
+			<ProductMediaCarousel carousel={data.medias} autoplay={true} height="h-96" />
+		{:else}
+			<img
+				src={data.product.image_path}
+				alt={data.product.name}
+				class="md:w-modal-slim h-96 object-cover rounded-lg"
+			/>
+		{/if}
 
 		<div class="mt-4 md:mt-0 md:w-1/2 md:ml-8">
 			<h1 class="text-2xl font-semibold text-primary-500">{data.product.name}</h1>

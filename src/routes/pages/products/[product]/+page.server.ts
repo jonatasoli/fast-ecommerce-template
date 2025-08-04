@@ -27,8 +27,21 @@ export const load = async ({ params, cookies }) => {
 
 		const data: Product = await response.json();
 
+		const res = await fetch(`${VITE_SERVER_BASE_URL}/product/media/${data.uri}`, {
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		});
+
+		if (!res.ok) {
+			throw new Error('Failed to fetch product medias');
+		}
+
+		const dataMedia = await res.json();
+
 		return {
-			product: data
+			product: data,
+			medias: dataMedia
 		};
 	} catch (error) {
 		console.error('Error fetching product:', error);

@@ -1,9 +1,9 @@
 <script>
 	export let message = '';
-	export let type = 'success'; // pode ser 'success' ou 'error'
+	export let type = 'success'; 
 	let show = false;
 
-	// Mostrar o toast por um tempo determinado
+	
 	export const triggerToast = (msg, toastType = 'success', duration = 3000) => {
 		message = msg;
 		type = toastType;
@@ -23,5 +23,5 @@
 </div>
 
 <style>
-	/* Adicione qualquer estilo adicional aqui */
+	
 </style>

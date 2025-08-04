@@ -12,7 +12,7 @@ export interface Product {
 	};
 	image_path: string;
 	installments_config: number;
-	installments_list: null | any[]; // pode ser atualizado para um tipo específico se houver dados estruturados
+	installments_list: null | any[]; 
 	discount: number;
 	category_id: number;
 	showcase: boolean;
@@ -39,6 +39,7 @@ export interface CreditCard {
 
 export interface ResponseProduct {
 	product: Product;
+	medias: MediaItem[];
 }
 
 export interface Address {
@@ -220,6 +221,12 @@ type Variant = {
 	value: string;
 	label: string;
 };
+
+export interface MediaItem {
+	media_id: string;
+	type: 'PHOTO' | 'VIDEO';
+	uri: string;
+}
 
 export type ProductItem = {
 	product_id: number;

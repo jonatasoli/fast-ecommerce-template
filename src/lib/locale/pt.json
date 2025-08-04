@@ -112,6 +112,9 @@
             "error": "Algo deu errado, tente novamente..."
         }
     },
+    "RandomDescriptions": {
+        "emptyMedia": "Nenhuma mídia disponível."
+    },
     "login": {
         "title": "Login",
         "username": "CPF",

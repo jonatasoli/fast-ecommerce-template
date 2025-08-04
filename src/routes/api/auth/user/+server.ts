@@ -1,4 +1,4 @@
-// src/routes/api/user/+server.ts
+
 import { error, type RequestHandler } from '@sveltejs/kit';
 import { VITE_SERVER_BASE_URL } from '$env/static/private';
 import type { User } from '$lib/types';

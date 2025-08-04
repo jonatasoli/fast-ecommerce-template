@@ -16,7 +16,7 @@
 		{ number: 5, label: 'finish', isActive: false }
 	];
 
-	// Avançar para o próximo passo
+	
 	function nextStep() {
 		$isLoading = true;
 		if (activeStep < steps.length) {
@@ -27,7 +27,7 @@
 		$isLoading = false;
 	}
 
-	// Voltar para o passo anterior
+	
 	function previousStep() {
 		$isLoading = true;
 		if (activeStep > 1) {

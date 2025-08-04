@@ -14,7 +14,7 @@
 	import { paymentMethod } from '$lib/stores/paymentStore';
 	import { getStripeInstallments } from '$lib/plugins/stripe';
 
-	type PaymentMethod = 'credit_card' | 'pix';
+	type PaymentMethod = 'credit-card' | 'pix';
 	export let data: any;
 
 	export let nextStep: () => void;
@@ -38,7 +38,7 @@
 	let cvv = '123';
 	$: ({ year, month } = splitDate(formattedValue));
 
-	let payment_type: PaymentMethod = 'credit_card';
+	let payment_type: PaymentMethod = 'credit-card';
 
 	$: paymentMethod.set(payment_type);
 
@@ -60,12 +60,12 @@
 	async function getInstallments() {
 		console.log(data);
 
-		optionInstallments = []; // Sempre limpa antes de popular
+		optionInstallments = [];
 
 		try {
 			showLoading();
 
-			if (data.i18nRedirected === 'pt-br') {
+			if (data.i18nRedirected === 'pt-BR') {
 				const res: any = await mercadoPagoService.getInstallments({
 					amount: $cart.total,
 					bin: credit_card_number,
@@ -174,10 +174,10 @@
 	}
 
 	function handleSubmit() {
-		if ($paymentMethod === 'credit_card') {
-			if (data.i18nRedirected === 'pt-br') {
+		if ($paymentMethod === 'credit-card') {
+			if (data.i18nRedirected === 'pt-BR') {
 				createCardToken();
-			} else if (data.i18nRedirected === 'en-US') {
+			} else {
 				createStripePayment();
 			}
 		}
@@ -218,7 +218,7 @@
 				<p class=" ">Pix</p>
 			</label>
 		</div>
-		{#if $paymentMethod === 'credit_card'}
+		{#if $paymentMethod === 'credit-card'}
 			<div
 				class="p-3 space-y-4 w-full text-left sm:w-3/4 border border-gray-300 text-gray-600 flex flex-col gap-2 rounded-lg"
 			>
