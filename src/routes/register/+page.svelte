@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { showToast } from '$lib/utils';
 	import { Toaster } from 'svelte-french-toast';
+	
 
 	const logo = import.meta.env.VITE_URL_LOGO;
 
@@ -19,28 +20,6 @@
 		terms: false
 	};
 
-<<<<<<< HEAD
-=======
-
-	const toastStore = getToastStore();
-
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message,
-			autohide: false,
-			hideDismiss: true,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
-
-	function openTerms() {
-		// Substitua pela URL real dos termos de uso
-		window.open('/termos-de-uso', '_blank');
-	}
-
->>>>>>> e05ea1d8a974b8a72ff86f88fb84ddb38051553f
 	async function handleSignup(event: Event) {
 		event.preventDefault();
 
@@ -72,14 +51,6 @@
 			});
 
 			if (response.ok) {
-<<<<<<< HEAD
-				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${formData.name}`, 'bg-primary-500');
-				goto('/pages/dashboard');
-			} else {
-				const errorData = await response.json();
-				error = errorData.detail?.[0]?.msg || errorData.message || 'Erro ao realizar cadastro.';
-				showToast(error, 'bg-red');
-=======
 				const result = await response.json();
 				showToast(
 					$_('register.notification.success.title', {
@@ -90,21 +61,13 @@
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
-<<<<<<< HEAD
-				error = errorData.message || 'Erro ao realizar cadastro.';
+
 				showToast($_('register.notification.error.content'), 'error');
->>>>>>> f95ac573f8bf56afc7d6de86d28ef1a06026fc33
-=======
-
-				error = errorData.detail?.[0]?.msg || errorData.message || 'Erro ao realizar cadastro.';
-				showToast(error, 'bg-red');
-
->>>>>>> e05ea1d8a974b8a72ff86f88fb84ddb38051553f
 			}
 		} catch (err) {
 			console.error('Registration error:', err);
-			error = 'Erro de conexão. Tente novamente mais tarde.';
-			showToast(error, 'error');
+
+			showToast($_('register.notification.error.content'), 'error');
 		} finally {
 			loading = false;
 		}
@@ -240,8 +203,8 @@
 				</div>
 				<div class="ml-3 text-sm">
 					<label for="terms" class="font-medium text-gray-700">
-						Eu li e aceito os <a 
-							href="../terms-of-service" 
+						Eu li e aceito os <a
+							href="../terms-of-service"
 							target="_blank"
 							class="text-primary-600 hover:underline"
 						>
