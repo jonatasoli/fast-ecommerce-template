@@ -19,6 +19,28 @@
 		terms: false
 	};
 
+<<<<<<< HEAD
+=======
+
+	const toastStore = getToastStore();
+
+	function showToast(message: string, bgColor: string) {
+		const t = {
+			message,
+			autohide: false,
+			hideDismiss: true,
+			background: bgColor,
+			classes: `${bgColor} text-white`
+		};
+		toastStore.trigger(t);
+	}
+
+	function openTerms() {
+		// Substitua pela URL real dos termos de uso
+		window.open('/termos-de-uso', '_blank');
+	}
+
+>>>>>>> e05ea1d8a974b8a72ff86f88fb84ddb38051553f
 	async function handleSignup(event: Event) {
 		event.preventDefault();
 
@@ -68,9 +90,16 @@
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
+<<<<<<< HEAD
 				error = errorData.message || 'Erro ao realizar cadastro.';
 				showToast($_('register.notification.error.content'), 'error');
 >>>>>>> f95ac573f8bf56afc7d6de86d28ef1a06026fc33
+=======
+
+				error = errorData.detail?.[0]?.msg || errorData.message || 'Erro ao realizar cadastro.';
+				showToast(error, 'bg-red');
+
+>>>>>>> e05ea1d8a974b8a72ff86f88fb84ddb38051553f
 			}
 		} catch (err) {
 			console.error('Registration error:', err);
