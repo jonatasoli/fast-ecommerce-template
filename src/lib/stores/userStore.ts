@@ -1,4 +1,4 @@
-// src/lib/stores/userStore.ts
+
 import { writable, type Writable } from 'svelte/store';
 import type { User, Address } from '$lib/types';
 

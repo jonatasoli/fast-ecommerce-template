@@ -2,20 +2,19 @@
 	import { goto } from '$app/navigation';
 	import { currencyFormat } from '$lib/utils';
 	import { _ } from 'svelte-i18n';
-	import { cartStore } from '$lib/stores/cart'; // Supondo que cartStore seja uma writable store
-	import type { Cart, CartItem, Product, ProductItem } from '$lib/types';
+	import { cartStore } from '$lib/stores/cart';
+	import type { CartItem } from '$lib/types';
 
 	export let latestProducts;
+	export let columns = 'xl:grid-cols-4';
 
-	// Torne a store 'cartStore' reativa
-	$: cart = cartStore(); // Se cartStore for uma writable store, use o '$' para se inscrever.
+	$: cart = cartStore();
 
 	async function handleAddToCart(product: CartItem) {
 		if (!product) {
 			return;
 		}
 
-		// Adiciona o produto ao carrinho
 		await cart.addToCart({
 			image_path: product.image_path,
 			name: product.name,
@@ -26,20 +25,16 @@
 			available_quantity: product.quantity
 		});
 
-		// Redireciona para a página do carrinho
-
 		await goto('/pages/cart');
-
-		console.log($cart.cart_items);
 	}
 </script>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8 p-4">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 {columns} gap-8 p-4">
 	{#each latestProducts as product}
 		<div
-			class=" flex flex-col rounded-3xl border border-primary-500 overflow-hidden shadow-lg lg:w-64"
+			class="flex flex-col rounded-3xl border border-primary-500 overflow-hidden shadow-lg lg:w-64"
 		>
-			<a href={`/pages/products/${product.product_id}`}>
+			<a href={`/pages/products/${product.product_id}`} class="flex-1 flex flex-col">
 				<div class="relative w-full h-0 pb-[76.03%] overflow-hidden">
 					<img
 						class="absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -48,18 +43,18 @@
 					/>
 				</div>
 
-				<div class="product-item__content p-3 pb-4 flex-1">
+				<div class="product-item__content p-3 pb-4 flex-1 flex flex-col">
 					<div
 						class="name font-medium text-base leading-5 min-h-[2.5rem] mb-1 hover:text-primaryHover"
 					>
-					{#if product.name.length > 35}
-					{product.name.slice(0, 35)}...
-				  {:else}
-					{product.name}
-				  {/if}
+						{#if product.name.length > 35}
+							{product.name.slice(0, 35)}...
+						{:else}
+							{product.name}
+						{/if}
 					</div>
 
-					<div class="container-price flex flex-col gap-2 mt-6">
+					<div class="container-price flex flex-col gap-2 mt-auto">
 						<p class="price text-primary-500 font-semibold text-xl m-0">
 							{currencyFormat(product.price)}
 						</p>

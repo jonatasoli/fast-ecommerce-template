@@ -1,6 +1,7 @@
 <script>
 	import { _ } from 'svelte-i18n';
 	const logo = import.meta.env.VITE_URL_LOGO;
+	console.log('Logo URL:', logo);
 </script>
 
 <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-gray-800 px-4">

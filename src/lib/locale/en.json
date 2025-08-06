@@ -1,0 +1,295 @@
+{
+    "greeting": "thank you",
+    "address": "Brazilian Beauty Academy Hair School - CNPJ: 09.675.354/0001-00 © All rights reserved. 2023",
+    "navigation": {
+        "news": "News",
+        "latest": "Latest",
+        "categories": "Categories",
+        "kits": "Combos",
+        "naturalCompound": "Capsules (Natural Compound)",
+        "accessories": "Accessories",
+        "sales": "Promotions",
+        "celebrity": "Blondes",
+        "diammontLiss": "Straight and Sealing",
+        "hairSpray": "Hairstyles",
+        "helpTherapy": "Treatments",
+        "shower": "Shampoo Area",
+        "overdoseColor": "Colored",
+        "vibranceCurls": "Curls",
+        "wonderLiss": "Home Care",
+        "trainningDoll": "Training Doll",
+        "books": "Books",
+        "scissors": "Aluminum Roll",
+        "fiber": "Fiber",
+        "test": "Test",
+        "diamonds": "Diamonds"
+    },
+    "header": {
+        "type": "Type what you're looking for"
+    },
+    "footer": {
+        "contact": {
+            "title": "Contact us via WHATSAPP button, or leave your email",
+            "placeholder": "Enter your email",
+            "subscribe": "Subscribe"
+        }
+    },
+    "productItem": {
+        "buy": "Buy",
+        "outOfStock": "Product unavailable"
+    },
+    "home": {
+        "news": {
+            "title": "News"
+        },
+        "features": {
+            "treatments": "Treatments"
+        }
+    },
+    "productPage": {
+        "installments": "up to {count} of {amount} interest-free",
+        "variants": "Select an option:"
+    },
+    "productDetails": {
+        "composition": "Composition",
+        "howToUse": "How to use"
+    },
+    "pageNotFound": {
+        "notFound": "The product you entered does not exist or the URL provided is incorrect",
+        "tryAgain": "visit our home page",
+        "home": "Back to homepage"
+    },
+    "buttons": {
+        "edit": "Edit",
+        "save": "Save"
+    },
+    "profile": {
+        "myOrders": "My Orders",
+        "myProfile": "Profile",
+        "outProfile": "Logout"
+    },
+    "cart": {
+        "title": "My Cart",
+        "empty": "Your cart is empty",
+        "total": "Total",
+        "finish": "Checkout",
+        "continue": "Continue Shopping",
+        "free": "Free",
+        "AddCart": "Add to Cart",
+        "products": {
+            "title": "Product",
+            "quantity": "Quantity",
+            "price": "Price",
+            "action": "Action"
+        },
+        "summary": {
+            "products": "Products",
+            "shipping": "Shipping",
+            "discount": "Discount",
+            "total": "Total"
+        },
+        "inputs": {
+            "shipping": {
+                "title": "Enter your ZIP code to calculate shipping and delivery time",
+                "content": "Enter your ZIP code",
+                "buttonText": "Calculate"
+            },
+            "discount": {
+                "title": "Discount Coupon",
+                "buttonText": "Add"
+            }
+        },
+        "freight": {
+            "deliveryTime": "Delivery - up to {delivery} business days",
+            "send": "Shipping throughout Brazil",
+            "typeSend": {
+                "type1": "PAC",
+                "type2": "SEDEX"
+            }
+        },
+        "notification": {
+            "success": "ok",
+            "error": "Something went wrong, please try again..."
+        }
+    },
+    "login": {
+        "title": "Login",
+        "username": "CPF",
+        "password": "Password",
+        "forgotPassword": "Forgot my password",
+        "submit": "Login",
+        "register": "I'm not a customer yet",
+        "success": "Login successful",
+        "failure": "Login failed",
+        "formValidation": {
+            "invalidCredentials": "Invalid username or password",
+            "serverError": "Login error",
+            "requiredUsername": "CPF is required",
+            "requiredPassword": "Password is required"
+        },
+        "requestResetPassword": {
+            "error": "Request could not be sent. Check if the CPF is correct.",
+            "success": {
+                "title": "Request sent successfully",
+                "content": "You will soon receive an email with instructions to change your password"
+            }
+        }
+    },
+    "resetPassword": {
+        "title": "Reset Password",
+        "document": "CPF",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "submit": "Change Password",
+        "formValidation": {
+            "documentRequired": "CPF is required",
+            "requiredNewPassword": "New password is required",
+            "requiredConfirmPassword": "Password confirmation is required",
+            "passwordMismatch": "Passwords do not match",
+            "serverError": "Error changing password"
+        },
+        "message": {
+            "error": {
+                "title": "Error",
+                "content": "Could not reset password. Request a new recovery link."
+            },
+            "success": {
+                "title": "Password changed successfully",
+                "content": "You can now log in"
+            }
+        },
+        "return": "Back"
+    },
+    "register": {
+        "title": "Register",
+        "username": "Username",
+        "name": "Name",
+        "login": "Go to login",
+        "email": "Email",
+        "document": "CPF",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "phone": "Enter your phone number",
+        "submit": "Register",
+        "formValidation": {
+            "requiredUsername": "Username is required",
+            "requiredName": "Name is required",
+            "requiredEmail": "Email is required",
+            "requiredDocument": "CPF is required",
+            "requiredPassword": "Password is required",
+            "passwordMinLength": "Password must be at least 6 characters",
+            "requiredConfirmPassword": "Password confirmation is required",
+            "requiredPhone": "Phone is required",
+            "invalidDocument": "Invalid CPF",
+            "invalidPhone": "Enter a valid phone number",
+            "invalidEmail": "Enter a valid email",
+            "passwordMismatch": "Passwords do not match",
+            "serverError": "Error registering"
+        },
+        "notification": {
+            "success": {
+                "title": "Registration successful! Welcome, {result}",
+                "content": "You can now log in"
+            },
+            "error": {
+                "title": "Registration error",
+                "content": "Registration could not be completed, check the data and try again"
+            }
+        }
+    },
+    "userMenu": {
+        "welcome": "Hello, {user}",
+        "visitor": "visitor",
+        "myAccount": "Access my account",
+        "login": "Login",
+        "logout": "Logout",
+        "or": "or",
+        "register": "Sign up"
+    },
+    "categoryPage": {
+        "empty": "No products found",
+        "totalProducts": "{num} products",
+        "singleProduct": "01 product"
+    },
+    "search": {
+        "title": "Results for: {search}",
+        "empty": "No products found"
+    },
+    "checkout": {
+        "steps": {
+            "login": "Login",
+            "shipping": "Delivery",
+            "payment": "Payment",
+            "resume": "Confirmation"
+        },
+        "user": {
+            "title": "Personal Information",
+            "name": "Name",
+            "document": "Document",
+            "idUser": "User ID",
+            "email": "Email",
+            "phone": "Phone",
+            "address": "Address",
+            "locale": "Locale",
+            "zipcode": "ZIP code",
+            "login": {
+                "part1": "Please",
+                "part2": "login",
+                "part3": "or",
+                "part4": "register",
+                "part5": "to continue"
+            }
+        },
+        "shipping": {
+            "title": "Delivery Address",
+            "payment_title": "Billing Address",
+            "shipping_is_payment": "Is the billing address the same as the delivery address?",
+            "shipping_is_payment_yes": "Yes, it is the same address",
+            "shipping_is_payment_no": "Another address",
+            "select_option": "Select an option",
+            "form": {
+                "zipcode": "ZIP code",
+                "search": "Search",
+                "country": "Country",
+                "state": "State",
+                "city": "City",
+                "neighborhood": "Neighborhood",
+                "street": "Street",
+                "number": "Number",
+                "complement": "Complement",
+                "zipcodeInvalid": "Invalid ZIP code",
+                "zipcodeRequired": "ZIP code is required",
+                "countryRequired": "Country is required",
+                "stateRequired": "State is required",
+                "cityRequired": "City is required",
+                "neighborhoodRequired": "Neighborhood is required",
+                "streetRequired": "Street is required",
+                "numberRequired": "Number is required"
+            }
+        },
+        "payment": {
+            "title": "Payment Method",
+            "credit_card": "Credit Card",
+            "credit_card_number": "Card Number",
+            "credit_card_name": "Name on Card",
+            "credit_card_validate": "Expiration Date",
+            "type_card": "Document Type",
+            "document": "Document",
+            "credit_card_cvv": "CVV",
+            "installments": "Installments",
+            "form": {
+                "credit_card_number_invalid": "Invalid card number",
+                "credit_card_name_invalid": "Name on card is invalid",
+                "credit_card_validateRequired": "Expiration date is required",
+                "credit_card_cvv_invalid": "Invalid CVV"
+            },
+            "purchaseSummary": {
+                "title": "Purchase Summary",
+                "products": "Products",
+                "discount": "Discount",
+                "shipping": "Shipping",
+                "total": "Total"
+            }
+        }
+    }
+}

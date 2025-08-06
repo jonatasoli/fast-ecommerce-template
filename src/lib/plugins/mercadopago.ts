@@ -77,9 +77,9 @@ export class MercadoPagoService {
 		// eslint-disable-next-line no-useless-catch
 		try {
 			const response = await this.mercadoPago.createCardToken(data);
-			return response; // Sucesso, retorna o token
+			return response; 
 		} catch (error) {
-			throw error; // Em caso de erro, lança o erro
+			throw error; 
 		}
 	}
 

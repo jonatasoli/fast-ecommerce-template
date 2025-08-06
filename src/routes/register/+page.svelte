@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
 	import { goto } from '$app/navigation';
-	import { initializeStores, Toast, getToastStore } from '@skeletonlabs/skeleton';
+	import { showToast } from '$lib/utils';
+	import { Toaster } from 'svelte-french-toast';
 
 	const logo = import.meta.env.VITE_URL_LOGO;
-
-	initializeStores();
 
 	let error = '';
 	let loading = false;
@@ -19,19 +18,6 @@
 		phone: '',
 		terms: false
 	};
-
-	const toastStore = getToastStore();
-
-	function showToast(message: string, bgColor: string) {
-		const t = {
-			message,
-			autohide: false,
-			hideDismiss: true,
-			background: bgColor,
-			classes: `${bgColor} text-white`
-		};
-		toastStore.trigger(t);
-	}
 
 	async function handleSignup(event: Event) {
 		event.preventDefault();
@@ -64,17 +50,32 @@
 			});
 
 			if (response.ok) {
+<<<<<<< HEAD
 				showToast(`Cadastro realizado com sucesso! Bem-vindo, ${formData.name}`, 'bg-primary-500');
 				goto('/pages/dashboard');
 			} else {
 				const errorData = await response.json();
 				error = errorData.detail?.[0]?.msg || errorData.message || 'Erro ao realizar cadastro.';
 				showToast(error, 'bg-red');
+=======
+				const result = await response.json();
+				showToast(
+					$_('register.notification.success.title', {
+						values: result.name
+					}),
+					'success'
+				);
+				goto('/pages/dashboard');
+			} else {
+				const errorData = await response.json();
+				error = errorData.message || 'Erro ao realizar cadastro.';
+				showToast($_('register.notification.error.content'), 'error');
+>>>>>>> f95ac573f8bf56afc7d6de86d28ef1a06026fc33
 			}
 		} catch (err) {
 			console.error('Registration error:', err);
 			error = 'Erro de conexão. Tente novamente mais tarde.';
-			showToast(error, 'bg-red');
+			showToast(error, 'error');
 		} finally {
 			loading = false;
 		}
@@ -249,5 +250,5 @@
 		</div>
 	</div>
 
-	<Toast rounded="rounded-lg" position="tr" />
+	<Toaster position="top-right" />
 </div>

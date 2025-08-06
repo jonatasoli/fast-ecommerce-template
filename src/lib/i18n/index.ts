@@ -1,10 +1,13 @@
-// src/lib/i18n/index.ts
+
 import { browser } from '$app/environment';
 import { init, register } from 'svelte-i18n';
 
-const defaultLocale = 'pt';
+const defaultLocale = 'pt-BR';
 
-register('pt', () => import('../locale/pt.json'));
+register('pt-BR', () => import('../locale/pt.json'));
+register('en-US', () => import('../locale/en.json'));
+register('es-ES', () => import('../locale/es.json'));
+register('en-GB', () => import('../locale/gb.json'));
 
 init({
 	fallbackLocale: defaultLocale,

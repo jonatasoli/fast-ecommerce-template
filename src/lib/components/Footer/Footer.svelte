@@ -2,7 +2,7 @@
 	import { _ } from 'svelte-i18n';
 	export let data;
 
-	// Importa a função de tradução
+	
 </script>
 
 <footer class="w-full font-sans">

@@ -12,7 +12,7 @@ export interface Product {
 	};
 	image_path: string;
 	installments_config: number;
-	installments_list: null | any[]; // pode ser atualizado para um tipo específico se houver dados estruturados
+	installments_list: null | any[]; 
 	discount: number;
 	category_id: number;
 	showcase: boolean;
@@ -39,6 +39,7 @@ export interface CreditCard {
 
 export interface ResponseProduct {
 	product: Product;
+	medias: MediaItem[];
 }
 
 export interface Address {
@@ -63,10 +64,10 @@ export interface User {
 
 export interface Cart {
 	uuid: string;
-	affiliate: string;
-	coupon: string;
+	affiliate: string | null;
+	coupon: string | null;
 	discount: string;
-	freight_product_code: string;
+	freight_product_code?: string;
 	freight: Freight;
 	zipcode: string;
 	subtotal: string;
@@ -94,8 +95,8 @@ export interface CartItem {
 
 export interface CartAddress {
 	shipping_is_payment: boolean;
-	user_address_id: number | null;
-	shipping_address_id: number | null;
+	user_address_id?: number | null;
+	shipping_address_id?: number | null;
 	user_address: UserAddress;
 	shipping_address: ShippingAddress;
 	token: string | null;
@@ -154,7 +155,7 @@ export interface Payment {
 	pix_payment_id: number;
 	gateway_provider: string;
 	installments: number;
-	shipping_address_id: string;
+	shipping_address_id: number | null;
 	user_address_id: number;
 	shipping_is_payment: boolean;
 	subtotal_with_fee: number;
@@ -167,6 +168,27 @@ export interface CreditCardPayment {
 	card_issuer: string;
 	card_brand: string;
 	installments: number;
+}
+
+export type PaymentGateway = 'STRIPE' | 'MERCADO_PAGO' | 'PAYPAL';
+
+export interface BaseCreditCardPayment {
+	payment_gateway: PaymentGateway;
+	installments: number;
+}
+
+export interface MercadoPagoCreditCardPayment extends BaseCreditCardPayment {
+	card_token: string;
+	card_issuer: string;
+	card_brand: string;
+}
+
+export interface StripeCreditCardPayment extends BaseCreditCardPayment {
+	number: string;
+	exp_month: number;
+	exp_year: number;
+	cvc: string;
+	name: string;
 }
 
 export interface AddPixPaymentMethodResponse {
@@ -200,6 +222,12 @@ type Variant = {
 	label: string;
 };
 
+export interface MediaItem {
+	media_id: string;
+	type: 'PHOTO' | 'VIDEO';
+	uri: string;
+}
+
 export type ProductItem = {
 	product_id: number;
 	name: string;
@@ -225,3 +253,48 @@ export type ProductItem = {
 	length?: number;
 	sku: string;
 };
+
+type Response<T> = {
+	success: boolean;
+	data?: T;
+	error?: string;
+};
+
+export interface CartPreview {
+	uuid: string;
+	affiliate: string;
+	cart_items: CartItem[];
+	coupon: string;
+	discount: string;
+	zipcode: string;
+	freight_product_code: string;
+	freight: Freight;
+	subtotal: string;
+	total: string;
+	user_data: UserData;
+	shipping_is_payment: boolean;
+	user_address_id: number;
+	shipping_address_id: number | null;
+	payment_method: string;
+	payment_method_id: string;
+	payment_intent: string | null;
+	customer_id: string;
+	card_token: string;
+	pix_qr_code: string | null;
+	pix_qr_code_base64: string | null;
+	pix_payment_id: string | null;
+	gateway_provider: string;
+	installments: number;
+	subtotal_with_fee: string;
+	total_with_fee: string;
+}
+
+export type CreditCardResponse = Response<Checkout>;
+export type PreviewResponse = Response<Checkout>;
+
+export interface Checkout extends Cart, Payment {
+	user_data: User;
+	shipping_is_payment: boolean;
+	user_address_id: number;
+	shipping_address_id: number | null;
+}
