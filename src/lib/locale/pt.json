@@ -173,6 +173,7 @@
         "password": "Senha",
         "confirmPassword": "Confirmar senha",
         "phone": "Informe seu telefone",
+        "termsAndConditions": "Termos e condições",
         "submit": "Cadastrar",
         "formValidation": {
             "requiredUsername": "Username é obrigatório",

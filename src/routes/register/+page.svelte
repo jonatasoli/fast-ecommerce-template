@@ -245,7 +245,7 @@
 							target="_blank"
 							class="text-primary-600 hover:underline"
 						>
-							Termos e Condições
+							{$_('register.termsAndConditions')}
 						</a>
 					</label>
 					{#if !formData.terms && error.includes('termos')}
